@@ -8,7 +8,7 @@ import io from "socket.io-client";
 import { buyerMessagingTranslations } from "./translation/buyerMessagingTranslations";
 
 const socket = io(config.baseUrl.replace("/api/v1", ""), {
-  transports: ['polling']
+  transports: ['websocket']
 });
 
 // Avatar component
