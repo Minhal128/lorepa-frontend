@@ -7,7 +7,9 @@ import config from "../../../config";
 import io from "socket.io-client";
 import { buyerMessagingTranslations } from "./translation/buyerMessagingTranslations";
 
-const socket = io(config.baseUrl.replace("/api/v1", ""));
+const socket = io(config.baseUrl.replace("/api/v1", ""), {
+  transports: ['polling']
+});
 
 // Avatar component
 const Avatar = ({ initials, isOnline }) => {
