@@ -3,8 +3,70 @@ import { FaFacebookF, FaGoogle } from 'react-icons/fa';
 import { IoMailOutline } from 'react-icons/io5';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Logo from "../../../assets/logo.svg";
 import toast from 'react-hot-toast';
+
+const registerTranslations = {
+    en: {
+        signUp: "Sign up",
+        welcome: "Welcome, provide your details",
+        firstName: "First name",
+        lastName: "Last name",
+        email: "Email address",
+        phone: "Phone number",
+        password: "Password",
+        confirmPassword: "Confirm password",
+        signUpButton: "Sign up",
+        or: "Or",
+        alreadyHaveAccount: "Already have an account?",
+        login: "Login",
+        passwordMismatch: "Passwords do not match!"
+    },
+    fr: {
+        signUp: "S'inscrire",
+        welcome: "Bienvenue, veuillez fournir vos informations",
+        firstName: "Prénom",
+        lastName: "Nom",
+        email: "Adresse e-mail",
+        phone: "Numéro de téléphone",
+        password: "Mot de passe",
+        confirmPassword: "Confirmer le mot de passe",
+        signUpButton: "S'inscrire",
+        or: "Ou",
+        alreadyHaveAccount: "Vous avez déjà un compte ?",
+        login: "Connexion",
+        passwordMismatch: "Les mots de passe ne correspondent pas !"
+    },
+    es: {
+        signUp: "Registrarse",
+        welcome: "Bienvenido, proporcione sus datos",
+        firstName: "Nombre",
+        lastName: "Apellido",
+        email: "Correo electrónico",
+        phone: "Número de teléfono",
+        password: "Contraseña",
+        confirmPassword: "Confirmar contraseña",
+        signUpButton: "Registrarse",
+        or: "O",
+        alreadyHaveAccount: "¿Ya tienes una cuenta?",
+        login: "Iniciar sesión",
+        passwordMismatch: "¡Las contraseñas no coinciden!"
+    },
+    cn: {
+        signUp: "注册",
+        welcome: "欢迎，请提供您的信息",
+        firstName: "名",
+        lastName: "姓",
+        email: "电子邮箱",
+        phone: "电话号码",
+        password: "密码",
+        confirmPassword: "确认密码",
+        signUpButton: "注册",
+        or: "或",
+        alreadyHaveAccount: "已经有账户了？",
+        login: "登录",
+        passwordMismatch: "密码不匹配！"
+    }
+};
 
 // Animation Variants
 const fadeInUp = {
@@ -27,6 +89,8 @@ const stagger = {
 
 const UserRegister = () => {
   const navigation = useNavigate()
+  const lang = localStorage.getItem('lang') || 'fr';
+  const t = registerTranslations[lang] || registerTranslations.fr;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -42,7 +106,7 @@ const UserRegister = () => {
   const handleSignUp = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match!");
+      toast.error(t.passwordMismatch);
       return;
     }
     else{
@@ -53,16 +117,6 @@ const UserRegister = () => {
   return (
     <div className='min-h-screen bg-white flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 relative'>
 
-      {/* Logo */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className='absolute top-8 left-8'
-      >
-        <Link to={"/"}><img src={Logo} alt="Logo" className='h-[24rem]' /></Link>
-      </motion.div>
-
       {/* Form Container */}
       <motion.div
         variants={fadeInUp}
@@ -70,8 +124,8 @@ const UserRegister = () => {
         animate="visible"
         className='bg-white p-6 sm:p-8 md:p-10 w-full max-w-md '
       >
-        <motion.h2 variants={fadeInUp} className='text-3xl text-gray-900 text-center mb-2'>Sign up</motion.h2>
-        <motion.p variants={fadeInUp} className='text-gray-500 text-center mb-8'>Welcome back, provide your details</motion.p>
+        <motion.h2 variants={fadeInUp} className='text-3xl text-gray-900 text-center mb-2'>{t.signUp}</motion.h2>
+        <motion.p variants={fadeInUp} className='text-gray-500 text-center mb-8'>{t.welcome}</motion.p>
 
         <motion.form
           onSubmit={handleSignUp}
@@ -82,52 +136,52 @@ const UserRegister = () => {
         >
           {/* First Name */}
           <motion.div variants={fadeInUp}>
-            <label htmlFor='firstName' className='block text-sm text-gray-700 mb-1'>First name</label>
+            <label htmlFor='firstName' className='block text-sm text-gray-700 mb-1'>{t.firstName}</label>
             <input
               type='text'
               id='firstName'
               required
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              placeholder='First name'
+              placeholder={t.firstName}
               className='block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500'
             />
           </motion.div>
 
           {/* Last Name */}
           <motion.div variants={fadeInUp}>
-            <label htmlFor='lastName' className='block text-sm text-gray-700 mb-1'>Last name</label>
+            <label htmlFor='lastName' className='block text-sm text-gray-700 mb-1'>{t.lastName}</label>
             <input
               type='text'
               id='lastName'
               required
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              placeholder='Last name'
+              placeholder={t.lastName}
               className='block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500'
             />
           </motion.div>
 
           {/* Email */}
           <motion.div variants={fadeInUp}>
-            <label htmlFor='email' className='block text-sm text-gray-700 mb-1'>Email address</label>
+            <label htmlFor='email' className='block text-sm text-gray-700 mb-1'>{t.email}</label>
             <input
               type='email'
               id='email'
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder='Email address'
+              placeholder={t.email}
               className='block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500'
             />
           </motion.div>
 
           {/* Phone */}
           <motion.div variants={fadeInUp}>
-            <label htmlFor='phoneNumber' className='block text-sm text-gray-700 mb-1'>Phone number</label>
+            <label htmlFor='phoneNumber' className='block text-sm text-gray-700 mb-1'>{t.phone}</label>
             <div className='mt-1 flex rounded-md shadow-sm'>
               <span className='inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm'>
-                NG (+234)
+                CA (+1)
               </span>
               <input
                 type='tel'
@@ -135,7 +189,7 @@ const UserRegister = () => {
                 required
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder='000-000-000'
+                placeholder='000-000-0000'
                 className='flex-1 block w-full rounded-none rounded-r-md px-4 py-2 border border-gray-300 sm:text-sm focus:ring-blue-500 focus:border-blue-500'
               />
             </div>
@@ -143,7 +197,7 @@ const UserRegister = () => {
 
           {/* Password */}
           <motion.div variants={fadeInUp}>
-            <label htmlFor='password' className='block text-sm text-gray-700 mb-1'>Password</label>
+            <label htmlFor='password' className='block text-sm text-gray-700 mb-1'>{t.password}</label>
             <div className='relative'>
               <input
                 type={passwordVisible ? 'text' : 'password'}
@@ -151,7 +205,7 @@ const UserRegister = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder='Password'
+                placeholder={t.password}
                 className='w-full pr-10 px-4 py-2 border border-gray-300 rounded-md sm:text-sm focus:ring-blue-500 focus:border-blue-500'
               />
               <div className='absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer' onClick={togglePasswordVisibility}>
@@ -166,7 +220,7 @@ const UserRegister = () => {
 
           {/* Confirm Password */}
           <motion.div variants={fadeInUp}>
-            <label htmlFor='confirmPassword' className='block text-sm text-gray-700 mb-1'>Confirm password</label>
+            <label htmlFor='confirmPassword' className='block text-sm text-gray-700 mb-1'>{t.confirmPassword}</label>
             <div className='relative'>
               <input
                 type={confirmPasswordVisible ? 'text' : 'password'}
@@ -174,7 +228,7 @@ const UserRegister = () => {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder='Password'
+                placeholder={t.password}
                 className='w-full pr-10 px-4 py-2 border border-gray-300 rounded-md sm:text-sm focus:ring-blue-500 focus:border-blue-500'
               />
               <div className='absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer' onClick={toggleConfirmPasswordVisibility}>
@@ -193,7 +247,7 @@ const UserRegister = () => {
               type='submit'
               className='w-full py-2 px-4 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
             >
-              Sign up
+              {t.signUpButton}
             </button>
           </motion.div>
         </motion.form>
@@ -201,7 +255,7 @@ const UserRegister = () => {
         {/* OR separator */}
         <motion.div variants={fadeInUp} className='relative mt-6 mb-6'>
           <div className='absolute inset-0 flex items-center'><div className='w-full border-t border-gray-300' /></div>
-          <div className='relative flex justify-center text-sm'><span className='px-2 bg-white text-gray-500'>Or</span></div>
+          <div className='relative flex justify-center text-sm'><span className='px-2 bg-white text-gray-500'>{t.or}</span></div>
         </motion.div>
 
         {/* Social Buttons */}
@@ -221,8 +275,8 @@ const UserRegister = () => {
         {/* Login Link */}
         <motion.div variants={fadeInUp} className='mt-8 text-center text-sm'>
           <p>
-            Already have an account?{' '}
-            <Link to={"/user/login"} className='text-blue-600 hover:text-blue-500'>Login</Link>
+            {t.alreadyHaveAccount}{' '}
+            <Link to={"/user/login"} className='text-blue-600 hover:text-blue-500'>{t.login}</Link>
           </p>
         </motion.div>
       </motion.div>

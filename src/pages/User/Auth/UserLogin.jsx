@@ -6,7 +6,68 @@ import axios from 'axios';
 import config from '../../../config';
 import { FaGoogle } from 'react-icons/fa';
 
+const loginTranslations = {
+    en: {
+        login: "Login",
+        welcome: "Welcome back, provide your details",
+        email: "Email address",
+        emailPlaceholder: "Email address",
+        password: "Password",
+        passwordPlaceholder: "Password",
+        keepSignedIn: "Keep me signed in",
+        loginButton: "Login",
+        or: "Or",
+        continueGoogle: "Continue with Google",
+        noAccount: "Don't have an account",
+        register: "Register"
+    },
+    fr: {
+        login: "Connexion",
+        welcome: "Bienvenue, veuillez fournir vos informations",
+        email: "Adresse e-mail",
+        emailPlaceholder: "Adresse e-mail",
+        password: "Mot de passe",
+        passwordPlaceholder: "Mot de passe",
+        keepSignedIn: "Rester connecté",
+        loginButton: "Connexion",
+        or: "Ou",
+        continueGoogle: "Continuer avec Google",
+        noAccount: "Vous n'avez pas de compte ?",
+        register: "S'inscrire"
+    },
+    es: {
+        login: "Iniciar sesión",
+        welcome: "Bienvenido, proporcione sus datos",
+        email: "Correo electrónico",
+        emailPlaceholder: "Correo electrónico",
+        password: "Contraseña",
+        passwordPlaceholder: "Contraseña",
+        keepSignedIn: "Mantener sesión iniciada",
+        loginButton: "Iniciar sesión",
+        or: "O",
+        continueGoogle: "Continuar con Google",
+        noAccount: "¿No tienes una cuenta?",
+        register: "Registrarse"
+    },
+    cn: {
+        login: "登录",
+        welcome: "欢迎回来，请提供您的信息",
+        email: "电子邮箱",
+        emailPlaceholder: "电子邮箱",
+        password: "密码",
+        passwordPlaceholder: "密码",
+        keepSignedIn: "保持登录",
+        loginButton: "登录",
+        or: "或",
+        continueGoogle: "使用 Google 继续",
+        noAccount: "还没有账户？",
+        register: "注册"
+    }
+};
+
 const UserLogin = () => {
+    const lang = localStorage.getItem('lang') || 'fr';
+    const t = loginTranslations[lang] || loginTranslations.fr;
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -61,15 +122,15 @@ const UserLogin = () => {
             {/* Login Form Container */}
             <div className=' p-6 sm:p-8 md:p-10  w-full max-w-md'>
                 {/* Login Title and Subtitle */}
-                <h2 className='text-3xl  text-gray-900 text-center mb-2'>Login</h2>
-                <p className='text-gray-500 text-center mb-8'>Welcome back, provide your details</p>
+                <h2 className='text-3xl  text-gray-900 text-center mb-2'>{t.login}</h2>
+                <p className='text-gray-500 text-center mb-8'>{t.welcome}</p>
 
                 {/* Login Form */}
                 <form onSubmit={handleLogin} className='space-y-6'>
                     {/* Email Address Input */}
                     <div>
                         <label htmlFor='email' className='block text-sm  text-gray-700 mb-1'>
-                            Email address
+                            {t.email}
                         </label>
                         <input
                             type='email'
@@ -79,7 +140,7 @@ const UserLogin = () => {
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder='First name' // Placeholder as seen in the image
+                            placeholder={t.emailPlaceholder}
                             className='appearance-none block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                         />
                     </div>
@@ -87,7 +148,7 @@ const UserLogin = () => {
                     {/* Password Input */}
                     <div>
                         <label htmlFor='password' className='block text-sm  text-gray-700 mb-1'>
-                            Password
+                            {t.password}
                         </label>
                         <div className='mt-1 relative rounded-md shadow-sm'>
                             <input
@@ -98,7 +159,7 @@ const UserLogin = () => {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder='Password'
+                                placeholder={t.passwordPlaceholder}
                                 className='appearance-none block w-full pr-10 px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                             />
                             <div
@@ -126,7 +187,7 @@ const UserLogin = () => {
                                 className='h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
                             />
                             <label htmlFor='remember-me' className='ml-2 block text-sm text-gray-900'>
-                                Keep me signed in
+                                {t.keepSignedIn}
                             </label>
                         </div>
                     </div>
@@ -137,13 +198,13 @@ const UserLogin = () => {
                             type='submit'
                             className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm  text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                         >
-                            Login
+                            {t.loginButton}
                         </button>
                     </div>
 
                     <div className='flex items-center my-4'>
                         <div className='flex-grow border-t border-gray-300'></div>
-                        <span className='px-3 text-gray-500 text-sm'>Or</span>
+                        <span className='px-3 text-gray-500 text-sm'>{t.or}</span>
                         <div className='flex-grow border-t border-gray-300'></div>
                     </div>
 
@@ -154,12 +215,12 @@ const UserLogin = () => {
                             className="w-full flex items-center justify-center gap-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-gray-700 font-medium"
                         >
                             <FaGoogle className="text-red-500 w-5 h-5" />
-                            Continue with Google
+                            {t.continueGoogle}
                         </button>
                     </div>
 
                     <div className='mt-8 text-center text-sm'>
-                        <p>Don't have an account <Link to={"/user/register"} className='text-blue-600 hover:text-blue-500'>Register</Link></p>
+                        <p>{t.noAccount} <Link to={"/user/register"} className='text-blue-600 hover:text-blue-500'>{t.register}</Link></p>
                     </div>
                 </form>
 
