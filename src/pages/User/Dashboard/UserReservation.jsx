@@ -170,7 +170,7 @@ const UserReservation = () => {
             ))
           ) : (
             <div className="text-center py-8 text-gray-500">
-              {t.noReservations.replace("{tab}", activeTab.toLowerCase())}
+              {t.noReservations.replace("{tab}", activeTab === "All" ? "" : activeTab.toLowerCase())}
             </div>
           )}
         </div>

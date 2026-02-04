@@ -1,9 +1,22 @@
 import { FaTimes } from 'react-icons/fa';
 import { IoIosDocument } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { completeProfileModalTranslations } from '../../pages/User/Dashboard/translation/completeProfileModalTranslations';
 
 const CompleteProfileModal = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
+    const [t, setT] = useState(completeProfileModalTranslations.fr);
+
+    useEffect(() => {
+        const updateTranslations = () => {
+            const lang = localStorage.getItem('lang') || 'fr';
+            setT(completeProfileModalTranslations[lang] || completeProfileModalTranslations.fr);
+        };
+        updateTranslations();
+        window.addEventListener('storage', updateTranslations);
+        return () => window.removeEventListener('storage', updateTranslations);
+    }, []);
 
     if (!isOpen) return null;
 
@@ -23,8 +36,8 @@ const CompleteProfileModal = ({ isOpen, onClose }) => {
                                 <IoIosDocument />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900">Complete Your Profile to Start Booking</h3>
-                                <p className="text-sm text-gray-700 mt-1">Before you can make your first reservation, please upload your required documents. This helps us verify your identity and keep the community safe.</p>
+                                <h3 className="text-lg font-semibold text-gray-900">{t.title}</h3>
+                                <p className="text-sm text-gray-700 mt-1">{t.description}</p>
                             </div>
                         </div>
 
@@ -42,13 +55,13 @@ const CompleteProfileModal = ({ isOpen, onClose }) => {
                         onClick={onClose}
                         className="py-2 px-4 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-100"
                     >
-                        Later
+                        {t.later}
                     </button>
                     <button
                         onClick={handleGoToProfile}
                         className="py-2 px-4 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition"
                     >
-                        Go To Profile
+                        {t.goToProfile}
                     </button>
                 </div>
             </div>
