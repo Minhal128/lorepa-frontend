@@ -5,7 +5,32 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import config from "../config";
 
-const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, translations }) => {
+// Default translations fallback
+const defaultTranslations = {
+    uploadModal: {
+        title: "Téléverser un Nouveau Document",
+        selectDocumentType: "Type de Document",
+        selectTrailer: "Remorque Associée",
+        description: "Description",
+        dragDrop: "Glissez-déposez les fichiers ici, ou parcourez",
+        maxFileSize: "Taille maximale du fichier : 10 Mo",
+        uploadButton: "Téléverser le Document",
+    },
+    documentTypes: {
+        rentalContract: "Contrat de Location",
+        insuranceRider: "Avenant d'Assurance",
+        damageReport: "Rapport de Dommages",
+        checkInPhotos: "Photos d'Arrivée",
+        checkOutPhotos: "Photos de Départ",
+    },
+};
+
+const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, translations = defaultTranslations }) => {
+    // Ensure translations has required properties
+    const t = {
+        uploadModal: translations?.uploadModal || defaultTranslations.uploadModal,
+        documentTypes: translations?.documentTypes || defaultTranslations.documentTypes,
+    };
     const [uploadType, setUploadType] = useState('Guest');
     const [selectedDocumentType, setSelectedDocumentType] = useState('');
     const [selectedTrailer, setSelectedTrailer] = useState('');
@@ -72,7 +97,7 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
             <div className="bg-white rounded-lg w-full max-w-xl shadow-2xl">
                 <div className="p-5 border-b flex justify-between items-center">
                     <h3 className="text-xl font-bold text-gray-800">
-                        {translations.uploadModal.title}
+                        {t.uploadModal.title}
                     </h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition">
                         <IoClose className="text-2xl" />
@@ -82,7 +107,7 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
                 <div className="p-6 space-y-5">
                     <div>
                         <label htmlFor="documentType" className="block text-sm font-medium text-gray-700 mb-1">
-                            {translations.uploadModal.selectDocumentType}
+                            {t.uploadModal.selectDocumentType}
                         </label>
                         <select
                             id="documentType"
@@ -90,10 +115,10 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
                             onChange={(e) => setSelectedDocumentType(e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                         >
-                            <option value="">{translations.uploadModal.selectDocumentType}</option>
+                            <option value="">{t.uploadModal.selectDocumentType}</option>
                             {documentTypes.map((type) => (
                                 <option key={type} value={type}>
-                                    {translations.documentTypes[type.replace(/\s+/g, '').toLowerCase()] || type}
+                                    {t.documentTypes[type.replace(/\s+/g, '').toLowerCase()] || type}
                                 </option>
                             ))}
                         </select>
@@ -101,7 +126,7 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
 
                     <div>
                         <label htmlFor="linkedTrailer" className="block text-sm font-medium text-gray-700 mb-1">
-                            {translations.uploadModal.selectTrailer}
+                            {t.uploadModal.selectTrailer}
                         </label>
                         <select
                             id="linkedTrailer"
@@ -109,7 +134,7 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
                             onChange={(e) => setSelectedTrailer(e.target.value)}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm"
                         >
-                            <option value="">{translations.uploadModal.selectTrailer}</option>
+                            <option value="">{t.uploadModal.selectTrailer}</option>
                             {trailers.map((trailer) => (
                                 <option key={trailer._id} value={trailer._id}>
                                     {trailer.title}
@@ -120,7 +145,7 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
 
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                            {translations.uploadModal.description}
+                            {t.uploadModal.description}
                         </label>
                         <textarea
                             id="description"
@@ -154,10 +179,10 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
                             </p>
                         ) : (
                             <p className="text-sm text-gray-500">
-                                {translations.uploadModal.dragDrop}
+                                {t.uploadModal.dragDrop}
                             </p>
                         )}
-                        <p className="text-xs text-gray-400 mt-1">{translations.uploadModal.maxFileSize}</p>
+                        <p className="text-xs text-gray-400 mt-1">{t.uploadModal.maxFileSize}</p>
                     </div>
                 </div>
 
@@ -167,7 +192,7 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
                         className="px-6 py-2 bg-[#2563EB] text-white rounded-lg font-medium hover:bg-blue-700 transition shadow-md disabled:bg-gray-400"
                         disabled={!selectedDocumentType || !selectedTrailer || !file}
                     >
-                        {translations.uploadModal.uploadButton}
+                        {t.uploadModal.uploadButton}
                     </button>
                 </div>
             </div>
