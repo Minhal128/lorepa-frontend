@@ -3,7 +3,6 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../../config';
-import Logo from "../../../assets/logo.svg";
 import { FaGoogle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
@@ -60,13 +59,6 @@ const BuyerLogin = () => {
 
     return (
         <div className='min-h-screen bg-white flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8'>
-            {/* Logo Section */}
-            <div className='lg:absolute top-0 left-8'>
-                <Link to={"/"} className="text-xl">
-                    <img src={Logo} alt="logo" className='h-[24rem]' />
-                </Link>
-            </div>
-
             {/* Login Form Container */}
             <div className=' p-6 sm:p-8 md:p-10  w-full max-w-md'>
                 {/* Login Title and Subtitle */}

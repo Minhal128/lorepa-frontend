@@ -4,7 +4,6 @@ import { FaGoogle, FaFacebookF } from "react-icons/fa";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import Logo from "../../../assets/logo.svg";
 
 const AdminLogin = () => {
     const [passwordVisible, setPasswordVisible] = useState(false)
@@ -31,13 +30,6 @@ const AdminLogin = () => {
     };
     return (
         <div className='min-h-screen bg-white flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8'>
-            {/* Logo Section */}
-            <div className='lg:absolute top-0 left-8'>
-                <Link to={"/"} className="text-xl">
-                    <img src={Logo} alt="logo" className='h-[24rem]' />
-                </Link>
-            </div>
-
             {/* Login Form Container */}
             <div className=' p-6 sm:p-8 md:p-10  w-full max-w-md'>
                 {/* Login Title and Subtitle */}
