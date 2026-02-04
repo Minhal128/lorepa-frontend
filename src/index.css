@@ -10,12 +10,14 @@
     padding-top: env(safe-area-inset-top);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+    scroll-behavior: smooth;
   }
 
   /* Prevent horizontal scroll on mobile */
   body {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
 
   /* Better touch targets for mobile */
