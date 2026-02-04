@@ -8,6 +8,7 @@ export const LANGUAGES = {
 export const sidebarTranslations = {
   en: {
     menu: "MENU",
+    home: "Home",
     dashboard: "Dashboard",
     listing: "My Listings",
     reservation: "Reservation",
@@ -27,6 +28,7 @@ export const sidebarTranslations = {
   },
   fr: {
     menu: "MENU",
+    home: "Accueil",
     dashboard: "Tableau de bord",
     listing: "Mes annonces",
     reservation: "Réservation",
@@ -46,6 +48,7 @@ export const sidebarTranslations = {
   },
   es: {
     menu: "MENÚ",
+    home: "Inicio",
     dashboard: "Panel",
     listing: "Mis anuncios",
     reservation: "Reservas",
@@ -65,6 +68,7 @@ export const sidebarTranslations = {
   },
   cn: {
     menu: "菜单",
+    home: "首页",
     dashboard: "仪表板",
     listing: "房源",
     reservation: "预订",

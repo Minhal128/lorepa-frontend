@@ -153,7 +153,7 @@ const BuyerDocument = () => {
     const [isViewerModalOpen, setIsViewerModalOpen] = useState(false);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState('All');
+    const [activeTab, setActiveTab] = useState('Tous');
     const [searchTerm, setSearchTerm] = useState('');
     const [trailers, setTrailers] = useState([]);
     const [documentsData, setDocumentData] = useState([])
@@ -173,10 +173,10 @@ const BuyerDocument = () => {
     const closeUploadModal = () => {
         setIsUploadModalOpen(false);
     };
-    const filteredDocuments = documentsData.filter(doc => {
-        const matchesTab = activeTab === 'All' || doc.documentType === activeTab;
-        const matchesSearch = doc.documentType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            doc.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredDocuments = documentsData?.filter(doc => {
+        const matchesTab = activeTab === 'Tous' || doc.documentType === activeTab;
+        const matchesSearch = doc.documentType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            doc.description?.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesTab && matchesSearch;
     });
 
