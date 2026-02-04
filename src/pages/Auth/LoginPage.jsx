@@ -9,7 +9,6 @@ import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { LoginSocialFacebook } from 'reactjs-social-login';
 import config from '../../config';
-import Logo from "../../assets/logo.svg";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -192,11 +191,6 @@ const LoginPage = () => {
 
   return (
     <div className='min-h-screen bg-white flex flex-col items-center justify-center mobile-px relative py-12'>
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-        className='absolute top-6 left-6 lg:top-8 lg:left-12 mb-4 lg:mb-0'>
-        <Link to={"/"}><img src={Logo} alt="logo" className='h-16 sm:h-20 w-auto' /></Link>
-      </motion.div>
-
       <motion.div variants={fadeInUp} initial="hidden" animate="visible" className='p-6 sm:p-8 md:p-10 w-full max-w-md'>
         <motion.h2 variants={fadeInUp} className='text-xl mb-2'>{translations.title}</motion.h2>
         <motion.p variants={fadeInUp} className='text-sm mb-8'>{translations.welcome}</motion.p>

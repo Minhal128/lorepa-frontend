@@ -340,12 +340,12 @@ const TrailersListing = () => {
                   <div className="p-3 sm:p-4">
                     <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 line-clamp-1">{trailer.title}</h3>
                     <p className="text-gray-500 text-xs sm:text-sm mb-2">{trailer.city}, {trailer.state}</p>
-                    <div className='flex items-center justify-between gap-2'>
+                    <div className='flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2'>
                       <p className="text-black font-medium text-base sm:text-lg">${trailer.dailyRate}{translations.perDay}</p>
                       {
                         (isLogin && role !== "owner") &&
                         <button
-                          className='bg-blue-600 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap'
+                          className='bg-blue-600 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full xs:w-auto text-center'
                           onClick={(e) => handleBookNowClick(e, trailer)}
                         >
                           {translations.bookNow}

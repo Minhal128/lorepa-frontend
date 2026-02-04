@@ -129,7 +129,7 @@ const TicketsTable = ({ tickets, onViewTicket, t }) => {
                 ))}
                 {filteredTickets.length === 0 && (
                     <div className="text-center py-10 text-gray-500 italic">
-                        No tickets found
+                        {t.noTicketsFound}
                     </div>
                 )}
             </div>

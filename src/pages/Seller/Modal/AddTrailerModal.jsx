@@ -66,20 +66,6 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const maxDescChars = 300;
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
   const daysInThisMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
@@ -162,14 +148,14 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
   const handleSubmitTrailer = async () => {
     if (!location.latitude || !location.longitude)
-      return toast.error("Location required.");
+      return toast.error(t("locationRequired"));
     if (
       !title ||
       !category ||
       !description ||
       images.length + existingImages.length === 0
     )
-      return toast.error("All fields required.");
+      return toast.error(t("allFieldsRequired"));
 
     const formData = new FormData();
     formData.append("userId", localStorage.getItem("userId"));
@@ -197,7 +183,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
     setLoading(true);
     const toastId = toast.loading(
-      trailerData ? "Updating trailer..." : "Creating trailer..."
+      trailerData ? t("updatingTrailer") : t("creatingTrailer")
     );
     try {
       const url = trailerData
@@ -207,14 +193,14 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
       const res = await fetch(url, { method, body: formData });
       const data = await res.json();
       if (res.ok) {
-        toast.success(trailerData ? "Trailer updated!" : "Trailer created!", {
+        toast.success(trailerData ? t("trailerUpdated") : t("trailerCreated"), {
           id: toastId,
         });
         onClose();
-      } else toast.error(data.msg || "Operation failed", { id: toastId });
+      } else toast.error(data.msg || t("operationFailed"), { id: toastId });
     } catch (err) {
       console.log(err);
-      toast.error("Something went wrong", { id: toastId });
+      toast.error(t("somethingWentWrong"), { id: toastId });
     }
     setLoading(false);
   };
@@ -318,10 +304,10 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                 <div className="flex items-center justify-between">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">
-                      Listing Status
+                      {t("listingStatus")}
                     </label>
                     <p className="text-xs text-gray-500">
-                      Publicly listed and visible for booking.
+                      {t("listingDescription")}
                     </p>
                   </div>
                   <CustomSwitch
@@ -331,7 +317,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Title
+                    {t("title")}
                   </label>
                   <input
                     type="text"
@@ -342,23 +328,23 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Category
+                    {t("category")}
                   </label>
                   <select
                     className="block w-full border border-gray-300 rounded-md py-2 px-3 outline-none"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                   >
-                    {["Utility", "Enclosed", "Flatbed", "Dump", "Boat"].map(
+                    {[{value: "Utility", label: t("utility")}, {value: "Enclosed", label: t("enclosed")}, {value: "Flatbed", label: t("flatbed")}, {value: "Dump", label: t("dump")}, {value: "Boat", label: t("boat")}].map(
                       (c) => (
-                        <option key={c}>{c}</option>
+                        <option key={c.value} value={c.value}>{c.label}</option>
                       )
                     )}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description (max {maxDescChars} chars)
+                    {t("description")} ({t("maxChars")})
                   </label>
                   <textarea
                     rows="4"
@@ -374,7 +360,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                 </div>
                 <div className="relative" ref={wrapperRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Location
+                    {t("location")}
                   </label>
                   <input
                     type="text"
@@ -395,7 +381,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                     }}
                   />
                   {isSearching && (
-                    <p className="text-xs text-blue-600 mt-1 animate-pulse">Searching locations...</p>
+                    <p className="text-xs text-blue-600 mt-1 animate-pulse">{t("searchingLocations")}</p>
                   )}
                   {showSuggestions && (
                     <ul className="absolute z-50 top-full left-0 right-0 bg-white shadow-xl border border-gray-200 rounded-md mt-1 max-h-60 overflow-y-auto">
@@ -410,12 +396,12 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                           </li>
                         ))
                       ) : !isSearching && locationInput.length > 2 && (
-                        <li className="p-3 text-sm text-gray-500 italic">No locations found. Please try a different search.</li>
+                        <li className="p-3 text-sm text-gray-500 italic">{t("noLocationsFound")}</li>
                       )}
                     </ul>
                   )}
                   <p className="text-[10px] text-gray-400 mt-1">
-                    * Please select a location from the dropdown to continue.
+                    {t("locationHint")}
                   </p>
                 </div>
                 {location.city && location.country && (
@@ -426,7 +412,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                 <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Price per day ($)
+                      {t("pricePerDay")}
                     </label>
                     <input
                       type="number"
@@ -438,7 +424,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium">Make</label>
+                    <label className="block text-sm font-medium">{t("make")}</label>
                     <input
                       value={make}
                       onChange={(e) => setMake(e.target.value)}
@@ -447,7 +433,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium">Model</label>
+                    <label className="block text-sm font-medium">{t("model")}</label>
                     <input
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
@@ -456,7 +442,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium">Year</label>
+                    <label className="block text-sm font-medium">{t("year")}</label>
                     <input
                       type="number"
                       value={year}
@@ -467,7 +453,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
                   <div>
                     <label className="block text-sm font-medium">
-                      Length (ft)
+                      {t("length")}
                     </label>
                     <input
                       value={length}
@@ -478,7 +464,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
                   <div>
                     <label className="block text-sm font-medium">
-                      Weight Capacity (lbs)
+                      {t("weightCapacity")}
                     </label>
                     <input
                       value={weightCapacity}
@@ -489,7 +475,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
                   <div>
                     <label className="block text-sm font-medium">
-                      Ball Size
+                      {t("ballSize")}
                     </label>
                     <input
                       value={ballSize}
@@ -500,30 +486,30 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
                   <div>
                     <label className="block text-sm font-medium">
-                      Hitch Type
+                      {t("hitchType")}
                     </label>
                     <select
                       value={hitchType}
                       onChange={(e) => setHitchType(e.target.value)}
                       className="w-full border rounded-md px-3 py-2 outline-none"
                     >
-                      <option value="">Select</option>
-                      <option>Receiver</option>
-                      <option>Gooseneck</option>
-                      <option>Fifth Wheel</option>
+                      <option value="">{t("select")}</option>
+                      <option value="Receiver">{t("receiver")}</option>
+                      <option value="Gooseneck">{t("gooseneck")}</option>
+                      <option value="Fifth Wheel">{t("fifthWheel")}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium">
-                      Light Plug
+                      {t("lightPlug")}
                     </label>
                     <select
                       value={lightPlug}
                       onChange={(e) => setLightPlug(e.target.value)}
                       className="w-full border rounded-md px-3 py-2 outline-none"
                     >
-                      <option value="">Select</option>
+                      <option value="">{t("select")}</option>
                       <option>4-pin</option>
                       <option>5-pin</option>
                       <option>6-pin</option>
@@ -533,10 +519,10 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
                   <div className="col-span-2">
                     <label className="block text-sm font-medium">
-                      Trailer Dimensions
+                      {t("trailerDimensions")}
                     </label>
                     <input
-                      placeholder="e.g. 7 x 14 x 6"
+                      placeholder={t("dimensionsPlaceholder")}
                       value={dimensions}
                       onChange={(e) => setDimensions(e.target.value)}
                       className="w-full border rounded-md px-3 py-2 outline-none"
@@ -549,13 +535,13 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
           <div className="space-y-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Photos
+                {t("photos")}
               </h3>
               <label className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 cursor-pointer block transition">
                 <FaCloudUploadAlt className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-2 text-sm text-gray-600">Upload Image</p>
+                <p className="mt-2 text-sm text-gray-600">{t("uploadImage")}</p>
                 <p className="text-xs text-gray-500">
-                  Recommended 7-8 high-quality photos
+                  {t("photoRecommendation")}
                 </p>
                 <input
                   type="file"
@@ -600,7 +586,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Closed Dates
+                {t("closedDates")}
               </h3>
               <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-4">
@@ -611,7 +597,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                     <FaChevronLeft />
                   </button>
                   <span className="font-semibold text-gray-800">
-                    {monthNames[currentMonth]} {currentYear}
+                    {[t("january"), t("february"), t("march"), t("april"), t("may"), t("june"), t("july"), t("august"), t("september"), t("october"), t("november"), t("december")][currentMonth]} {currentYear}
                   </span>
                   <button
                     onClick={goToNextMonth}
@@ -621,7 +607,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                   </button>
                 </div>
                 <div className="grid grid-cols-7 text-center text-xs font-medium text-gray-500 mb-2">
-                  {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
+                  {[t("sun"), t("mon"), t("tue"), t("wed"), t("thu"), t("fri"), t("sat")].map((d) => (
                     <div key={d}>{d}</div>
                   ))}
                 </div>
@@ -648,8 +634,13 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                   })}
                 </div>
                 <p className="text-xs text-gray-500 mt-4 text-center">
-                  Click a date to mark it as{" "}
-                  <span className="text-red-600 font-semibold">Closed</span>.
+                  {t("closedDateHint").split(t("closed")).map((part, i, arr) => 
+                    i === arr.length - 1 ? part : (
+                      <React.Fragment key={i}>
+                        {part}<span className="text-red-600 font-semibold">{t("closed")}</span>
+                      </React.Fragment>
+                    )
+                  )}
                 </p>
               </div>
             </div>
@@ -660,14 +651,14 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
             onClick={onClose}
             className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 mr-3 hover:bg-gray-50"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             disabled={loading}
             className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow-md"
             onClick={handleSubmitTrailer}
           >
-            {loading ? "Saving..." : "Save Trailer"}
+            {loading ? t("saving") : t("saveTrailer")}
           </button>
         </div>
       </div>
