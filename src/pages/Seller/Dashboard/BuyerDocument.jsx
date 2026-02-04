@@ -8,6 +8,7 @@ import config from '../../../config';
 import toast from 'react-hot-toast';
 import UploadNewDocumentModal from '../../../components/UploadNewDocumentModal';
 import { formatReadableDate } from '../../../helpers/function';
+import { documentPageTranslations } from '../../User/Dashboard/translation/documentPageTranslations';
 
 
 const documentTypes = [
@@ -154,6 +155,8 @@ const BuyerDocument = () => {
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('Tous');
+    const lang = localStorage.getItem('lang') || 'fr';
+    const translations = documentPageTranslations[lang] || documentPageTranslations.fr;
     const [searchTerm, setSearchTerm] = useState('');
     const [trailers, setTrailers] = useState([]);
     const [documentsData, setDocumentData] = useState([])
@@ -311,6 +314,7 @@ const BuyerDocument = () => {
                     onClose={closeUploadModal}
                     trailers={trailers}
                     documentTypes={documentTypes}
+                    translations={translations}
                 />
             </div>
         </div>
