@@ -9,6 +9,10 @@ export const userNotificationTranslations = {
     inAppNotifications: "In-App Notifications",
     inAppDescription: "Receive messages and system alerts in the app.",
     savePreferences: "Save Preferences",
+    saving: "Saving...",
+    preferencesSaved: "Preferences saved successfully!",
+    preferencesSaveError: "Failed to save preferences",
+    pleaseLogin: "Please login to save preferences",
     recentActivity: "Recent Activity",
   },
   es: {
@@ -21,6 +25,10 @@ export const userNotificationTranslations = {
     inAppNotifications: "Notificaciones en la App",
     inAppDescription: "Recibe mensajes y alertas del sistema en la aplicación.",
     savePreferences: "Guardar Preferencias",
+    saving: "Guardando...",
+    preferencesSaved: "¡Preferencias guardadas con éxito!",
+    preferencesSaveError: "Error al guardar preferencias",
+    pleaseLogin: "Por favor inicie sesión para guardar preferencias",
     recentActivity: "Actividad Reciente",
   },
   fr: {
@@ -33,6 +41,10 @@ export const userNotificationTranslations = {
     inAppNotifications: "Notifications dans l’App",
     inAppDescription: "Recevez des messages et alertes système dans l'application.",
     savePreferences: "Enregistrer les Préférences",
+    saving: "Enregistrement...",
+    preferencesSaved: "Préférences enregistrées avec succès !",
+    preferencesSaveError: "Échec de l'enregistrement des préférences",
+    pleaseLogin: "Veuillez vous connecter pour enregistrer vos préférences",
     recentActivity: "Activité Récente",
   },
   cn: {
@@ -45,6 +57,10 @@ export const userNotificationTranslations = {
     inAppNotifications: "应用内通知",
     inAppDescription: "在应用内接收消息和系统提醒。",
     savePreferences: "保存偏好",
+    saving: "保存中...",
+    preferencesSaved: "偏好设置保存成功！",
+    preferencesSaveError: "保存偏好设置失败",
+    pleaseLogin: "请登录以保存偏好设置",
     recentActivity: "最近活动",
   },
 };

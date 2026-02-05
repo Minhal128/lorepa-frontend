@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { FaEnvelope, FaMobileAlt, FaBell } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 import config from '../../../config';
 import { userNotificationTranslations } from './translation/userNotificationTranslations';
 
@@ -14,7 +15,7 @@ const ToggleSwitch = ({ checked, onChange }) => (
 );
 
 // --- Notification Preferences Card ---
-const NotificationPreferences = ({ preferences, onToggle, t }) => (
+const NotificationPreferences = ({ preferences, onToggle, onSave, loading, t }) => (
   <div className="bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-gray-100 h-fit">
     <h2 className="text-xl font-bold text-gray-900 mb-8">{t.notificationPreferences}</h2>
 
@@ -62,8 +63,12 @@ const NotificationPreferences = ({ preferences, onToggle, t }) => (
       </div>
     </div>
 
-    <button className="w-full mt-10 py-3.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition active:scale-[0.98]">
-      {t.savePreferences}
+    <button
+      onClick={onSave}
+      disabled={loading}
+      className="w-full mt-10 py-3.5 bg-blue-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-700 transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {loading ? (t.saving || 'Saving...') : t.savePreferences}
     </button>
   </div>
 );
@@ -117,6 +122,7 @@ const UserNotification = () => {
     inApp: true,
   });
   const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [t, setT] = useState(() => {
     const lang = localStorage.getItem("lang") || "fr";
     return userNotificationTranslations[lang] || userNotificationTranslations.fr;
@@ -124,6 +130,42 @@ const UserNotification = () => {
 
   const handleToggle = (key) => {
     setPreferences(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSavePreferences = async () => {
+    try {
+      setLoading(true);
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        toast.error(t.pleaseLogin || 'Please login to save preferences');
+        return;
+      }
+
+      await axios.put(`${config.baseUrl}/account/notification-preferences/${userId}`, {
+        notificationPreferences: preferences
+      });
+
+      toast.success(t.preferencesSaved || 'Preferences saved successfully!');
+    } catch (err) {
+      console.error('Error saving preferences:', err);
+      toast.error(t.preferencesSaveError || 'Failed to save preferences');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchNotificationPreferences = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+
+      const res = await axios.get(`${config.baseUrl}/account/${userId}`);
+      if (res.data.data?.notificationPreferences) {
+        setPreferences(res.data.data.notificationPreferences);
+      }
+    } catch (err) {
+      console.error('Error fetching notification preferences:', err);
+    }
   };
 
   const fetchNotifications = async () => {
@@ -147,6 +189,7 @@ const UserNotification = () => {
 
   useEffect(() => {
     fetchNotifications();
+    fetchNotificationPreferences();
 
     const handleLangChange = () => {
       const lang = localStorage.getItem("lang") || "fr";
@@ -166,7 +209,13 @@ const UserNotification = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Preferences */}
         <div className="lg:col-span-1">
-          <NotificationPreferences preferences={preferences} onToggle={handleToggle} t={t} />
+          <NotificationPreferences
+            preferences={preferences}
+            onToggle={handleToggle}
+            onSave={handleSavePreferences}
+            loading={loading}
+            t={t}
+          />
         </div>
 
         {/* Activity */}

@@ -151,14 +151,14 @@ const AdminHomePage = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                    <p className='text-sm font-medium text-gray-500'>Location: <span className="text-gray-900">{listing.location}</span></p>
+                    <p className='text-sm font-medium text-gray-500'>Location: <span className="text-gray-900">{listing.city || 'N/A'}</span></p>
                   </div>
                 </div>
               </div>
 
               <div className="sm:text-right shrink-0 border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-6">
                 <p className="text-xs font-black text-gray-400 uppercase mb-1 tracking-widest">Daily Rate</p>
-                <p className='text-xl font-black text-gray-900'>${listing.dailyRate} <span className="text-xs font-bold text-gray-400">CAD</span></p>
+                <p className='text-xl font-black text-gray-900'>${listing.dailyRate || 0} <span className="text-xs font-bold text-gray-400">CAD</span></p>
               </div>
             </div>
           )) : (
