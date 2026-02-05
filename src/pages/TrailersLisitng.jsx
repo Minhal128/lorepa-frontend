@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import Footer from '../components/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -61,6 +61,19 @@ const TrailersListing = () => {
   const [selectedTrailerForBooking, setSelectedTrailerForBooking] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 45.5017, lng: -73.5673 });
   const [showMap, setShowMap] = useState(false); // Mobile map/list toggle
+  const mapRef = useRef(null);
+
+  // Callback to store map reference when loaded
+  const onMapLoad = useCallback((map) => {
+    mapRef.current = map;
+  }, []);
+
+  // Pan map to new center when mapCenter changes
+  useEffect(() => {
+    if (mapRef.current && mapCenter) {
+      mapRef.current.panTo(mapCenter);
+    }
+  }, [mapCenter]);
 
   const [translations, setTranslations] = useState(() => {
     const storedLang = localStorage.getItem('lang');
@@ -373,6 +386,7 @@ const TrailersListing = () => {
                   mapContainerStyle={containerStyle}
                   center={mapCenter}
                   zoom={10}
+                  onLoad={onMapLoad}
                 >
                   {trailers.map((trailer) => (
                     <Marker
