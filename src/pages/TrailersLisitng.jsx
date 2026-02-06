@@ -21,6 +21,23 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
+// Red marker icon for search location
+const createSearchLocationIcon = () => {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42">
+      <path fill="#DC2626" stroke="#FFFFFF" stroke-width="2" d="M16 0C7.163 0 0 7.163 0 16c0 8.837 16 26 16 26s16-17.163 16-26C32 7.163 24.837 0 16 0z"/>
+      <circle cx="16" cy="16" r="6" fill="#FFFFFF"/>
+    </svg>
+  `;
+  return L.divIcon({
+    html: `<img src="data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}" style="width: 32px; height: 42px;" />`,
+    className: 'custom-search-marker',
+    iconSize: [32, 42],
+    iconAnchor: [16, 42],
+    popupAnchor: [0, -42]
+  });
+};
+
 const cardVariants = {
   hidden: { opacity: 0, scale: 0.9, y: 30 },
   visible: (i) => ({
@@ -406,6 +423,21 @@ const TrailersListing = () => {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <MapCenterHandler center={mapCenter} />
+                
+                {/* Red marker for search location */}
+                {cityFromQuery && mapCenter && (
+                  <Marker
+                    position={[mapCenter.lat, mapCenter.lng]}
+                    icon={createSearchLocationIcon()}
+                  >
+                    <Popup>
+                      <div className="p-1">
+                        <h3 className="font-semibold text-sm">Search Location</h3>
+                        <p className="text-gray-600 text-xs">{cityFromQuery}</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                )}
                 
                 {filteredTrailers.map((trailer) => {
                   const lat = parseFloat(trailer.latitude);
