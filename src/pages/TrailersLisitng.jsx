@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import Footer from '../components/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -7,11 +7,19 @@ import axios from 'axios';
 import config from '../config';
 import toast from 'react-hot-toast';
 import { trailersListingTranslations } from '../translations/trailerListing';
-import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from '@react-google-maps/api';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import BookingModal from '../components/BookingModel';
 import { FiMap, FiList } from 'react-icons/fi';
 
-const GOOGLE_API_KEY = config.GOOGLE_API_KEY;
+// Fix for default marker icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+});
 
 const cardVariants = {
   hidden: { opacity: 0, scale: 0.9, y: 30 },
@@ -28,20 +36,37 @@ const fadeInUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 1, ease: "easeOut" } },
 };
 
-const containerStyle = { width: "100%", height: "100%" };
-
 const useQuery = () => new URLSearchParams(useLocation().search);
 
-const createTruckMarker = (price) => {
+// Custom price marker icon for Leaflet
+const createPriceIcon = (price) => {
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="70" height="20">
-      <rect x="0" y="0" width="70" height="20" rx="10" ry="10" fill="#2563eb" />
-      <text x="35" y="14" font-size="10" text-anchor="middle" fill="white" font-family="Arial">
+    <svg xmlns="http://www.w3.org/2000/svg" width="70" height="28">
+      <rect x="0" y="0" width="70" height="24" rx="12" ry="12" fill="#2563eb" />
+      <polygon points="35,28 30,24 40,24" fill="#2563eb"/>
+      <text x="35" y="16" font-size="11" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold">
         $${price}
       </text>
     </svg>
   `;
-  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+  return L.divIcon({
+    html: `<img src="data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}" style="width: 70px; height: 28px;" />`,
+    className: 'custom-price-marker',
+    iconSize: [70, 28],
+    iconAnchor: [35, 28],
+    popupAnchor: [0, -28]
+  });
+};
+
+// Component to handle map center changes
+const MapCenterHandler = ({ center }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.setView([center.lat, center.lng], map.getZoom());
+    }
+  }, [center, map]);
+  return null;
 };
 
 const TrailersListing = () => {
@@ -61,27 +86,10 @@ const TrailersListing = () => {
   const [selectedTrailerForBooking, setSelectedTrailerForBooking] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 45.5017, lng: -73.5673 });
   const [showMap, setShowMap] = useState(false); // Mobile map/list toggle
-  const mapRef = useRef(null);
-
-  // Callback to store map reference when loaded
-  const onMapLoad = useCallback((map) => {
-    mapRef.current = map;
-  }, []);
-
-  // Pan map to new center when mapCenter changes
-  useEffect(() => {
-    if (mapRef.current && mapCenter) {
-      mapRef.current.panTo(mapCenter);
-    }
-  }, [mapCenter]);
 
   const [translations, setTranslations] = useState(() => {
     const storedLang = localStorage.getItem('lang');
     return trailersListingTranslations[storedLang] || trailersListingTranslations.fr;
-  });
-
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: GOOGLE_API_KEY
   });
 
   useEffect(() => {
@@ -206,23 +214,29 @@ const TrailersListing = () => {
     }
   };
 
+  // Using OpenStreetMap Nominatim API for geocoding (FREE, no API key needed)
   useEffect(() => {
     const fetchCoordinates = async () => {
       if (!cityFromQuery) return;
 
       try {
-        const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+        // Using OpenStreetMap Nominatim API for geocoding
+        const response = await axios.get('https://nominatim.openstreetmap.org/search', {
           params: {
-            address: cityFromQuery,
-            key: config.GOOGLE_API_KEY
+            q: cityFromQuery,
+            format: 'json',
+            limit: 1
+          },
+          headers: {
+            'Accept-Language': 'en'
           }
         });
 
-        const results = response.data.results;
-        if (results.length > 0) {
-          const location = results[0].geometry.location;
-          setMapCenter({ lat: location.lat, lng: location.lng });
+        if (response.data && response.data.length > 0) {
+          const location = response.data[0];
+          setMapCenter({ lat: parseFloat(location.lat), lng: parseFloat(location.lon) });
         } else {
+          // Default to Montreal if city not found
           setMapCenter({ lat: 45.5017, lng: -73.5673 });
         }
       } catch (error) {
@@ -378,39 +392,54 @@ const TrailersListing = () => {
             )}
           </div>
 
-          {/* Map Section */}
+          {/* Map Section - OpenStreetMap with Leaflet */}
           <div className={`lg:w-1/3 flex-shrink-0 ${showMap ? 'block' : 'hidden lg:block'}`}>
             <div className="h-[60vh] lg:h-[80vh] rounded-xl overflow-hidden shadow-mobileCard sticky top-20">
-              {isLoaded && (
-                <GoogleMap
-                  mapContainerStyle={containerStyle}
-                  center={mapCenter}
-                  zoom={10}
-                  onLoad={onMapLoad}
-                >
-                  {trailers.map((trailer) => (
+              <MapContainer
+                center={[mapCenter.lat, mapCenter.lng]}
+                zoom={10}
+                style={{ width: '100%', height: '100%' }}
+                scrollWheelZoom={true}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <MapCenterHandler center={mapCenter} />
+                
+                {filteredTrailers.map((trailer) => {
+                  const lat = parseFloat(trailer.latitude);
+                  const lng = parseFloat(trailer.longitude);
+                  
+                  // Skip if invalid coordinates
+                  if (isNaN(lat) || isNaN(lng)) return null;
+                  
+                  return (
                     <Marker
                       key={trailer._id}
-                      position={{ lat: parseFloat(trailer.latitude), lng: parseFloat(trailer.longitude) }}
-                      onClick={() => setActiveTrailer(trailer)}
-                      icon={{ url: createTruckMarker(trailer.dailyRate), scaledSize: new window.google.maps.Size(80, 50) }}
-                    />
-                  ))}
-
-                  {activeTrailer && (
-                    <InfoWindow
-                      position={{ lat: parseFloat(activeTrailer.latitude), lng: parseFloat(activeTrailer.longitude) }}
-                      onCloseClick={() => setActiveTrailer(null)}
+                      position={[lat, lng]}
+                      icon={createPriceIcon(trailer.dailyRate)}
+                      eventHandlers={{
+                        click: () => setActiveTrailer(trailer)
+                      }}
                     >
-                      <div className="p-2">
-                        <h3 className="font-semibold">{activeTrailer.title}</h3>
-                        <p>${activeTrailer.dailyRate}{translations.perDay}</p>
-                        <p className="text-gray-600 text-sm">{activeTrailer.city}, {activeTrailer.state}</p>
-                      </div>
-                    </InfoWindow>
-                  )}
-                </GoogleMap>
-              )}
+                      <Popup>
+                        <div className="p-1">
+                          <h3 className="font-semibold text-sm">{trailer.title}</h3>
+                          <p className="text-blue-600 font-medium">${trailer.dailyRate}{translations.perDay}</p>
+                          <p className="text-gray-600 text-xs">{trailer.city}, {trailer.state}</p>
+                          <button 
+                            onClick={() => handleCardClick(trailer._id)}
+                            className="mt-2 bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700 w-full"
+                          >
+                            {translations.viewDetails || 'View Details'}
+                          </button>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                })}
+              </MapContainer>
             </div>
           </div>
         </div>

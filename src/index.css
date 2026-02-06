@@ -364,3 +364,36 @@
     user-select: none;
   }
 }
+
+/* Leaflet Custom Price Marker */
+.custom-price-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-price-marker img {
+  display: block;
+}
+
+/* Leaflet map container fixes */
+.leaflet-container {
+  font-family: inherit;
+  z-index: 1;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-content {
+  margin: 8px 12px;
+}
+
+.leaflet-popup-close-button {
+  color: #666 !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: #333 !important;
+}
