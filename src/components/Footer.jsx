@@ -30,7 +30,8 @@ const footerTranslations = {
         privacyPolicy: "Privacy Policy",
         termsOfService: "Terms of Service",
         cookiePolicy: "Cookie Policy",
-        legalNotice: "Legal Notice"
+        legalNotice: "Legal Notice",
+        dashboard: "Dashboard"
     },
     es: {
         lorepa: "Lorepa",
@@ -57,7 +58,8 @@ const footerTranslations = {
         privacyPolicy: "Política de privacidad",
         termsOfService: "Términos de servicio",
         cookiePolicy: "Política de cookies",
-        legalNotice: "Aviso legal"
+        legalNotice: "Aviso legal",
+        dashboard: "Panel de Control"
     },
     cn: {
         lorepa: "Lorepa",
@@ -84,7 +86,8 @@ const footerTranslations = {
         privacyPolicy: "隐私政策",
         termsOfService: "服务条款",
         cookiePolicy: "Cookie政策",
-        legalNotice: "法律声明"
+        legalNotice: "法律声明",
+        dashboard: "仪表板"
     },
     fr: {
         lorepa: "Lorepa",
@@ -111,7 +114,8 @@ const footerTranslations = {
         privacyPolicy: "Politique de confidentialité",
         termsOfService: "Conditions d'utilisation",
         cookiePolicy: "Politique de cookies",
-        legalNotice: "Mentions légales"
+        legalNotice: "Mentions légales",
+        dashboard: "Tableau de Bord"
     }
 };
 
@@ -157,8 +161,8 @@ const Footer = () => {
                             <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">{translations.getStarted}</h3>
                             <ul className="space-y-2 text-sm">
                                 {!isLogin && <li><Link to="/login" className="hover:underline py-1 inline-block">{translations.createAccount}</Link></li>}
-                                {!isLogin && <li><Link to="/trailers" className="hover:underline py-1 inline-block">{translations.findTrailer}</Link></li>}
-                                {isLogin && <li><Link to="/host" className="hover:underline py-1 inline-block">{translations.becomeHost}</Link></li>}
+                                <li><Link to="/trailers" className="hover:underline py-1 inline-block">{translations.findTrailer}</Link></li>
+                                {isLogin && <li><Link to={localStorage.getItem('role') === 'owner' ? '/seller/dashboard/home' : '/user/dashboard/home'} className="hover:underline py-1 inline-block">{translations.dashboard || 'Dashboard'}</Link></li>}
                             </ul>
                         </div>
 
@@ -178,7 +182,6 @@ const Footer = () => {
                         <div>
                             <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">{translations.support}</h3>
                             <ul className="space-y-2 text-sm">
-                                <li><Link to="/contact" className="hover:underline py-1 inline-block">{translations.helpCenter}</Link></li>
                                 <li><Link to="/contact" className="hover:underline py-1 inline-block">{translations.contactUs}</Link></li>
                             </ul>
                         </div>

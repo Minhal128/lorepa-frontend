@@ -132,7 +132,7 @@ const TrailersListing = () => {
     setSelectedTrailerForBooking(null);
   };
 
-  const handleBookingSubmit = async ({ trailerId, startDate, endDate, price }) => {
+  const handleBookingSubmit = async ({ trailerId, startDate, endDate, price, message }) => {
     const userId = localStorage.getItem("userId");
 
     if (!userId) {
@@ -140,22 +140,25 @@ const TrailersListing = () => {
       return;
     }
 
-    let loadingToast = toast.loading("Redirecting to payment...");
+    let loadingToast = toast.loading(translations.submittingBooking || "Sending booking request...");
 
     try {
-      const { data } = await axios.post(`${config.baseUrl}/stripe/create-checkout-session`, {
+      const { data } = await axios.post(`${config.baseUrl}/booking/create`, {
+        user_id: userId,
         trailerId,
-        userId,
         startDate,
         endDate,
         price,
+        message,
       });
 
       toast.dismiss(loadingToast);
-      window.location.href = data.url;
+      toast.success(translations.bookingSubmittedSuccess || "Booking request sent! Waiting for owner approval.");
+      handleCloseBookingModal();
+      nav('/user/dashboard/reservation');
 
     } catch (error) {
-      toast.error("Payment failed", { id: loadingToast });
+      toast.error("Failed to send booking request", { id: loadingToast });
     }
   };
 

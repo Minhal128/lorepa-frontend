@@ -5,7 +5,13 @@ export const userReservationTranslations = {
     tabs: ["All", "Upcoming", "Past", "Cancelled"],
     viewDetails: "View details",
     contactOwner: "Contact Owner",
-    noReservations: "No {tab} reservations found."
+    noReservations: "No {tab} reservations found.",
+    checkInPhotos: "Check-in Photos",
+    checkOutPhotos: "Check-out Photos",
+    uploadPhotos: "Upload Photos",
+    viewPhotos: "View Photos",
+    maxPhotosNote: "Up to 15 photos allowed",
+    noneUploaded: "No photos uploaded yet.",
   },
   es: {
     myReservations: "Mis Reservas",
@@ -21,7 +27,13 @@ export const userReservationTranslations = {
     tabs: ["Toutes", "À venir", "Passées", "Annulées"],
     viewDetails: "Voir les détails",
     contactOwner: "Contacter le Propriétaire",
-    noReservations: "Aucune réservation {tab} trouvée."
+    noReservations: "Aucune réservation {tab} trouvée.",
+    checkInPhotos: "Photos d'état des lieux (Départ)",
+    checkOutPhotos: "Photos d'état des lieux (Retour)",
+    uploadPhotos: "Télécharger des photos",
+    viewPhotos: "Voir les photos",
+    maxPhotosNote: "Jusqu'à 15 photos autorisées",
+    noneUploaded: "Aucune photo téléchargée pour le moment.",
   },
   cn: {
     myReservations: "我的预订",

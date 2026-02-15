@@ -24,7 +24,6 @@ import CalculatorPage from './pages/CalculatorPage';
 import ContactPage from './pages/ContactPage';
 import PrivacyPage from './pages/PrivacyPage';
 import TermsPage from './pages/TermsPage';
-import BecomeHostPage from './pages/BecomeHostPage';
 import BookingPage from './pages/BookingPage';
 import ListTrailer from './pages/ListTrailer';
 import TrailersLisitng from './pages/TrailersLisitng';
@@ -147,7 +146,6 @@ function App() {
             <Route path='/cookie' element={<CookiesPage />} />
             <Route path='/legal' element={<LegalPage />} />
             <Route path='/terms' element={<TermsPage />} />
-            <Route path='/host' element={<BecomeHostPage />} />
             <Route path='/list' element={<ListTrailer />} />
             <Route path='/booking' element={<BookingPage />} />
             <Route path='/trailers' element={<TrailersLisitng />} />

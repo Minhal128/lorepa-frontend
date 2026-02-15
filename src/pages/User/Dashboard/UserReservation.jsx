@@ -13,7 +13,9 @@ const TABS = ['All', 'Upcoming', 'Past', 'Cancel'];
 const STATUS_STYLES = {
   pending: 'text-yellow-700 bg-yellow-100',
   accepted: 'text-blue-700 bg-blue-100',
+  paid: 'text-green-700 bg-green-100',
   completed: 'text-gray-700 bg-gray-200',
+  rejected: 'text-red-700 bg-red-100',
   cancelled: 'text-red-700 bg-red-100',
 };
 
@@ -179,6 +181,7 @@ const UserReservation = () => {
       <BookingDetailsDrawer
         reservation={selectedReservation}
         onClose={() => setSelectedReservation(null)}
+        onRefresh={fetchBookings}
         StatusBadge={({ status }) => (
           <span className={`text-xs font-medium px-2 py-1 rounded-md w-fit ${STATUS_STYLES[status] || 'text-gray-700 bg-gray-100'}`}>
             {status}

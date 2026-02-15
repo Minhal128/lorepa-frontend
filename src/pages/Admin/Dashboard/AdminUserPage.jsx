@@ -3,12 +3,16 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../../config';
 import toast from 'react-hot-toast';
+import { adminTranslations } from '../translation/adminTranslations';
 
 const AdminUserPage = () => {
   const [activeTab, setActiveTab] = useState('owner');
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [modalImage, setModalImage] = useState(null); // <-- NEW for modal image
+
+  const lang = localStorage.getItem("lang") || "en";
+  const t = adminTranslations[lang] || adminTranslations.en;
 
   const itemsPerPage = 10;
 
@@ -53,7 +57,7 @@ const AdminUserPage = () => {
           <div className="relative max-w-4xl w-full animate-in zoom-in-95 duration-300" onClick={(e) => e.stopPropagation()}>
             <img
               src={modalImage}
-              alt="Verification Document"
+              alt={t.verificationDocument}
               className="w-full h-auto rounded-[2rem] shadow-2xl border-4 border-white"
             />
             <button
@@ -70,8 +74,8 @@ const AdminUserPage = () => {
       <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
-            <h3 className='text-xl font-black text-gray-900 tracking-tight'>User Management</h3>
-            <p className="text-sm text-gray-500 font-medium">Verify documents and manage user accounts.</p>
+            <h3 className='text-xl font-black text-gray-900 tracking-tight'>{t.userManagement}</h3>
+            <p className="text-sm text-gray-500 font-medium">{t.verifyDocsManageAccounts}</p>
           </div>
           <div className='flex gap-2 p-1.5 bg-gray-50 rounded-2xl w-full md:w-auto'>
             <button
@@ -79,14 +83,14 @@ const AdminUserPage = () => {
               className={`flex-1 md:flex-none py-2.5 px-8 text-sm font-bold rounded-xl transition-all ${activeTab === 'owner' ? 'bg-white text-blue-600 shadow-md' : 'text-gray-500 hover:text-gray-700'
                 }`}
             >
-              Owners
+              {t.owners}
             </button>
             <button
               onClick={() => handleTabChange('renter')}
               className={`flex-1 md:flex-none py-2.5 px-8 text-sm font-bold rounded-xl transition-all ${activeTab === 'renter' ? 'bg-white text-blue-600 shadow-md' : 'text-gray-500 hover:text-gray-700'
                 }`}
             >
-              Renters
+              {t.renters}
             </button>
           </div>
         </div>
@@ -96,12 +100,12 @@ const AdminUserPage = () => {
           <table className='min-w-full divide-y divide-gray-100'>
             <thead className='bg-gray-50'>
               <tr>
-                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>S/N</th>
-                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Profile</th>
-                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Contact</th>
-                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Documents</th>
-                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Status</th>
-                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Actions</th>
+                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.sn}</th>
+                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.profile}</th>
+                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.contact}</th>
+                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.documents}</th>
+                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.status}</th>
+                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.actions}</th>
               </tr>
             </thead>
             <tbody className='bg-white divide-y divide-gray-100'>
@@ -148,10 +152,10 @@ const AdminUserPage = () => {
                   <td className='px-6 py-4'>
                     <div className="flex flex-col gap-1">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex w-fit ${user.accountBlocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                        {user.accountBlocked ? 'Blocked' : 'Active'}
+                        {user.accountBlocked ? t.blocked : t.active}
                       </span>
                       <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex w-fit ${user.kycVerified ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
-                        KYC: {user.kycVerified ? 'Verified' : 'Pending'}
+                        KYC: {user.kycVerified ? t.verified : t.pending}
                       </span>
                     </div>
                   </td>
@@ -188,7 +192,7 @@ const AdminUserPage = () => {
                     <p className="text-lg font-black text-gray-900 tracking-tight leading-tight">{user.name}</p>
                     <div className="flex gap-2 mt-1">
                       <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${user.accountBlocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                        {user.accountBlocked ? 'Blocked' : 'Active'}
+                        {user.accountBlocked ? t.blocked : t.active}
                       </span>
                     </div>
                   </div>
@@ -199,17 +203,17 @@ const AdminUserPage = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-xs">
                   <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 text-nowrap">Email</p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 text-nowrap">{t.email}</p>
                     <p className="font-bold text-gray-900 truncate">{user.email}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 text-nowrap">Phone</p>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 text-nowrap">{t.phone}</p>
                     <p className="font-bold text-gray-900">{user.phone}</p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 font-bold">Documents</p>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 font-bold">{t.documents}</p>
                   <div className="flex gap-2">
                     {[
                       { img: user.licenseFrontImage },
@@ -232,10 +236,10 @@ const AdminUserPage = () => {
 
               <div className="flex gap-2 pt-2">
                 <Link to={`/admin/dashboard/user/${user._id}`} className='flex-1 py-3 bg-blue-50 text-blue-600 font-bold text-sm rounded-2xl text-center hover:bg-blue-100 transition'>
-                  View Profile
+                  {t.viewProfile}
                 </Link>
                 <button className={`flex-1 py-3 rounded-2xl font-bold text-sm transition ${user.accountBlocked ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-red-50 text-red-600 hover:bg-red-100'}`}>
-                  {user.accountBlocked ? 'Reactivate' : 'Suspend'}
+                  {user.accountBlocked ? t.reactivate : t.suspend}
                 </button>
               </div>
             </div>
@@ -244,15 +248,15 @@ const AdminUserPage = () => {
 
         {/* Pagination */}
         <div className='flex flex-col sm:flex-row justify-between items-center gap-6 pt-6 border-t border-gray-50'>
-          <p className='text-sm font-bold text-gray-400 uppercase tracking-widest'>Page {currentPage} of {totalPages}</p>
+          <p className='text-sm font-bold text-gray-400 uppercase tracking-widest'>{t.pageXofY.replace('{current}', currentPage).replace('{total}', totalPages)}</p>
           <div className='flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 max-w-full scrollbar-hide'>
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
                 className={`w-10 h-10 shrink-0 rounded-xl text-sm font-black transition-all ${currentPage === page
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                    : 'bg-white border-2 border-gray-100 text-gray-400 hover:border-blue-200'
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                  : 'bg-white border-2 border-gray-100 text-gray-400 hover:border-blue-200'
                   }`}
               >
                 {page}

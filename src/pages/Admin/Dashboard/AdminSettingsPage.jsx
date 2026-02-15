@@ -4,10 +4,14 @@ import { CiFileOn } from "react-icons/ci";
 import axios from 'axios';
 import config from '../../../config';
 import toast from 'react-hot-toast';
+import { adminTranslations } from '../translation/adminTranslations';
 
 const AdminSettingsPage = () => {
     const [faqTab, setFaqTab] = useState('guest'); // Changed to 'guest' to match backend type
     const [activeSetting, setActiveSetting] = useState('Trusted by section');
+
+    const lang = localStorage.getItem("lang") || "en";
+    const t = adminTranslations[lang] || adminTranslations.en;
 
     // State for API data
     const [trustedByImages, setTrustedByImages] = useState([]);
@@ -77,16 +81,16 @@ const AdminSettingsPage = () => {
 
     // Generic delete function
     const handleDelete = async (endpoint, id, fetchDataCallback) => {
-        if (!window.confirm('Are you sure you want to delete this item?')) {
+        if (!window.confirm(t.areYouSureDelete)) {
             return;
         }
         try {
             await axios.delete(`${API_BASE_URL}/content/${endpoint}/${id}`);
-            toast.success('Item deleted successfully!');
+            toast.success(t.itemDeletedSuccess);
             fetchDataCallback();
         } catch (err) {
             console.error(`Error deleting ${endpoint}:`, err);
-            toast.error(`Failed to delete item.`);
+            toast.error(t.failedToDelete);
         }
     };
 
@@ -95,13 +99,13 @@ const AdminSettingsPage = () => {
         setLoading(true);
         try {
             await axios.put(`${API_BASE_URL}/content/${endpoint}/${id}`, payload);
-            toast.success('Item updated successfully!');
+            toast.success(t.itemUpdatedSuccess);
             closeModalCallback();
             setEditingItem(null); // Clear editing item after update
             fetchDataCallback();
         } catch (err) {
             console.error(`Error updating ${endpoint}:`, err);
-            toast.error(`Failed to update item.`);
+            toast.error(t.failedToUpdate);
         } finally {
             setLoading(false);
         }
@@ -150,7 +154,7 @@ const AdminSettingsPage = () => {
     const handleCreateTrustedBy = async (e) => {
         e.preventDefault();
         if (!newTrustedByImage) {
-            toast.error('Please select an image.');
+            toast.error(t.pleaseSelectImage);
             return;
         }
         setLoading(true);
@@ -160,13 +164,13 @@ const AdminSettingsPage = () => {
             await axios.post(`${API_BASE_URL}/content/trusted`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            toast.success('Trusted By item added successfully!');
+            toast.success(t.addedSuccessfully);
             setIsTrustedByModalOpen(false);
             setNewTrustedByImage(null);
             fetchData('trusted', setTrustedByImages);
         } catch (err) {
             console.error('Error creating trusted by item:', err);
-            toast.error('Failed to add trusted by item.');
+            toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
         }
@@ -175,7 +179,7 @@ const AdminSettingsPage = () => {
     const handleCreateLocation = async (e) => {
         e.preventDefault();
         if (!newLocationTitle || !newLocationImage) {
-            toast.error('Please enter a title and select an image.');
+            toast.error(t.pleaseFillAllFields);
             return;
         }
         setLoading(true);
@@ -186,14 +190,14 @@ const AdminSettingsPage = () => {
             await axios.post(`${API_BASE_URL}/content/locations`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            toast.success('Popular location added successfully!');
+            toast.success(t.addedSuccessfully);
             setIsLocationModalOpen(false);
             setNewLocationTitle('');
             setNewLocationImage(null);
             fetchData('locations', setPopularLocations);
         } catch (err) {
             console.error('Error creating location:', err);
-            toast.error('Failed to add popular location.');
+            toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
         }
@@ -202,7 +206,7 @@ const AdminSettingsPage = () => {
     const handleCreateTrailerCategory = async (e) => {
         e.preventDefault();
         if (!newTrailerCategoryTitle || !newTrailerCategoryImage) {
-            toast.error('Please enter a title and select an image.');
+            toast.error(t.pleaseFillAllFields);
             return;
         }
         setLoading(true);
@@ -213,14 +217,14 @@ const AdminSettingsPage = () => {
             await axios.post(`${API_BASE_URL}/content/trailers`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-            toast.success('Trailer category added successfully!');
+            toast.success(t.addedSuccessfully);
             setIsTrailerModalOpen(false);
             setNewTrailerCategoryTitle('');
             setNewTrailerCategoryImage(null);
             fetchData('trailers', setTrailerCategories);
         } catch (err) {
             console.error('Error creating trailer category:', err);
-            toast.error('Failed to add trailer category.');
+            toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
         }
@@ -229,7 +233,7 @@ const AdminSettingsPage = () => {
     const handleCreateFaq = async (e) => {
         e.preventDefault();
         if (!newFaqQuestion || !newFaqAnswer || !newFaqType) {
-            toast.error('Please fill in all FAQ fields.');
+            toast.error(t.pleaseFillAllFields);
             return;
         }
         setLoading(true);
@@ -239,7 +243,7 @@ const AdminSettingsPage = () => {
                 answer: newFaqAnswer,
                 type: newFaqType,
             });
-            toast.success('FAQ added successfully!');
+            toast.success(t.addedSuccessfully);
             setIsFaqModalOpen(false);
             setNewFaqQuestion('');
             setNewFaqAnswer('');
@@ -251,7 +255,7 @@ const AdminSettingsPage = () => {
             });
         } catch (err) {
             console.error('Error creating FAQ:', err);
-            toast.error('Failed to add FAQ.');
+            toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
         }
@@ -260,7 +264,7 @@ const AdminSettingsPage = () => {
     const handleCreateSecurityDeposit = async (e) => {
         e.preventDefault();
         if (!newSecurityDepositTitle || !newSecurityDepositAmount) {
-            toast.error('Please fill in all fields.');
+            toast.error(t.pleaseFillAllFields);
             return;
         }
         setLoading(true);
@@ -269,14 +273,14 @@ const AdminSettingsPage = () => {
                 title: newSecurityDepositTitle,
                 amount: newSecurityDepositAmount,
             });
-            toast.success('Security Deposit added successfully!');
+            toast.success(t.addedSuccessfully);
             setIsSecurityDepositModalOpen(false);
             setNewSecurityDepositTitle('');
             setNewSecurityDepositAmount('');
             fetchData('security-deposits', setSecurityDeposits);
         } catch (err) {
             console.error('Error creating security deposit:', err);
-            toast.error('Failed to add security deposit.');
+            toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
         }
@@ -285,19 +289,19 @@ const AdminSettingsPage = () => {
     const handleCreateCategory = async (e) => {
         e.preventDefault();
         if (!newCategoryTitle) {
-            toast.error('Please enter a title.');
+            toast.error(t.pleaseEnterTitle);
             return;
         }
         setLoading(true);
         try {
             await axios.post(`${API_BASE_URL}/content/categories`, { title: newCategoryTitle });
-            toast.success('Category added successfully!');
+            toast.success(t.addedSuccessfully);
             setIsCategoryModalOpen(false);
             setNewCategoryTitle('');
             fetchData('categories', setOwnerCategories);
         } catch (err) {
             console.error('Error creating category:', err);
-            toast.error('Failed to add category.');
+            toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
         }
@@ -306,19 +310,19 @@ const AdminSettingsPage = () => {
     const handleCreateTrailerStatus = async (e) => {
         e.preventDefault();
         if (!newTrailerStatusTitle) {
-            toast.error('Please enter a title.');
+            toast.error(t.pleaseEnterTitle);
             return;
         }
         setLoading(true);
         try {
             await axios.post(`${API_BASE_URL}/content/trailer-statuses`, { title: newTrailerStatusTitle });
-            toast.success('Trailer Status added successfully!');
+            toast.success(t.addedSuccessfully);
             setIsTrailerStatusModalOpen(false);
             setNewTrailerStatusTitle('');
             fetchData('trailer-statuses', setTrailerTitleStatus);
         } catch (err) {
             console.error('Error creating trailer status:', err);
-            toast.error('Failed to add trailer status.');
+            toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
         }
@@ -327,19 +331,19 @@ const AdminSettingsPage = () => {
     const handleCreateHitchType = async (e) => {
         e.preventDefault();
         if (!newHitchTypeTitle) {
-            toast.error('Please enter a title.');
+            toast.error(t.pleaseEnterTitle);
             return;
         }
         setLoading(true);
         try {
             await axios.post(`${API_BASE_URL}/content/hitch-types`, { title: newHitchTypeTitle });
-            toast.success('Hitch Type added successfully!');
+            toast.success(t.addedSuccessfully);
             setIsHitchTypeModalOpen(false);
             setNewHitchTypeTitle('');
             fetchData('hitch-types', setHitchTypes);
         } catch (err) {
             console.error('Error creating hitch type:', err);
-            toast.error('Failed to add hitch type.');
+            toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
         }
@@ -348,19 +352,19 @@ const AdminSettingsPage = () => {
     const handleCreateBallSize = async (e) => {
         e.preventDefault();
         if (!newBallSizeTitle) {
-            toast.error('Please enter a size.');
+            toast.error(t.pleaseEnterTitle);
             return;
         }
         setLoading(true);
         try {
             await axios.post(`${API_BASE_URL}/content/ball-sizes`, { title: newBallSizeTitle });
-            toast.success('Ball Size added successfully!');
+            toast.success(t.addedSuccessfully);
             setIsBallSizeModalOpen(false);
             setNewBallSizeTitle('');
             fetchData('ball-sizes', setBallSizes);
         } catch (err) {
             console.error('Error creating ball size:', err);
-            toast.error('Failed to add ball size.');
+            toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
         }
@@ -393,7 +397,7 @@ const AdminSettingsPage = () => {
     const handleUpdateSecurityDeposit = async (e) => {
         e.preventDefault();
         if (!newSecurityDepositTitle || !newSecurityDepositAmount || !editingItem?._id) {
-            toast.error('Invalid data for update.');
+            toast.error(t.invalidDataUpdate);
             return;
         }
         handleUpdate(
@@ -408,7 +412,7 @@ const AdminSettingsPage = () => {
     const handleUpdateCategory = async (e) => {
         e.preventDefault();
         if (!newCategoryTitle || !editingItem?._id) {
-            toast.error('Invalid data for update.');
+            toast.error(t.invalidDataUpdate);
             return;
         }
         handleUpdate(
@@ -423,7 +427,7 @@ const AdminSettingsPage = () => {
     const handleUpdateTrailerStatus = async (e) => {
         e.preventDefault();
         if (!newTrailerStatusTitle || !editingItem?._id) {
-            toast.error('Invalid data for update.');
+            toast.error(t.invalidDataUpdate);
             return;
         }
         handleUpdate(
@@ -438,7 +442,7 @@ const AdminSettingsPage = () => {
     const handleUpdateHitchType = async (e) => {
         e.preventDefault();
         if (!newHitchTypeTitle || !editingItem?._id) {
-            toast.error('Invalid data for update.');
+            toast.error(t.invalidDataUpdate);
             return;
         }
         handleUpdate(
@@ -453,7 +457,7 @@ const AdminSettingsPage = () => {
     const handleUpdateBallSize = async (e) => {
         e.preventDefault();
         if (!newBallSizeTitle || !editingItem?._id) {
-            toast.error('Invalid data for update.');
+            toast.error(t.invalidDataUpdate);
             return;
         }
         handleUpdate(
@@ -468,7 +472,7 @@ const AdminSettingsPage = () => {
     const handleUpdateFaq = async (e) => {
         e.preventDefault();
         if (!newFaqQuestion || !newFaqAnswer || !newFaqType || !editingItem?._id) {
-            toast.error('Invalid data for update.');
+            toast.error(t.invalidDataUpdate);
             return;
         }
         handleUpdate(
@@ -487,7 +491,7 @@ const AdminSettingsPage = () => {
 
     const renderContent = () => {
         if (loading) {
-            return <div className='text-center py-8 text-gray-600'>Loading...</div>;
+            return <div className='text-center py-8 text-gray-600'>{t.loading}</div>;
         }
 
         if (error) {
@@ -499,11 +503,11 @@ const AdminSettingsPage = () => {
                 return (
                     <div>
                         <div className='flex justify-between items-center mb-6 flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800'>Trusted by section</h2>
+                            <h2 className='text-2xl font-semibold text-gray-800'>{t.trustedBySection}</h2>
                             <button
                                 onClick={() => { setEditingItem(null); setIsTrustedByModalOpen(true); }}
                                 className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'>
-                                Add new
+                                {t.addNew}
                             </button>
                         </div>
                         <div className='space-y-4'>
@@ -513,20 +517,20 @@ const AdminSettingsPage = () => {
                                         <img src={item.image} alt="Logo" className='w-16 h-16 rounded-md object-cover' />
                                     </div>
                                     <div className='flex space-x-3'>
-                                        <button onClick={() => handleDelete('trusted', item._id, () => fetchData('trusted', setTrustedByImages))} className='text-red-600 hover:text-red-800 text-sm font-medium'>Delete</button>
+                                        <button onClick={() => handleDelete('trusted', item._id, () => fetchData('trusted', setTrustedByImages))} className='text-red-600 hover:text-red-800 text-sm font-medium'>{t.delete}</button>
                                     </div>
                                 </div>
                             ))}
-                            {trustedByImages.length === 0 && !loading && <p className='text-gray-600'>No trusted by images found.</p>}
+                            {trustedByImages.length === 0 && !loading && <p className='text-gray-600'>{t.noItemsFound}</p>}
                         </div>
 
                         {isTrustedByModalOpen && (
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? 'Edit Trusted By Image' : 'Add Trusted By Image'}</h3>
+                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.trustedBySection : t.add + ' ' + t.trustedBySection}</h3>
                                     <form onSubmit={editingItem ? null : handleCreateTrustedBy}> {/* No edit for image only */}
                                         <div className="mb-4">
-                                            <label htmlFor="trustedByImage" className="block text-gray-700 text-sm font-bold mb-2">Image:</label>
+                                            <label htmlFor="trustedByImage" className="block text-gray-700 text-sm font-bold mb-2">{t.image}:</label>
                                             <input
                                                 type="file"
                                                 id="trustedByImage"
@@ -548,14 +552,14 @@ const AdminSettingsPage = () => {
                                                 onClick={() => { setIsTrustedByModalOpen(false); setEditingItem(null); }}
                                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
                                             >
-                                                Cancel
+                                                {t.cancel}
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                                                 disabled={editingItem} // Disable submit if editing, as image update is complex
                                             >
-                                                {editingItem ? 'Update (Image change not supported here)' : 'Add'}
+                                                {editingItem ? t.update : t.add}
                                             </button>
                                         </div>
                                     </form>
@@ -568,11 +572,11 @@ const AdminSettingsPage = () => {
                 return (
                     <div>
                         <div className='flex items-center justify-between flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800 mb-6'>Popular location</h2>
+                            <h2 className='text-2xl font-semibold text-gray-800 mb-6'>{t.popularLocationSection}</h2>
                             <button
                                 onClick={() => { setEditingItem(null); setIsLocationModalOpen(true); setNewLocationTitle(''); setNewLocationImage(null); }}
                                 className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'>
-                                Add new
+                                {t.addNew}
                             </button>
                         </div>
 
@@ -580,25 +584,25 @@ const AdminSettingsPage = () => {
                             {
                                 popularLocations.map((item) => (
                                     <div key={item._id} className='w-1/2 sm:w-1/3 lg:w-1/4 p-2 my-3'>
-                                        <img className='w-full h-[267px] rounded-md object-cover' src={item.image} alt={item.title} onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/223x267/CCCCCC/666666?text=Image+Unavailable"; }} />
+                                        <img className='w-full h-[267px] rounded-md object-cover' src={item.image} alt={item.title} onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/223x267/CCCCCC/666666?text=" + t.imageUnavailable.replace(' ', '+'); }} />
                                         <p className='mt-3 text-gray-800 font-medium'>{item.title}</p>
                                         <div className='flex space-x-3'>
                                             {/* Edit functionality not directly provided for image uploads */}
-                                            <button onClick={() => handleDelete('locations', item._id, () => fetchData('locations', setPopularLocations))} className='text-red-600 hover:text-red-800 text-sm font-medium'>Delete</button>
+                                            <button onClick={() => handleDelete('locations', item._id, () => fetchData('locations', setPopularLocations))} className='text-red-600 hover:text-red-800 text-sm font-medium'>{t.delete}</button>
                                         </div>
                                     </div>
                                 ))
                             }
-                            {popularLocations.length === 0 && !loading && <p className='text-gray-600'>No popular locations found.</p>}
+                            {popularLocations.length === 0 && !loading && <p className='text-gray-600'>{t.noItemsFound}</p>}
                         </div>
 
                         {isLocationModalOpen && (
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? 'Edit Popular Location' : 'Add Popular Location'}</h3>
+                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.popularLocationSection : t.add + ' ' + t.popularLocationSection}</h3>
                                     <form onSubmit={editingItem ? null : handleCreateLocation}> {/* Edit for image based items usually handled differently, simplifying */}
                                         <div className="mb-4">
-                                            <label htmlFor="locationTitle" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                                            <label htmlFor="locationTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.title}:</label>
                                             <input
                                                 type="text"
                                                 id="locationTitle"
@@ -609,7 +613,7 @@ const AdminSettingsPage = () => {
                                             />
                                         </div>
                                         <div className="mb-4">
-                                            <label htmlFor="locationImage" className="block text-gray-700 text-sm font-bold mb-2">Image:</label>
+                                            <label htmlFor="locationImage" className="block text-gray-700 text-sm font-bold mb-2">{t.image}:</label>
                                             <input
                                                 type="file"
                                                 id="locationImage"
@@ -631,14 +635,14 @@ const AdminSettingsPage = () => {
                                                 onClick={() => { setIsLocationModalOpen(false); setEditingItem(null); }}
                                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
                                             >
-                                                Cancel
+                                                {t.cancel}
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                                                 disabled={editingItem} // Disable submit if editing for simplicity
                                             >
-                                                {editingItem ? 'Update (Image change not supported here)' : 'Add'}
+                                                {editingItem ? t.update : t.add}
                                             </button>
                                         </div>
                                     </form>
@@ -651,33 +655,33 @@ const AdminSettingsPage = () => {
                 return (
                     <div>
                         <div className='flex items-center justify-between flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800 mb-6'>Trailers by category</h2>
-                            <button onClick={() => { setEditingItem(null); setIsTrailerModalOpen(true); setNewTrailerCategoryTitle(''); setNewTrailerCategoryImage(null); }} className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'> Add new </button>
+                            <h2 className='text-2xl font-semibold text-gray-800 mb-6'>{t.trailersByCategorySection}</h2>
+                            <button onClick={() => { setEditingItem(null); setIsTrailerModalOpen(true); setNewTrailerCategoryTitle(''); setNewTrailerCategoryImage(null); }} className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'> {t.addNew} </button>
                         </div>
 
                         <div className='flex justify-start items-start flex-wrap -mx-2'>
                             {
                                 trailerCategories.map((item) => (
                                     <div key={item._id} className='w-1/2 sm:w-1/3 lg:w-1/4 p-2 my-3'>
-                                        <img className='w-full h-[267px] rounded-md object-cover' src={item.image} alt={item.title} onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/223x267/CCCCCC/666666?text=Image+Unavailable"; }} />
+                                        <img className='w-full h-[267px] rounded-md object-cover' src={item.image} alt={item.title} onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/223x267/CCCCCC/666666?text=" + t.imageUnavailable.replace(' ', '+'); }} />
                                         <p className='mt-3 text-gray-800 font-medium'>{item.title}</p>
                                         <div className='flex space-x-3'>
                                             {/* Edit functionality not directly provided for image uploads */}
-                                            <button onClick={() => handleDelete('trailers', item._id, () => fetchData('trailers', setTrailerCategories))} className='text-red-600 hover:text-red-800 text-sm font-medium'>Delete</button>
+                                            <button onClick={() => handleDelete('trailers', item._id, () => fetchData('trailers', setTrailerCategories))} className='text-red-600 hover:text-red-800 text-sm font-medium'>{t.delete}</button>
                                         </div>
                                     </div>
                                 ))
                             }
-                            {trailerCategories.length === 0 && !loading && <p className='text-gray-600'>No trailer categories found.</p>}
+                            {trailerCategories.length === 0 && !loading && <p className='text-gray-600'>{t.noItemsFound}</p>}
                         </div>
 
                         {isTrailerModalOpen && (
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? 'Edit Trailer Category' : 'Add Trailer Category'}</h3>
+                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.trailersByCategorySection : t.add + ' ' + t.trailersByCategorySection}</h3>
                                     <form onSubmit={editingItem ? null : handleCreateTrailerCategory}>
                                         <div className="mb-4">
-                                            <label htmlFor="trailerCategoryTitle" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                                            <label htmlFor="trailerCategoryTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.title}:</label>
                                             <input
                                                 type="text"
                                                 id="trailerCategoryTitle"
@@ -688,7 +692,7 @@ const AdminSettingsPage = () => {
                                             />
                                         </div>
                                         <div className="mb-4">
-                                            <label htmlFor="trailerCategoryImage" className="block text-gray-700 text-sm font-bold mb-2">Image:</label>
+                                            <label htmlFor="trailerCategoryImage" className="block text-gray-700 text-sm font-bold mb-2">{t.image}:</label>
                                             <input
                                                 type="file"
                                                 id="trailerCategoryImage"
@@ -710,14 +714,14 @@ const AdminSettingsPage = () => {
                                                 onClick={() => { setIsTrailerModalOpen(false); setEditingItem(null); }}
                                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
                                             >
-                                                Cancel
+                                                {t.cancel}
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                                                 disabled={editingItem}
                                             >
-                                                {editingItem ? 'Update (Image change not supported here)' : 'Add'}
+                                                {editingItem ? t.update : t.add}
                                             </button>
                                         </div>
                                     </form>
@@ -730,17 +734,17 @@ const AdminSettingsPage = () => {
                 return (
                     <div>
                         <div className='flex justify-between items-center mb-6 flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800'>Frequently asked questions</h2>
+                            <h2 className='text-2xl font-semibold text-gray-800'>{t.frequentlyAskedQuestions}</h2>
                             <button
                                 onClick={() => { setEditingItem(null); setIsFaqModalOpen(true); setNewFaqQuestion(''); setNewFaqAnswer(''); setNewFaqType('guest'); }}
                                 className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'>
-                                Add new
+                                {t.addNew}
                             </button>
                         </div>
 
                         <div className='flex mb-6 border-b border-gray-200'>
-                            <button onClick={() => setFaqTab('guest')} className={`py-2 px-4 text-md font-medium rounded-t-lg ${faqTab === 'guest' ? 'bg-gray-100 text-gray-900 border-b-2 border-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}>Guests</button>
-                            <button onClick={() => setFaqTab('host')} className={`py-2 px-4 text-md font-medium rounded-t-lg ${faqTab === 'host' ? 'bg-gray-100 text-gray-900 border-b-2 border-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}>Hosts</button>
+                            <button onClick={() => setFaqTab('guest')} className={`py-2 px-4 text-md font-medium rounded-t-lg ${faqTab === 'guest' ? 'bg-gray-100 text-gray-900 border-b-2 border-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}>{t.guests}</button>
+                            <button onClick={() => setFaqTab('host')} className={`py-2 px-4 text-md font-medium rounded-t-lg ${faqTab === 'host' ? 'bg-gray-100 text-gray-900 border-b-2 border-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}>{t.hosts}</button>
                         </div>
 
                         <div className='space-y-6'>
@@ -751,7 +755,7 @@ const AdminSettingsPage = () => {
                                         <div className='flex space-x-3 text-sm'>
                                             <button
                                                 onClick={() => handleEditClick(faq, setIsFaqModalOpen)}
-                                                className='text-blue-600 hover:text-blue-800 font-medium'>Edit</button>
+                                                className='text-blue-600 hover:text-blue-800 font-medium'>{t.edit}</button>
                                             <button
                                                 className='text-red-600 hover:text-red-800 font-medium'
                                                 onClick={() => handleDelete('faq', faq._id, () => fetchData('faq', setFaqs, (data) => {
@@ -759,22 +763,22 @@ const AdminSettingsPage = () => {
                                                     const hostFaqs = data.filter(item => item.type === 'host');
                                                     return { guest: guestFaqs, host: hostFaqs };
                                                 }))}
-                                            >Delete</button>
+                                            >{t.delete}</button>
                                         </div>
                                     </div>
                                     <p className='text-gray-700 text-sm'>{faq.answer}</p>
                                 </div>
                             ))}
-                            {faqs[faqTab].length === 0 && !loading && <p className='text-gray-600'>No FAQs found for {faqTab}.</p>}
+                            {faqs[faqTab].length === 0 && !loading && <p className='text-gray-600'>{t.noFaqsFound.replace('{tab}', faqTab)}</p>}
                         </div>
 
                         {isFaqModalOpen && (
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? 'Edit FAQ' : 'Add New FAQ'}</h3>
+                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.frequentlyAskedQuestions : t.add + ' ' + t.frequentlyAskedQuestions}</h3>
                                     <form onSubmit={editingItem ? handleUpdateFaq : handleCreateFaq}>
                                         <div className="mb-4">
-                                            <label htmlFor="faqQuestion" className="block text-gray-700 text-sm font-bold mb-2">Question:</label>
+                                            <label htmlFor="faqQuestion" className="block text-gray-700 text-sm font-bold mb-2">{t.question}:</label>
                                             <input
                                                 type="text"
                                                 id="faqQuestion"
@@ -785,7 +789,7 @@ const AdminSettingsPage = () => {
                                             />
                                         </div>
                                         <div className="mb-4">
-                                            <label htmlFor="faqAnswer" className="block text-gray-700 text-sm font-bold mb-2">Answer:</label>
+                                            <label htmlFor="faqAnswer" className="block text-gray-700 text-sm font-bold mb-2">{t.answer}:</label>
                                             <textarea
                                                 id="faqAnswer"
                                                 value={newFaqAnswer}
@@ -796,15 +800,15 @@ const AdminSettingsPage = () => {
                                             ></textarea>
                                         </div>
                                         <div className="mb-4">
-                                            <label htmlFor="faqType" className="block text-gray-700 text-sm font-bold mb-2">Type:</label>
+                                            <label htmlFor="faqType" className="block text-gray-700 text-sm font-bold mb-2">{t.type}:</label>
                                             <select
                                                 id="faqType"
                                                 value={newFaqType}
                                                 onChange={(e) => setNewFaqType(e.target.value)}
                                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                             >
-                                                <option value="guest">guest</option>
-                                                <option value="host">host</option>
+                                                <option value="guest">{t.guests}</option>
+                                                <option value="host">{t.hosts}</option>
                                             </select>
                                         </div>
                                         <div className="flex justify-end">
@@ -813,13 +817,13 @@ const AdminSettingsPage = () => {
                                                 onClick={() => { setIsFaqModalOpen(false); setEditingItem(null); }}
                                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
                                             >
-                                                Cancel
+                                                {t.cancel}
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                                             >
-                                                {editingItem ? 'Update FAQ' : 'Add FAQ'}
+                                                {editingItem ? t.update : t.add}
                                             </button>
                                         </div>
                                     </form>
@@ -832,11 +836,11 @@ const AdminSettingsPage = () => {
                 return (
                     <div>
                         <div className='flex justify-between items-center mb-6 flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800'>Security Deposits</h2>
+                            <h2 className='text-2xl font-semibold text-gray-800'>{t.securityDeposit}</h2>
                             <button
                                 onClick={() => { setEditingItem(null); setIsSecurityDepositModalOpen(true); setNewSecurityDepositTitle(''); setNewSecurityDepositAmount(''); }}
                                 className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'>
-                                Add new
+                                {t.addNew}
                             </button>
                         </div>
                         <div className='space-y-4'>
@@ -844,28 +848,28 @@ const AdminSettingsPage = () => {
                                 <div key={item._id} className='flex items-center justify-between p-4 border border-gray-200 rounded-md bg-white'>
                                     <div className='flex-grow'>
                                         <h3 className='text-lg font-semibold text-gray-900'>{item.title}</h3>
-                                        <p className='text-gray-700'>Amount: ${item.amount}</p>
+                                        <p className='text-gray-700'>{t.amount}: ${item.amount}</p>
                                     </div>
                                     <div className='flex space-x-3 text-sm'>
                                         <button
                                             onClick={() => handleEditClick(item, setIsSecurityDepositModalOpen)}
-                                            className='text-blue-600 hover:text-blue-800 font-medium'>Edit</button>
+                                            className='text-blue-600 hover:text-blue-800 font-medium'>{t.edit}</button>
                                         <button
                                             onClick={() => handleDelete('security-deposits', item._id, () => fetchData('security-deposits', setSecurityDeposits))}
-                                            className='text-red-600 hover:text-red-800 font-medium'>Delete</button>
+                                            className='text-red-600 hover:text-red-800 font-medium'>{t.delete}</button>
                                     </div>
                                 </div>
                             ))}
-                            {securityDeposits.length === 0 && !loading && <p className='text-gray-600'>No security deposits found.</p>}
+                            {securityDeposits.length === 0 && !loading && <p className='text-gray-600'>{t.noItemsFound}</p>}
                         </div>
 
                         {isSecurityDepositModalOpen && (
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? 'Edit Security Deposit' : 'Add New Security Deposit'}</h3>
+                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.securityDeposit : t.add + ' ' + t.securityDeposit}</h3>
                                     <form onSubmit={editingItem ? handleUpdateSecurityDeposit : handleCreateSecurityDeposit}>
                                         <div className="mb-4">
-                                            <label htmlFor="sdTitle" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                                            <label htmlFor="sdTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.title}:</label>
                                             <input
                                                 type="text"
                                                 id="sdTitle"
@@ -876,7 +880,7 @@ const AdminSettingsPage = () => {
                                             />
                                         </div>
                                         <div className="mb-4">
-                                            <label htmlFor="sdAmount" className="block text-gray-700 text-sm font-bold mb-2">Amount:</label>
+                                            <label htmlFor="sdAmount" className="block text-gray-700 text-sm font-bold mb-2">{t.amount}:</label>
                                             <input
                                                 type="number"
                                                 id="sdAmount"
@@ -892,13 +896,13 @@ const AdminSettingsPage = () => {
                                                 onClick={() => { setIsSecurityDepositModalOpen(false); setEditingItem(null); }}
                                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
                                             >
-                                                Cancel
+                                                {t.cancel}
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                                             >
-                                                {editingItem ? 'Update Security Deposit' : 'Add Security Deposit'}
+                                                {editingItem ? t.update : t.add}
                                             </button>
                                         </div>
                                     </form>
@@ -911,11 +915,11 @@ const AdminSettingsPage = () => {
                 return (
                     <div>
                         <div className='flex justify-between items-center mb-6 flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800'>Categories</h2>
+                            <h2 className='text-2xl font-semibold text-gray-800'>{t.category}</h2>
                             <button
                                 onClick={() => { setEditingItem(null); setIsCategoryModalOpen(true); setNewCategoryTitle(''); }}
                                 className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'>
-                                Add new
+                                {t.addNew}
                             </button>
                         </div>
                         <div className='space-y-4'>
@@ -925,23 +929,23 @@ const AdminSettingsPage = () => {
                                     <div className='flex space-x-3 text-sm'>
                                         <button
                                             onClick={() => handleEditClick(item, setIsCategoryModalOpen)}
-                                            className='text-blue-600 hover:text-blue-800 font-medium'>Edit</button>
+                                            className='text-blue-600 hover:text-blue-800 font-medium'>{t.edit}</button>
                                         <button
                                             onClick={() => handleDelete('categories', item._id, () => fetchData('categories', setOwnerCategories))}
-                                            className='text-red-600 hover:text-red-800 font-medium'>Delete</button>
+                                            className='text-red-600 hover:text-red-800 font-medium'>{t.delete}</button>
                                     </div>
                                 </div>
                             ))}
-                            {ownerCategories.length === 0 && !loading && <p className='text-gray-600'>No categories found.</p>}
+                            {ownerCategories.length === 0 && !loading && <p className='text-gray-600'>{t.noItemsFound}</p>}
                         </div>
 
                         {isCategoryModalOpen && (
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? 'Edit Category' : 'Add New Category'}</h3>
+                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.category : t.add + ' ' + t.category}</h3>
                                     <form onSubmit={editingItem ? handleUpdateCategory : handleCreateCategory}>
                                         <div className="mb-4">
-                                            <label htmlFor="categoryTitle" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                                            <label htmlFor="categoryTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.title}:</label>
                                             <input
                                                 type="text"
                                                 id="categoryTitle"
@@ -957,13 +961,13 @@ const AdminSettingsPage = () => {
                                                 onClick={() => { setIsCategoryModalOpen(false); setEditingItem(null); }}
                                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
                                             >
-                                                Cancel
+                                                {t.cancel}
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                                             >
-                                                {editingItem ? 'Update Category' : 'Add Category'}
+                                                {editingItem ? t.update : t.add}
                                             </button>
                                         </div>
                                     </form>
@@ -976,11 +980,11 @@ const AdminSettingsPage = () => {
                 return (
                     <div>
                         <div className='flex justify-between items-center mb-6 flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800'>Trailer Title Statuses</h2>
+                            <h2 className='text-2xl font-semibold text-gray-800'>{t.trailerTitleStatus}</h2>
                             <button
                                 onClick={() => { setEditingItem(null); setIsTrailerStatusModalOpen(true); setNewTrailerStatusTitle(''); }}
                                 className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'>
-                                Add new
+                                {t.addNew}
                             </button>
                         </div>
                         <div className='space-y-4'>
@@ -990,23 +994,23 @@ const AdminSettingsPage = () => {
                                     <div className='flex space-x-3 text-sm'>
                                         <button
                                             onClick={() => handleEditClick(item, setIsTrailerStatusModalOpen)}
-                                            className='text-blue-600 hover:text-blue-800 font-medium'>Edit</button>
+                                            className='text-blue-600 hover:text-blue-800 font-medium'>{t.edit}</button>
                                         <button
                                             onClick={() => handleDelete('trailer-statuses', item._id, () => fetchData('trailer-statuses', setTrailerTitleStatus))}
-                                            className='text-red-600 hover:text-red-800 font-medium'>Delete</button>
+                                            className='text-red-600 hover:text-red-800 font-medium'>{t.delete}</button>
                                     </div>
                                 </div>
                             ))}
-                            {trailerTitleStatus.length === 0 && !loading && <p className='text-gray-600'>No trailer title statuses found.</p>}
+                            {trailerTitleStatus.length === 0 && !loading && <p className='text-gray-600'>{t.noItemsFound}</p>}
                         </div>
 
                         {isTrailerStatusModalOpen && (
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? 'Edit Trailer Status' : 'Add New Trailer Status'}</h3>
+                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.trailerTitleStatus : t.add + ' ' + t.trailerTitleStatus}</h3>
                                     <form onSubmit={editingItem ? handleUpdateTrailerStatus : handleCreateTrailerStatus}>
                                         <div className="mb-4">
-                                            <label htmlFor="trailerStatusTitle" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                                            <label htmlFor="trailerStatusTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.title}:</label>
                                             <input
                                                 type="text"
                                                 id="trailerStatusTitle"
@@ -1022,13 +1026,13 @@ const AdminSettingsPage = () => {
                                                 onClick={() => { setIsTrailerStatusModalOpen(false); setEditingItem(null); }}
                                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
                                             >
-                                                Cancel
+                                                {t.cancel}
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                                             >
-                                                {editingItem ? 'Update Trailer Status' : 'Add Trailer Status'}
+                                                {editingItem ? t.update : t.add}
                                             </button>
                                         </div>
                                     </form>
@@ -1041,11 +1045,11 @@ const AdminSettingsPage = () => {
                 return (
                     <div>
                         <div className='flex justify-between items-center mb-6 flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800'>Hitch Types</h2>
+                            <h2 className='text-2xl font-semibold text-gray-800'>{t.hitchType}</h2>
                             <button
                                 onClick={() => { setEditingItem(null); setIsHitchTypeModalOpen(true); setNewHitchTypeTitle(''); }}
                                 className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'>
-                                Add new
+                                {t.addNew}
                             </button>
                         </div>
                         <div className='space-y-4'>
@@ -1055,23 +1059,23 @@ const AdminSettingsPage = () => {
                                     <div className='flex space-x-3 text-sm'>
                                         <button
                                             onClick={() => handleEditClick(item, setIsHitchTypeModalOpen)}
-                                            className='text-blue-600 hover:text-blue-800 font-medium'>Edit</button>
+                                            className='text-blue-600 hover:text-blue-800 font-medium'>{t.edit}</button>
                                         <button
                                             onClick={() => handleDelete('hitch-types', item._id, () => fetchData('hitch-types', setHitchTypes))}
-                                            className='text-red-600 hover:text-red-800 font-medium'>Delete</button>
+                                            className='text-red-600 hover:text-red-800 font-medium'>{t.delete}</button>
                                     </div>
                                 </div>
                             ))}
-                            {hitchTypes.length === 0 && !loading && <p className='text-gray-600'>No hitch types found.</p>}
+                            {hitchTypes.length === 0 && !loading && <p className='text-gray-600'>{t.noItemsFound}</p>}
                         </div>
 
                         {isHitchTypeModalOpen && (
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? 'Edit Hitch Type' : 'Add New Hitch Type'}</h3>
+                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.hitchType : t.add + ' ' + t.hitchType}</h3>
                                     <form onSubmit={editingItem ? handleUpdateHitchType : handleCreateHitchType}>
                                         <div className="mb-4">
-                                            <label htmlFor="hitchTypeTitle" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                                            <label htmlFor="hitchTypeTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.title}:</label>
                                             <input
                                                 type="text"
                                                 id="hitchTypeTitle"
@@ -1087,13 +1091,13 @@ const AdminSettingsPage = () => {
                                                 onClick={() => { setIsHitchTypeModalOpen(false); setEditingItem(null); }}
                                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
                                             >
-                                                Cancel
+                                                {t.cancel}
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                                             >
-                                                {editingItem ? 'Update Hitch Type' : 'Add Hitch Type'}
+                                                {editingItem ? t.update : t.add}
                                             </button>
                                         </div>
                                     </form>
@@ -1106,11 +1110,11 @@ const AdminSettingsPage = () => {
                 return (
                     <div>
                         <div className='flex justify-between items-center mb-6 flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800'>Ball Sizes</h2>
+                            <h2 className='text-2xl font-semibold text-gray-800'>{t.ballSize}</h2>
                             <button
                                 onClick={() => { setEditingItem(null); setIsBallSizeModalOpen(true); setNewBallSizeTitle(''); }}
                                 className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'>
-                                Add new
+                                {t.addNew}
                             </button>
                         </div>
                         <div className='space-y-4'>
@@ -1120,23 +1124,23 @@ const AdminSettingsPage = () => {
                                     <div className='flex space-x-3 text-sm'>
                                         <button
                                             onClick={() => handleEditClick(item, setIsBallSizeModalOpen)}
-                                            className='text-blue-600 hover:text-blue-800 font-medium'>Edit</button>
+                                            className='text-blue-600 hover:text-blue-800 font-medium'>{t.edit}</button>
                                         <button
                                             onClick={() => handleDelete('ball-sizes', item._id, () => fetchData('ball-sizes', setBallSizes))}
-                                            className='text-red-600 hover:text-red-800 font-medium'>Delete</button>
+                                            className='text-red-600 hover:text-red-800 font-medium'>{t.delete}</button>
                                     </div>
                                 </div>
                             ))}
-                            {ballSizes.length === 0 && !loading && <p className='text-gray-600'>No ball sizes found.</p>}
+                            {ballSizes.length === 0 && !loading && <p className='text-gray-600'>{t.noItemsFound}</p>}
                         </div>
 
                         {isBallSizeModalOpen && (
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? 'Edit Ball Size' : 'Add New Ball Size'}</h3>
+                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.ballSize : t.add + ' ' + t.ballSize}</h3>
                                     <form onSubmit={editingItem ? handleUpdateBallSize : handleCreateBallSize}>
                                         <div className="mb-4">
-                                            <label htmlFor="ballSizeTitle" className="block text-gray-700 text-sm font-bold mb-2">Size (e.g., 2"):</label>
+                                            <label htmlFor="ballSizeTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.size}:</label>
                                             <input
                                                 type="text"
                                                 id="ballSizeTitle"
@@ -1152,13 +1156,13 @@ const AdminSettingsPage = () => {
                                                 onClick={() => { setIsBallSizeModalOpen(false); setEditingItem(null); }}
                                                 className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
                                             >
-                                                Cancel
+                                                {t.cancel}
                                             </button>
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                                             >
-                                                {editingItem ? 'Update Ball Size' : 'Add Ball Size'}
+                                                {editingItem ? t.update : t.add}
                                             </button>
                                         </div>
                                     </form>
@@ -1168,7 +1172,7 @@ const AdminSettingsPage = () => {
                     </div>
                 );
             default:
-                return <div className='text-center py-8 text-gray-600'>Select a setting to manage its content.</div>;
+                return <div className='text-center py-8 text-gray-600'>{t.selectSettingToManage}</div>;
         }
     };
 
@@ -1176,36 +1180,47 @@ const AdminSettingsPage = () => {
         <div className='min-h-screen bg-[#fff] flex p-4 rounded-lg flex-wrap mt-2'>
             {/* Left Sidebar */}
             <div className='w-full md:w-1/4 p-6 mr-6 border rounded-md'>
-                <h1 className='text-xl -bold text-gray-900 mb-6'>Platform setting</h1>
+                <h1 className='text-xl -bold text-gray-900 mb-6'>{t.generalSettings}</h1>
 
                 {/* Website settings */}
-                <h3 className='text-lg -semibold text-gray-800 mb-3'>Website settings</h3>
+                <h3 className='text-lg -semibold text-gray-800 mb-3'>{t.generalSettings}</h3>
                 <nav className='space-y-2 mb-6'>
-                    {['Trusted by section', 'Popular location section', 'Trailers by category section', 'FAQ'].map((item) => (
+                    {[
+                        { key: 'Trusted by section', label: t.trustedBySection },
+                        { key: 'Popular location section', label: t.popularLocationSection },
+                        { key: 'Trailers by category section', label: t.trailersByCategorySection },
+                        { key: 'FAQ', label: t.frequentlyAskedQuestions }
+                    ].map((item) => (
                         <button
-                            key={item}
-                            onClick={() => setActiveSetting(item)}
+                            key={item.key}
+                            onClick={() => setActiveSetting(item.key)}
                             className={`w-full text-left px-4 py-2 rounded-md text-sm -medium
-                ${activeSetting === item ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-50'}
+                ${activeSetting === item.key ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-50'}
               `}
                         >
-                            {item}
+                            {item.label}
                         </button>
                     ))}
                 </nav>
 
                 {/* Owner settings */}
-                <h3 className='text-lg -semibold text-gray-800 mb-3'>Owner settings</h3>
+                <h3 className='text-lg -semibold text-gray-800 mb-3'>{t.owners}</h3>
                 <nav className='space-y-2'>
-                    {['Security Deposit', 'Category', 'Trailer title status', 'Hitch type', 'Ball size'].map((item) => (
+                    {[
+                        { key: 'Security Deposit', label: t.securityDeposit },
+                        { key: 'Category', label: t.category },
+                        { key: 'Trailer title status', label: t.trailerTitleStatus },
+                        { key: 'Hitch type', label: t.hitchType },
+                        { key: 'Ball size', label: t.ballSize }
+                    ].map((item) => (
                         <button
-                            key={item}
-                            onClick={() => setActiveSetting(item)}
+                            key={item.key}
+                            onClick={() => setActiveSetting(item.key)}
                             className={`w-full text-left px-4 py-2 rounded-md text-sm -medium
-                ${activeSetting === item ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-50'}
+                ${activeSetting === item.key ? 'bg-blue-100 text-blue-700' : 'text-gray-700 hover:bg-gray-50'}
               `}
                         >
-                            {item}
+                            {item.label}
                         </button>
                     ))}
                 </nav>

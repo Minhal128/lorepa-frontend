@@ -49,6 +49,8 @@ const normalizeClosedDates = (closedDates) => {
 const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [step, setStep] = useState(1); // Step 1: Date selection, Step 2: Send message
+    const [message, setMessage] = useState('');
 
     const price = useMemo(() => {
         return calculatePrice(startDate, endDate, trailer?.dailyRate);
@@ -85,12 +87,11 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
         });
     };
 
-
-    const handleSubmit = (e) => {
+    const handleDateNext = (e) => {
         e.preventDefault();
 
         if (!startDate || !endDate || numberOfDays <= 0 || price <= 0) {
-            toast.error(translations.selectValidDates);
+            toast.error(translations.selectValidDates || "Please select valid dates");
             return;
         }
         const closedDates = normalizeClosedDates(trailer?.closedDates);
@@ -108,12 +109,27 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
             return;
         }
 
+        setStep(2);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
         onSubmit({
             trailerId: trailer._id,
             startDate,
             endDate,
             price,
+            message,
         });
+    };
+
+    const handleClose = () => {
+        setStep(1);
+        setMessage('');
+        setStartDate('');
+        setEndDate('');
+        onClose();
     };
 
 
@@ -122,80 +138,139 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4">
             <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-8 transform transition-all duration-300 scale-100 opacity-100">
-                <h2 className="text-3xl font-extrabold  mb-6 border-b pb-3">
-                    {translations.bookTrailer}
-                </h2>
-                <p className="text-lg font-medium text-gray-700 mb-6">
-                    {trailer?.title}
-                </p>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2" htmlFor="startDate">
-                                {translations.startDate}
-                            </label>
-                            <input
-                                id="startDate"
-                                type="date"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                                min={new Date().toISOString().split('T')[0]}
-                                required
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-                            />
+                {step === 1 && (
+                    <>
+                        <h2 className="text-3xl font-extrabold mb-6 border-b pb-3">
+                            {translations.bookTrailer || "Book Trailer"}
+                        </h2>
+                        <p className="text-lg font-medium text-gray-700 mb-6">
+                            {trailer?.title}
+                        </p>
+
+                        <form onSubmit={handleDateNext}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2" htmlFor="startDate">
+                                        {translations.startDate || "Start Date"}
+                                    </label>
+                                    <input
+                                        id="startDate"
+                                        type="date"
+                                        value={startDate}
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        min={new Date().toISOString().split('T')[0]}
+                                        required
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-2" htmlFor="endDate">
+                                        {translations.endDate || "End Date"}
+                                    </label>
+                                    <input
+                                        id="endDate"
+                                        type="date"
+                                        value={endDate}
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        min={startDate || new Date().toISOString().split('T')[0]}
+                                        required
+                                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                <h3 className="text-xl font-bold text-blue-800 mb-3">{translations.totalPrice || "Total Price"}</h3>
+                                <div className="flex justify-between items-center text-gray-700">
+                                    <span className="font-semibold">{translations.dailyRate || "Daily Rate"}:</span>
+                                    <span>${parseFloat(dailyRate).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-gray-700 border-b border-dashed pb-2 mb-2">
+                                    <span className="font-semibold">{translations.rentalDays || "Rental Days"}:</span>
+                                    <span>{numberOfDays}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-2xl font-bold text-gray-900">
+                                    <span>{translations.totalCost || "Total Cost"}:</span>
+                                    <span>${price.toFixed(2)}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end space-x-4">
+                                <button
+                                    type="button"
+                                    onClick={handleClose}
+                                    className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 transition-colors duration-200"
+                                >
+                                    {translations.cancel || "Cancel"}
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={price <= 0}
+                                    className={`px-6 py-3 rounded-lg text-white font-semibold transition-colors duration-200 ${price > 0 ? 'bg-blue-700 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'}`}
+                                >
+                                    {translations.next || "Next"}
+                                </button>
+                            </div>
+                        </form>
+                    </>
+                )}
+
+                {step === 2 && (
+                    <>
+                        <div className="flex items-center justify-between mb-6 border-b pb-3">
+                            <h2 className="text-2xl font-extrabold">
+                                {translations.sendMessage || "Send a message"}
+                            </h2>
+                            <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2" htmlFor="endDate">
-                                {translations.endDate}
-                            </label>
-                            <input
-                                id="endDate"
-                                type="date"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                                min={startDate || new Date().toISOString().split('T')[0]}
-                                required
-                                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150"
-                            />
-                        </div>
-                    </div>
+                        <p className="text-sm text-gray-500 mb-2">
+                            {translations.messageToOwnerDesc || "Send a message to the owner asking if the trailer is available for your selected dates."}
+                        </p>
 
-                    <div className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <h3 className="text-xl font-bold text-blue-800 mb-3">{translations.totalPrice}</h3>
-                        <div className="flex justify-between items-center text-gray-700">
-                            <span className="font-semibold">{translations.dailyRate}:</span>
-                            <span>${parseFloat(dailyRate).toFixed(2)}</span>
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-sm">
+                            <p className="font-semibold text-blue-800">{trailer?.title}</p>
+                            <p className="text-blue-700">{startDate} - {endDate} &middot; ${price.toFixed(2)}</p>
                         </div>
-                        <div className="flex justify-between items-center text-gray-700 border-b border-dashed pb-2 mb-2">
-                            <span className="font-semibold">{translations.rentalDays}:</span>
-                            <span>{numberOfDays}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-2xl font-bold text-gray-900">
-                            <span>{translations.totalCost}:</span>
-                            <span>${price.toFixed(2)}</span>
-                        </div>
-                    </div>
 
-                    <div className="flex justify-end space-x-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 transition-colors duration-200"
-                        >
-                            {translations.cancel}
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={price <= 0}
-                            className={`px-6 py-3 rounded-lg text-white font-semibold transition-colors duration-200 ${price > 0 ? 'bg-blue-700 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'
-                                }`}
-                        >
-                            {translations.confirmBooking}
-                        </button>
-                    </div>
-                </form>
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-6">
+                                <label className="block text-sm font-bold text-gray-700 mb-2">
+                                    {translations.yourMessage || "Your message"}
+                                </label>
+                                <textarea
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    placeholder={translations.messagePlaceholder || "Hi, I'd like to rent your trailer for these dates. Is it available?"}
+                                    rows={4}
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 resize-none"
+                                />
+                            </div>
+
+                            <div className="flex justify-between space-x-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setStep(1)}
+                                    className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 transition-colors duration-200"
+                                >
+                                    {translations.back || "Back"}
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="flex-1 px-6 py-3 rounded-lg text-white font-semibold bg-blue-700 hover:bg-blue-800 transition-colors duration-200"
+                                >
+                                    {translations.sendBookingRequest || "Send Booking Request"}
+                                </button>
+                            </div>
+                        </form>
+                    </>
+                )}
             </div>
         </div>
     );

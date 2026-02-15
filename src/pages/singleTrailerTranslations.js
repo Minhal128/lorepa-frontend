@@ -1,7 +1,7 @@
 export const singleTrailerTranslations = {
   en: {
     deposit: "Deposit",
-    signupsignin: "Sign in / Sign up",
+    signupsignin: "Request a Booking",
     loading: "Loading trailer details...",
     trailerNotFound: "Trailer not found.",
     failedToFetch: "Failed to fetch trailer details",
@@ -116,7 +116,7 @@ export const singleTrailerTranslations = {
   },
   es: {
     deposit: "Depósito",
-    signupsignin: "Iniciar sesión / Registrarse",
+    signupsignin: "Solicitar una reserva",
     chatWithOwner: "Descarga la aplicación para chatear",
     loading: "Cargando detalles del remolque...",
     trailerNotFound: "Remolque no encontrado.",
@@ -232,7 +232,7 @@ export const singleTrailerTranslations = {
   },
   cn: {
     deposit: "押金",
-    "signupsignin": "登录 / 注册",
+    "signupsignin": "请求预订",
     chatWithOwner: "下载应用以聊天",
     loading: "正在加载拖车详情...",
     trailerNotFound: "未找到拖车。",
@@ -348,7 +348,7 @@ export const singleTrailerTranslations = {
   },
   fr: {
     deposit: "Dépôt",
-    "signupsignin": "Se connecter / S'inscrire",
+    "signupsignin": "Demander une réservation",
     chatWithOwner: "Téléchargez l'application pour discuter",
     loading: "Chargement des détails de la remorque...",
     trailerNotFound: "Remorque introuvable.",

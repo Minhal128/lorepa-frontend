@@ -4,7 +4,12 @@ import {
   FaChevronRight,
   FaCloudUploadAlt,
   FaTimes,
+  FaMapMarkerAlt,
+  FaCrosshairs,
 } from "react-icons/fa";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import CustomSwitch from "../../../components/Switch";
 import config from "../../../config";
 import toast from "react-hot-toast";
@@ -29,6 +34,52 @@ const normalizeClosedDates = (input) => {
   }
 
   return Array.isArray(data) ? data : [];
+};
+
+// Fix for default marker icon
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+});
+
+// Red marker icon for search location
+const createSearchLocationIcon = () => {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42">
+      <path fill="#DC2626" stroke="#FFFFFF" stroke-width="2" d="M16 0C7.163 0 0 7.163 0 16c0 8.837 16 26 16 26s16-17.163 16-26C32 7.163 24.837 0 16 0z"/>
+      <circle cx="16" cy="16" r="6" fill="#FFFFFF"/>
+    </svg>
+  `;
+  return L.divIcon({
+    html: `<img src="data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}" style="width: 32px; height: 42px;" />`,
+    className: 'custom-search-marker',
+    iconSize: [32, 42],
+    iconAnchor: [16, 42],
+    popupAnchor: [0, -42]
+  });
+};
+
+// Component to handle map center changes
+const MapCenterHandler = ({ center }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center && center.lat && center.lng) {
+      map.setView([center.lat, center.lng], map.getZoom());
+    }
+  }, [center, map]);
+  return null;
+};
+
+// Component to handle map click events
+const MapClickHandler = ({ onMapClick }) => {
+  useMapEvents({
+    click(e) {
+      onMapClick(e.latlng.lat, e.latlng.lng);
+    },
+  });
+  return null;
 };
 const MAX_IMAGES = 8;
 
@@ -65,6 +116,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
   const maxDescChars = 300;
   const daysInThisMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
@@ -281,6 +333,56 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
     }
   };
 
+  const reverseGeocode = async (lat, lng) => {
+    try {
+      const res = await axios.get(
+        `${config.baseUrl.replace("/api/v1", "")}/api/reverse-geocode`,
+        { params: { lat, lng } }
+      );
+      if (res.data.status === "OK") {
+        setLocation({
+          latitude: lat,
+          longitude: lng,
+          city: res.data.city,
+          country: res.data.country,
+        });
+        setLocationInput(res.data.formatted_address || `${res.data.city}, ${res.data.country}`);
+      } else {
+        setLocation({ latitude: lat, longitude: lng, city: "", country: "" });
+        setLocationInput(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+      }
+    } catch (err) {
+      console.error("Reverse geocode error:", err);
+      setLocation({ latitude: lat, longitude: lng, city: "", country: "" });
+      setLocationInput(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+    }
+  };
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error(t("geolocationNotSupported"));
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        await reverseGeocode(latitude, longitude);
+        setIsLocating(false);
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        toast.error(t("geolocationError"));
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
+  const handleMapClick = async (lat, lng) => {
+    await reverseGeocode(lat, lng);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -335,7 +437,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                   >
-                    {[{value: "Utility", label: t("utility")}, {value: "Enclosed", label: t("enclosed")}, {value: "Flatbed", label: t("flatbed")}, {value: "Dump", label: t("dump")}, {value: "Boat", label: t("boat")}].map(
+                    {[{ value: "Utility", label: t("utility") }, { value: "Enclosed", label: t("enclosed") }, { value: "Flatbed", label: t("flatbed") }, { value: "Dump", label: t("dump") }, { value: "Boat", label: t("boat") }].map(
                       (c) => (
                         <option key={c.value} value={c.value}>{c.label}</option>
                       )
@@ -362,24 +464,37 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {t("location")}
                   </label>
-                  <input
-                    type="text"
-                    className="block w-full border border-gray-300 rounded-md py-2 px-3 outline-none"
-                    value={locationInput}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      setLocationInput(value);
-                      if (!value) {
-                        setLocation({
-                          latitude: null,
-                          longitude: null,
-                          city: "",
-                          country: "",
-                        });
-                      }
-                      fetchSuggestions(value);
-                    }}
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder={t("locationPlaceholder")}
+                      className="block w-full border border-gray-300 rounded-md py-2 px-3 outline-none"
+                      value={locationInput}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setLocationInput(value);
+                        if (!value) {
+                          setLocation({
+                            latitude: null,
+                            longitude: null,
+                            city: "",
+                            country: "",
+                          });
+                        }
+                        fetchSuggestions(value);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleUseCurrentLocation}
+                      disabled={isLocating}
+                      className="flex items-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 transition whitespace-nowrap disabled:opacity-50"
+                      title={t("useMyLocation")}
+                    >
+                      <FaCrosshairs className={`w-3.5 h-3.5 ${isLocating ? 'animate-spin' : ''}`} />
+                      <span className="hidden sm:inline">{isLocating ? t("locating") : t("useMyLocation")}</span>
+                    </button>
+                  </div>
                   {isSearching && (
                     <p className="text-xs text-blue-600 mt-1 animate-pulse">{t("searchingLocations")}</p>
                   )}
@@ -392,6 +507,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                             onMouseDown={() => handleSelect(item)}
                             className="p-3 hover:bg-blue-50 cursor-pointer text-sm border-b border-gray-50 last:border-none"
                           >
+                            <FaMapMarkerAlt className="inline mr-2 text-gray-400" />
                             {item.description}
                           </li>
                         ))
@@ -401,14 +517,49 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                     </ul>
                   )}
                   <p className="text-[10px] text-gray-400 mt-1">
-                    {t("locationHint")}
+                    {t("locationHintNew")}
                   </p>
                 </div>
                 {location.city && location.country && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    Location: {location.city}, {location.country}
+                  <p className="text-sm text-green-700 bg-green-50 rounded px-2 py-1 mt-2 flex items-center gap-1">
+                    <FaMapMarkerAlt className="text-green-600" />
+                    {location.city}, {location.country}
                   </p>
                 )}
+
+                {/* Map Integration - Click to select location */}
+                <div className="relative h-64 rounded-lg overflow-hidden border border-gray-300 mt-4">
+                  <div className="absolute top-2 left-2 z-[999] bg-white/90 backdrop-blur-sm text-xs text-gray-600 px-2 py-1 rounded shadow pointer-events-none">
+                    {t("clickMapHint")}
+                  </div>
+                  <MapContainer
+                    center={[location.latitude || 45.5017, location.longitude || -73.5673]}
+                    zoom={13}
+                    style={{ width: '100%', height: '100%', cursor: 'crosshair' }}
+                    scrollWheelZoom={true}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <MapCenterHandler center={{ lat: location.latitude, lng: location.longitude }} />
+                    <MapClickHandler onMapClick={handleMapClick} />
+
+                    {location.latitude && location.longitude && (
+                      <Marker
+                        position={[location.latitude, location.longitude]}
+                        icon={createSearchLocationIcon()}
+                      >
+                        <Popup>
+                          <div className="p-1">
+                            <h3 className="font-semibold text-sm">{t("selectedLocation")}</h3>
+                            <p className="text-gray-600 text-xs">{locationInput}</p>
+                          </div>
+                        </Popup>
+                      </Marker>
+                    )}
+                  </MapContainer>
+                </div>
                 <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -634,7 +785,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                   })}
                 </div>
                 <p className="text-xs text-gray-500 mt-4 text-center">
-                  {t("closedDateHint").split(t("closed")).map((part, i, arr) => 
+                  {t("closedDateHint").split(t("closed")).map((part, i, arr) =>
                     i === arr.length - 1 ? part : (
                       <React.Fragment key={i}>
                         {part}<span className="text-red-600 font-semibold">{t("closed")}</span>

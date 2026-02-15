@@ -2,11 +2,15 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import config from '../../../config';
 import toast from 'react-hot-toast';
+import { adminTranslations } from '../translation/adminTranslations';
 
 const AdminBookingPage = () => {
     const [bookings, setBookings] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+
+    const lang = localStorage.getItem("lang") || "en";
+    const t = adminTranslations[lang] || adminTranslations.en;
 
     const fetchBookings = async () => {
         try {
@@ -44,12 +48,12 @@ const AdminBookingPage = () => {
         <div className='min-h-screen space-y-8 pb-10'>
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
-                    <h1 className='text-2xl sm:text-3xl font-black text-gray-900 tracking-tight'>Booking Management</h1>
-                    <p className="text-sm text-gray-500 font-medium">Track and manage all trailer reservations.</p>
+                    <h1 className='text-2xl sm:text-3xl font-black text-gray-900 tracking-tight'>{t.bookingManagement}</h1>
+                    <p className="text-sm text-gray-500 font-medium">{t.trackManageReservations}</p>
                 </div>
                 <div className="flex gap-2">
                     <span className="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-black uppercase tracking-widest border border-blue-100">
-                        {bookings.length} Total Bookings
+                        {t.totalBookingsBadge.replace('{count}', bookings.length)}
                     </span>
                 </div>
             </header>
@@ -60,15 +64,15 @@ const AdminBookingPage = () => {
                     <table className='min-w-full divide-y divide-gray-100'>
                         <thead className='bg-gray-50'>
                             <tr>
-                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>S/N</th>
-                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Booking ID</th>
-                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Trailer</th>
-                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Renter</th>
-                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Dates</th>
-                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Price</th>
-                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Status</th>
-                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Payment</th>
-                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>Action</th>
+                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.sn}</th>
+                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.bookingId}</th>
+                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.trailer}</th>
+                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.renter}</th>
+                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.dates}</th>
+                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.price}</th>
+                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.status}</th>
+                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.payment}</th>
+                                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.action}</th>
                             </tr>
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-100'>
@@ -102,14 +106,14 @@ const AdminBookingPage = () => {
                                                     'bg-yellow-50 border-yellow-200 text-yellow-700'
                                                 }`}
                                         >
-                                            <option value='Pending'>Pending</option>
-                                            <option value='Active'>Active</option>
-                                            <option value='Completed'>Completed</option>
+                                            <option value='Pending'>{t.pending}</option>
+                                            <option value='Active'>{t.active}</option>
+                                            <option value='Completed'>{t.completed}</option>
                                         </select>
                                     </td>
                                     <td className='px-6 py-4'>
                                         <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${booking.price == booking.total_paid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                                            {booking.price == booking.total_paid ? "Paid" : "Unpaid"}
+                                            {booking.price == booking.total_paid ? t.paid : t.unpaid}
                                         </span>
                                     </td>
                                     <td className='px-6 py-4'>
@@ -129,29 +133,29 @@ const AdminBookingPage = () => {
                         <div key={booking._id} className="p-6 bg-white border border-gray-100 rounded-[2rem] hover:border-blue-200 transition-colors space-y-6">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Booking ID</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t.bookingId}</p>
                                     <h4 className="text-lg font-black text-gray-900 tracking-tight">#{booking._id.slice(-6).toUpperCase()}</h4>
                                 </div>
                                 <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${booking.price == booking.total_paid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                                    {booking.price == booking.total_paid ? "Paid" : "Unpaid"}
+                                    {booking.price == booking.total_paid ? t.paid : t.unpaid}
                                 </span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 text-xs font-bold">
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Trailer</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t.trailer}</p>
                                     <p className="text-gray-900 truncate">{booking?.trailerId?.title || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Renter</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t.renter}</p>
                                     <p className="text-blue-600">{booking.firstname} {booking.lastname}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Price</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t.price}</p>
                                     <p className="text-gray-900 font-black text-base">${booking?.price || '0'}</p>
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Dates</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t.dates}</p>
                                     <p className="text-gray-500">{new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}</p>
                                 </div>
                             </div>
@@ -162,9 +166,9 @@ const AdminBookingPage = () => {
                                     onChange={(e) => updateStatus(booking._id, e.target.value)}
                                     className="flex-1 bg-gray-50 border-2 border-gray-100 rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest outline-none focus:border-blue-600 transition appearance-none"
                                 >
-                                    <option value='Pending'>Set to Pending</option>
-                                    <option value='Active'>Set to Active</option>
-                                    <option value='Completed'>Set to Completed</option>
+                                    <option value='Pending'>{t.setToPending}</option>
+                                    <option value='Active'>{t.setToActive}</option>
+                                    <option value='Completed'>{t.setToCompleted}</option>
                                 </select>
                                 <button className="p-3.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition shadow-sm">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
@@ -176,7 +180,7 @@ const AdminBookingPage = () => {
 
                 {/* Pagination */}
                 <div className='flex flex-col sm:flex-row justify-between items-center gap-6 pt-6 border-t border-gray-50'>
-                    <p className='text-sm font-bold text-gray-400 uppercase tracking-widest'>Page {currentPage} of {totalPages}</p>
+                    <p className='text-sm font-bold text-gray-400 uppercase tracking-widest'>{t.pageXofY.replace('{current}', currentPage).replace('{total}', totalPages)}</p>
                     <div className='flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 max-w-full scrollbar-hide'>
                         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                             <button

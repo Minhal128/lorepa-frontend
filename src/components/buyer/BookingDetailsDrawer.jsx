@@ -1,10 +1,64 @@
 import axios from "axios";
-import { FaEnvelope, FaMobileAlt, FaStar, FaTimes, FaUserCircle } from "react-icons/fa";
+import { FaCheck, FaCloudUploadAlt, FaEnvelope, FaMobileAlt, FaStar, FaTimes, FaTimesCircle, FaUserCircle } from "react-icons/fa";
 import config from "../../config";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { reservationTranslations } from "../../pages/Seller/Dashboard/translation/reservationTranslations";
 
-const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge }) => {
+const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) => {
     if (!reservation) return null;
+    const [updatingStatus, setUpdatingStatus] = useState(false);
+    const [uploadingPhotos, setUploadingPhotos] = useState(false);
+    const [bookingDocs, setBookingDocs] = useState([]);
+
+    const lang = localStorage.getItem("lang") || "en";
+    const t = reservationTranslations[lang] || reservationTranslations.en;
+
+    useEffect(() => {
+        if (reservation?._id) {
+            fetchBookingDocs();
+        }
+    }, [reservation?._id]);
+
+    const fetchBookingDocs = async () => {
+        try {
+            const res = await axios.get(`${config.baseUrl}/document/booking/${reservation._id}`);
+            setBookingDocs(res.data.data);
+        } catch (err) {
+            console.error("Error fetching docs", err);
+        }
+    };
+
+    const handlePhotoUpload = async (e, type) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        setUploadingPhotos(true);
+        const loadingToast = toast.loading("Uploading photos...");
+
+        const formData = new FormData();
+        formData.append("userId", localStorage.getItem("userId"));
+        formData.append("uploadType", "Host");
+        formData.append("documentType", type);
+        formData.append("trailerId", reservation.trailerId._id);
+        formData.append("bookingId", reservation._id);
+        files.forEach(file => formData.append("files", file));
+
+        try {
+            await axios.post(`${config.baseUrl}/document/create-multiple`, formData);
+            toast.success("Photos uploaded successfully!", { id: loadingToast });
+            fetchBookingDocs();
+        } catch (err) {
+            toast.error("Failed to upload photos", { id: loadingToast });
+        } finally {
+            setUploadingPhotos(false);
+        }
+    };
+
+    const checkInDocs = bookingDocs.filter(d => d.documentType === "Check-in Photo");
+    const checkOutDocs = bookingDocs.filter(d => d.documentType === "Check-out Photo");
+
     const VerificationIcon = ({ isVerified, icon: Icon }) => (
         <span title={isVerified ? isVerified : "Not Verified"} className={`p-1 rounded-full ${isVerified ? 'text-green-500 bg-green-100' : 'text-gray-400 bg-gray-100'}`}>
             <Icon className="w-3 h-3" />
@@ -32,6 +86,32 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge }) => {
         }
     };
 
+    const handleAcceptBooking = async () => {
+        setUpdatingStatus(true);
+        try {
+            await axios.put(`${config.baseUrl}/booking/status/${reservation?._id}`, { status: "accepted" });
+            toast.success("Booking approved successfully!");
+            if (onRefresh) onRefresh();
+        } catch (err) {
+            toast.error("Failed to approve booking");
+        } finally {
+            setUpdatingStatus(false);
+        }
+    };
+
+    const handleRejectBooking = async () => {
+        setUpdatingStatus(true);
+        try {
+            await axios.put(`${config.baseUrl}/booking/status/${reservation?._id}`, { status: "rejected" });
+            toast.success("Booking rejected");
+            if (onRefresh) onRefresh();
+        } catch (err) {
+            toast.error("Failed to reject booking");
+        } finally {
+            setUpdatingStatus(false);
+        }
+    };
+
     return (
         <div className="fixed inset-0 z-40 overflow-hidden">
             <div className="absolute inset-0 overflow-hidden">
@@ -56,6 +136,40 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge }) => {
 
                             {/* Content */}
                             <div className="flex-1 p-4 sm:p-6 space-y-6">
+                                {/* Pending Approval Banner */}
+                                {reservation?.status === "pending" && (
+                                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-3">
+                                        <span className="text-2xl">📋</span>
+                                        <div>
+                                            <p className="font-semibold text-yellow-800 text-sm">New Booking Request</p>
+                                            <p className="text-yellow-700 text-xs">A renter has requested to book your trailer. Please review and approve or reject the request.</p>
+                                            {reservation?.message && (
+                                                <div className="mt-2 bg-white rounded p-2 text-xs text-gray-700 border">
+                                                    <p className="font-semibold text-gray-600 mb-1">Renter's message:</p>
+                                                    <p className="italic">"{reservation.message}"</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Contract status banner */}
+                                {reservation?.status === "accepted" && (
+                                    <div className={`rounded-lg p-3 flex items-start gap-3 ${reservation?.contractSigned ? 'bg-green-50 border border-green-200' : 'bg-blue-50 border border-blue-200'}`}>
+                                        <span className="text-2xl">{reservation?.contractSigned ? '✅' : '📄'}</span>
+                                        <div>
+                                            <p className={`font-semibold text-sm ${reservation?.contractSigned ? 'text-green-800' : 'text-blue-800'}`}>
+                                                {reservation?.contractSigned ? 'Contract Signed by Renter' : 'Waiting for Contract Signature'}
+                                            </p>
+                                            <p className={`text-xs ${reservation?.contractSigned ? 'text-green-700' : 'text-blue-700'}`}>
+                                                {reservation?.contractSigned
+                                                    ? 'The renter has signed the contract and will proceed to payment.'
+                                                    : 'You approved this booking. Waiting for the renter to sign the contract.'}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Trailer Image and Status */}
                                 <div className="space-y-4">
                                     <img
@@ -94,6 +208,56 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge }) => {
                                     </div>
                                 </div>
 
+                                {/* Photo Sections */}
+                                <div className="space-y-4">
+                                    {/* Check-in Photos (Seller Uploads) */}
+                                    <div className="border border-gray-100 rounded-lg p-3 space-y-2">
+                                        <div className="flex justify-between items-center">
+                                            <h4 className="text-sm font-semibold text-gray-800">{t.checkInPhotos}</h4>
+                                            {(reservation.status === 'accepted' || reservation.status === 'paid') && (
+                                                <label className="cursor-pointer text-blue-600 hover:text-blue-700 text-xs font-medium flex items-center gap-1">
+                                                    <FaCloudUploadAlt /> {t.uploadPhotos}
+                                                    <input
+                                                        type="file"
+                                                        multiple
+                                                        className="hidden"
+                                                        onChange={(e) => handlePhotoUpload(e, "Check-in Photo")}
+                                                        disabled={uploadingPhotos}
+                                                    />
+                                                </label>
+                                            )}
+                                        </div>
+                                        {checkInDocs.length > 0 ? (
+                                            <div className="grid grid-cols-4 gap-2">
+                                                {checkInDocs.map((doc, idx) => (
+                                                    <a key={idx} href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="aspect-square rounded border overflow-hidden">
+                                                        <img src={doc.fileUrl} className="w-full h-full object-cover" alt="Check-in" />
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-xs text-gray-500 italic">{t.noneUploaded}</p>
+                                        )}
+                                        <p className="text-[10px] text-gray-400">{t.maxPhotosNote}</p>
+                                    </div>
+
+                                    {/* Check-out Photos (View Only for Seller) */}
+                                    <div className="border border-gray-100 rounded-lg p-3 space-y-2">
+                                        <h4 className="text-sm font-semibold text-gray-800">{t.checkOutPhotos}</h4>
+                                        {checkOutDocs.length > 0 ? (
+                                            <div className="grid grid-cols-4 gap-2">
+                                                {checkOutDocs.map((doc, idx) => (
+                                                    <a key={idx} href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="aspect-square rounded border overflow-hidden">
+                                                        <img src={doc.fileUrl} className="w-full h-full object-cover" alt="Check-out" />
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-xs text-gray-500 italic">{t.noneUploaded}</p>
+                                        )}
+                                    </div>
+                                </div>
+
                                 {/* Booking & Payment Summary */}
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-800 mb-3">Booking & Payment Summary</h3>
@@ -108,49 +272,36 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge }) => {
                                         </div>
                                         <div className="flex justify-between">
                                             <span>Security Deposit</span>
-                                            <span>${reservation?.trailerId?.depositRate}</span>
+                                            <span>${reservation?.trailerId?.depositRate || 0}</span>
                                         </div>
                                         <div className="pt-2 flex justify-between font-bold text-lg text-gray-900">
                                             <span>Total Paid</span>
-                                            <span className="text-blue-600">${0}</span>
+                                            <span className="text-blue-600">${reservation?.total_paid || 0}</span>
                                         </div>
-                                        {/* <div className="flex justify-end text-xs">
-                                            <span className="text-green-600 bg-green-100 px-2 py-0.5 rounded-full font-medium">{bookingSummary.paymentStatus}</span>
-                                        </div> */}
                                     </div>
                                 </div>
 
-                                {/* Documents & Reports (Mock) */}
-                                {/* <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Documents & Reports (Mock)</h3>
-                                    <button className="w-full flex items-center justify-center p-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
-                                        <FaDownload className="w-4 h-4 mr-2" /> Rental Contract (PDF)
-                                    </button>
-                                </div> */}
-
-                                {/* Check-in Photos */}
-                                {/* <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Check-in Photos</h3>
-                                    <div className="grid grid-cols-3 gap-3">
-                                        {checkInPhotos.map((label) => (
-                                            <div key={label} className="bg-gray-200 h-16 rounded-lg flex items-center justify-center text-gray-700 font-semibold shadow-inner">
-                                                {label}
-                                            </div>
-                                        ))}
+                                {/* Accept/Reject Buttons for Pending Bookings */}
+                                {reservation?.status === "pending" && (
+                                    <div className="space-y-2">
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={handleAcceptBooking}
+                                                disabled={updatingStatus}
+                                                className="flex-1 p-3 bg-green-600 rounded-lg text-white font-medium hover:bg-green-700 transition flex items-center justify-center gap-2 disabled:opacity-50"
+                                            >
+                                                <FaCheck /> Approve
+                                            </button>
+                                            <button
+                                                onClick={handleRejectBooking}
+                                                disabled={updatingStatus}
+                                                className="flex-1 p-3 bg-red-600 rounded-lg text-white font-medium hover:bg-red-700 transition flex items-center justify-center gap-2 disabled:opacity-50"
+                                            >
+                                                <FaTimesCircle /> Reject
+                                            </button>
+                                        </div>
                                     </div>
-                                </div> */}
-
-                                {/* Check-out Photos */}
-                                {/* <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-3">Check-out Photos</h3>
-                                    <div className="grid grid-cols-3 gap-3">
-                                        {checkOutPhotos.map((label) => (
-                                            <div key={label} className="bg-gray-200 h-16 rounded-lg flex items-center justify-center text-gray-700 font-semibold shadow-inner">
-                                                {label}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div> */}
+                                )}
 
                                 {/* Message Renter */}
                                 <div className="pt-2">

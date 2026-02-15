@@ -9,7 +9,9 @@ import { reservationTranslations, statusTranslations } from './translation/reser
 const STATUS_STYLES = {
     pending: 'text-yellow-700 bg-yellow-100',
     accepted: 'text-blue-700 bg-blue-100',
+    paid: 'text-green-700 bg-green-100',
     completed: 'text-gray-700 bg-gray-200',
+    rejected: 'text-red-700 bg-red-100',
     cancelled: 'text-red-700 bg-red-100',
 };
 
@@ -189,6 +191,7 @@ const BuyerReservation = () => {
             <BookingDetailsDrawer
                 reservation={selectedReservation}
                 onClose={() => setSelectedReservation(null)}
+                onRefresh={fetchBookings}
                 StatusBadge={StatusBadge}
             />
         </div>

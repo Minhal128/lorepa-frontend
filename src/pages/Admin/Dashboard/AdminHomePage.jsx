@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AddLocationModal from '../Models/AddLocationModal';
 import axios from 'axios';
 import config from '../../../config';
+import { adminTranslations } from '../translation/adminTranslations';
 
 let cardStyle = "bg-white p-6 rounded-lg shadow-md flex items-center justify-between";
 
@@ -15,6 +16,9 @@ const AdminHomePage = () => {
     pendingTrailers: 0,
     recentTrailers: []
   });
+
+  const lang = localStorage.getItem("lang") || "en";
+  const t = adminTranslations[lang] || adminTranslations.en;
 
   const fetchDashboardData = async () => {
     try {
@@ -39,21 +43,21 @@ const AdminHomePage = () => {
     <div className='min-h-screen space-y-8 pb-10'>
       <header className='flex flex-col md:flex-row justify-between items-start md:items-center gap-6'>
         <div>
-          <h1 className='text-2xl sm:text-3xl font-black text-gray-900 tracking-tight'>Welcome Back, Admin</h1>
-          <p className='text-gray-500 mt-1 font-medium'>Here's what's happening with Lorepa today.</p>
+          <h1 className='text-2xl sm:text-3xl font-black text-gray-900 tracking-tight'>{t.welcomeBack}</h1>
+          <p className='text-gray-500 mt-1 font-medium'>{t.happeningToday}</p>
         </div>
         <div className='flex flex-col sm:flex-row gap-3 w-full md:w-auto'>
           <button
             onClick={() => { setType("Location"); setShowLocation(true); }}
             className='flex-1 sm:flex-none px-6 py-3 bg-white text-gray-700 font-bold rounded-2xl shadow-sm border border-gray-100 hover:bg-gray-50 active:scale-95 transition text-sm'
           >
-            Add Location
+            {t.addLocation}
           </button>
           <button
             onClick={() => { setType("Category"); setShowLocation(true); }}
             className='flex-1 sm:flex-none px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-200 hover:bg-blue-700 active:scale-95 transition text-sm'
           >
-            Manage Categories
+            {t.manageCategories}
           </button>
         </div>
       </header>
@@ -61,7 +65,7 @@ const AdminHomePage = () => {
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'>
         <div className="bg-white p-6 sm:p-8 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between group hover:border-blue-200 transition-colors">
           <div>
-            <p className='text-sm font-black text-gray-400 uppercase tracking-widest mb-2'>Total Revenue</p>
+            <p className='text-sm font-black text-gray-400 uppercase tracking-widest mb-2'>{t.totalRevenue}</p>
             <p className='text-3xl font-black text-gray-900 tracking-tight'>${dashboardData.totalRevenue.toLocaleString()}</p>
           </div>
           <div className='bg-blue-50 p-4 rounded-2xl text-blue-600 group-hover:scale-110 transition-transform'>
@@ -73,7 +77,7 @@ const AdminHomePage = () => {
 
         <div className="bg-white p-6 sm:p-8 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between group hover:border-orange-200 transition-colors">
           <div>
-            <p className='text-sm font-black text-gray-400 uppercase tracking-widest mb-2'>Pending Approvals</p>
+            <p className='text-sm font-black text-gray-400 uppercase tracking-widest mb-2'>{t.pendingApprovals}</p>
             <p className='text-3xl font-black text-gray-900 tracking-tight'>{dashboardData.pendingTrailers}</p>
           </div>
           <div className='bg-orange-50 p-4 rounded-2xl text-orange-600 group-hover:scale-110 transition-transform'>
@@ -85,7 +89,7 @@ const AdminHomePage = () => {
 
         <div className="bg-white p-6 sm:p-8 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between group hover:border-emerald-200 transition-colors">
           <div>
-            <p className='text-sm font-black text-gray-400 uppercase tracking-widest mb-2'>Total Bookings</p>
+            <p className='text-sm font-black text-gray-400 uppercase tracking-widest mb-2'>{t.totalBookings}</p>
             <p className='text-3xl font-black text-gray-900 tracking-tight'>{dashboardData.totalBookings}</p>
           </div>
           <div className='bg-emerald-50 p-4 rounded-2xl text-emerald-600 group-hover:scale-110 transition-transform'>
@@ -98,9 +102,9 @@ const AdminHomePage = () => {
 
       <div className='bg-white p-6 sm:p-8 rounded-[2.5rem] shadow-sm border border-gray-100'>
         <div className='flex justify-between items-center mb-8'>
-          <h3 className='text-xl font-black text-gray-900 tracking-tight'>Recent Listings</h3>
+          <h3 className='text-xl font-black text-gray-900 tracking-tight'>{t.recentListings}</h3>
           <button className='text-blue-600 font-bold text-sm hover:underline flex items-center gap-1'>
-            View All
+            {t.viewAll}
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
@@ -117,7 +121,7 @@ const AdminHomePage = () => {
                 : 'text-gray-500 hover:bg-gray-50'
                 }`}
             >
-              {status}
+              {t[status.toLowerCase()]}
             </button>
           ))}
         </div>
@@ -137,7 +141,7 @@ const AdminHomePage = () => {
                       listing.status === 'Decline' ? 'bg-red-100 text-red-800' :
                         'bg-blue-100 text-blue-800'
                     }`}>
-                    {listing.status}
+                    {t[listing.status.toLowerCase()]}
                   </span>
                 </div>
               </div>
@@ -147,17 +151,17 @@ const AdminHomePage = () => {
                 <div className="flex flex-wrap gap-x-6 gap-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                    <p className='text-sm font-medium text-gray-500'>Category: <span className="text-gray-900">{listing.category}</span></p>
+                    <p className='text-sm font-medium text-gray-500'>{t.category}: <span className="text-gray-900">{listing.category}</span></p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                    <p className='text-sm font-medium text-gray-500'>Location: <span className="text-gray-900">{listing.city || 'N/A'}</span></p>
+                    <p className='text-sm font-medium text-gray-500'>{t.location}: <span className="text-gray-900">{listing.city || 'N/A'}</span></p>
                   </div>
                 </div>
               </div>
 
               <div className="sm:text-right shrink-0 border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-6">
-                <p className="text-xs font-black text-gray-400 uppercase mb-1 tracking-widest">Daily Rate</p>
+                <p className="text-xs font-black text-gray-400 uppercase mb-1 tracking-widest">{t.dailyRate}</p>
                 <p className='text-xl font-black text-gray-900'>${listing.dailyRate || 0} <span className="text-xs font-bold text-gray-400">CAD</span></p>
               </div>
             </div>
@@ -165,10 +169,10 @@ const AdminHomePage = () => {
             <div className="text-center py-20 bg-gray-50 rounded-[2.5rem] border-2 border-dashed border-gray-200">
               <div className="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center mx-auto mb-4">
                 <svg className="w-10 h-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 01-2-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <p className="text-gray-500 font-bold">No listings found for this filter.</p>
+              <p className="text-gray-500 font-bold">{t.noListingsFound}</p>
             </div>
           )}
         </div>
