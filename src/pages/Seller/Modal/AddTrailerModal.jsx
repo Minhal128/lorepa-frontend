@@ -109,6 +109,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
     longitude: null,
     city: "",
     country: "",
+    state: "",
   });
   const [dailyRate, setDailyRate] = useState(0);
   const [depositRate, setDepositRate] = useState(0);
@@ -139,6 +140,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
         longitude: trailerData.longitude,
         city: trailerData.city || "",
         country: trailerData.country || "",
+        state: trailerData.state || "",
       });
       setDailyRate(trailerData.dailyRate || 0);
       setDepositRate(trailerData.depositRate || 0);
@@ -151,7 +153,14 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
       setLength(trailerData.length || "");
       setBallSize(trailerData.ballSize || "");
       setDimensions(trailerData.dimensions || "");
-      setLocationInput(trailerData.city ? `${trailerData.city}, ${trailerData.country}` : "");
+      // Show city/country if available, otherwise show coordinates as fallback
+      if (trailerData.city) {
+        setLocationInput(`${trailerData.city}${trailerData.state ? `, ${trailerData.state}` : ""}, ${trailerData.country}`);
+      } else if (trailerData.latitude && trailerData.longitude) {
+        setLocationInput(`${parseFloat(trailerData.latitude).toFixed(4)}, ${parseFloat(trailerData.longitude).toFixed(4)}`);
+      } else {
+        setLocationInput("");
+      }
     }
   }, [trailerData]);
 
@@ -218,6 +227,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
     formData.append("longitude", location.longitude);
     formData.append("city", location.city);
     formData.append("country", location.country);
+    formData.append("state", location.state);
     formData.append("dailyRate", dailyRate);
     formData.append("depositRate", depositRate);
     formData.append("closedDates", JSON.stringify(closedDates));
@@ -311,10 +321,14 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
       let city = "";
       let country = "";
+      let state = "";
 
       result.address_components.forEach((c) => {
         if (c.types.includes("locality")) city = c.long_name;
-        if (!city && (c.types.includes("administrative_area_level_1") || c.types.includes("political"))) city = c.long_name;
+        if (!city && c.types.includes("sublocality_level_1")) city = c.long_name;
+        if (!city && c.types.includes("administrative_area_level_2")) city = c.long_name;
+        if (!city && c.types.includes("administrative_area_level_1")) city = c.long_name;
+        if (c.types.includes("administrative_area_level_1")) state = c.short_name;
         if (c.types.includes("country")) country = c.long_name;
       });
 
@@ -323,6 +337,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
         longitude: result.geometry.location.lng,
         city,
         country,
+        state,
       });
       setLocationInput(item.description);
 
@@ -330,6 +345,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
       setShowSuggestions(false);
     } catch (err) {
       console.error(err);
+      toast.error(t("locationLoadError") || "Failed to load location details. Please try again.");
     }
   };
 
@@ -343,17 +359,18 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
         setLocation({
           latitude: lat,
           longitude: lng,
-          city: res.data.city,
-          country: res.data.country,
+          city: res.data.city || "",
+          country: res.data.country || "",
+          state: res.data.state || "",
         });
         setLocationInput(res.data.formatted_address || `${res.data.city}, ${res.data.country}`);
       } else {
-        setLocation({ latitude: lat, longitude: lng, city: "", country: "" });
+        setLocation({ latitude: lat, longitude: lng, city: "", country: "", state: "" });
         setLocationInput(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
       }
     } catch (err) {
       console.error("Reverse geocode error:", err);
-      setLocation({ latitude: lat, longitude: lng, city: "", country: "" });
+      setLocation({ latitude: lat, longitude: lng, city: "", country: "", state: "" });
       setLocationInput(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
     }
   };
@@ -479,6 +496,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                             longitude: null,
                             city: "",
                             country: "",
+                            state: "",
                           });
                         }
                         fetchSuggestions(value);
@@ -520,10 +538,12 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                     {t("locationHintNew")}
                   </p>
                 </div>
-                {location.city && location.country && (
+                {location.latitude && location.longitude && (
                   <p className="text-sm text-green-700 bg-green-50 rounded px-2 py-1 mt-2 flex items-center gap-1">
                     <FaMapMarkerAlt className="text-green-600" />
-                    {location.city}, {location.country}
+                    {location.city
+                      ? `${location.city}${location.state ? `, ${location.state}` : ""}, ${location.country}`
+                      : `${parseFloat(location.latitude).toFixed(4)}, ${parseFloat(location.longitude).toFixed(4)}`}
                   </p>
                 )}
 

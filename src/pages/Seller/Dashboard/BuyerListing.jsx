@@ -17,11 +17,12 @@ const BuyerListing = () => {
   const t = (key) => buyerListingTranslations[lang]?.[key] || key;
 
   const filteredListings = trailers.filter((l) => {
+    const status = l.status?.toLowerCase();
     if (activeTab === "All") return true;
     if (activeTab === "Inactive")
-      return l.status === "pending" || l.status === "decline";
+      return status === "pending" || status === "decline";
     if (activeTab === "Active")
-      return l.status !== "pending" && l.status !== "decline";
+      return status !== "pending" && status !== "decline";
     return false;
   });
 
@@ -64,7 +65,7 @@ const BuyerListing = () => {
           <p className="text-sm text-gray-500 font-medium">{t("manageFleet")}</p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => { setSelectedTrailer(null); setIsModalOpen(true); }}
           className="flex items-center justify-center w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition active:scale-[0.98]"
         >
           <FaPlus className="mr-2" /> {t("addTrailer")}
@@ -118,8 +119,8 @@ const BuyerListing = () => {
                     />
                     <div>
                       <div className="font-bold text-gray-900">{l.title}</div>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider ${l.status === 'pending' ? 'text-yellow-600' : l.status === 'decline' ? 'text-red-600' : 'text-green-600'}`}>
-                        {t(l.status === "pending" ? "pending" : l.status === "decline" ? "decline" : "activeStatus")}
+                      <span className={`text-[10px] font-bold uppercase tracking-wider ${l.status?.toLowerCase() === 'pending' ? 'text-yellow-600' : l.status?.toLowerCase() === 'decline' ? 'text-red-600' : 'text-green-600'}`}>
+                        {t(l.status?.toLowerCase() === "pending" ? "pending" : l.status?.toLowerCase() === "decline" ? "decline" : "activeStatus")}
                       </span>
                     </div>
                   </div>
@@ -176,8 +177,8 @@ const BuyerListing = () => {
                   }
                 }}
               />
-              <span className={`absolute top-4 left-4 px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider shadow-sm border bg-white ${l.status === 'pending' ? 'text-yellow-600 border-yellow-100' : l.status === 'decline' ? 'text-red-600 border-red-100' : 'text-green-600 border-green-100'}`}>
-                {t(l.status === "pending" ? "pending" : l.status === "decline" ? "decline" : "activeStatus")}
+              <span className={`absolute top-4 left-4 px-3 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider shadow-sm border bg-white ${l.status?.toLowerCase() === 'pending' ? 'text-yellow-600 border-yellow-100' : l.status?.toLowerCase() === 'decline' ? 'text-red-600 border-red-100' : 'text-green-600 border-green-100'}`}>
+                {t(l.status?.toLowerCase() === "pending" ? "pending" : l.status?.toLowerCase() === "decline" ? "decline" : "activeStatus")}
               </span>
               <div className="absolute bottom-4 right-4 flex gap-2">
                 <button
@@ -216,7 +217,7 @@ const BuyerListing = () => {
       <AddTrailerModal
         trailerData={selectedTrailer}
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => { setIsModalOpen(false); setSelectedTrailer(null); }}
       />
     </div>
   );
