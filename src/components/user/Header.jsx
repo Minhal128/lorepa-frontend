@@ -66,7 +66,7 @@ const Header = () => {
                         <BiSearchAlt className="text-gray-400 text-lg mr-2" />
                         <input
                             type="text"
-                            placeholder="Rechercher..."
+                            placeholder={t.searchPlaceholder}
                             className="bg-transparent border-none outline-none text-sm font-medium text-gray-900 w-full placeholder:text-gray-400"
                         />
                     </div>

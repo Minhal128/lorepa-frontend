@@ -9,7 +9,7 @@ const AdminListingPage = () => {
   const [filter, setFilter] = useState('All');
   const [trailers, setTrailers] = useState([]);
 
-  const lang = localStorage.getItem("lang") || "en";
+  const lang = localStorage.getItem("lang") || "fr";
   const t = adminTranslations[lang] || adminTranslations.en;
 
   const fetchTrailers = async () => {

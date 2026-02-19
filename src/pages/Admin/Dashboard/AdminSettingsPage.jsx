@@ -10,7 +10,7 @@ const AdminSettingsPage = () => {
     const [faqTab, setFaqTab] = useState('guest'); // Changed to 'guest' to match backend type
     const [activeSetting, setActiveSetting] = useState('Trusted by section');
 
-    const lang = localStorage.getItem("lang") || "en";
+    const lang = localStorage.getItem("lang") || "fr";
     const t = adminTranslations[lang] || adminTranslations.en;
 
     // State for API data

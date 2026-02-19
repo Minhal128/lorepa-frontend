@@ -219,8 +219,8 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
 
                 {step === 2 && (
                     <>
-                        <div className="flex items-center justify-between mb-6 border-b pb-3">
-                            <h2 className="text-2xl font-extrabold">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-xl font-bold">
                                 {translations.sendMessage || "Send a message"}
                             </h2>
                             <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
@@ -230,44 +230,23 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
                             </button>
                         </div>
 
-                        <p className="text-sm text-gray-500 mb-2">
-                            {translations.messageToOwnerDesc || "Send a message to the owner asking if the trailer is available for your selected dates."}
-                        </p>
-
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-sm">
-                            <p className="font-semibold text-blue-800">{trailer?.title}</p>
-                            <p className="text-blue-700">{startDate} - {endDate} &middot; ${price.toFixed(2)}</p>
-                        </div>
-
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-6">
-                                <label className="block text-sm font-bold text-gray-700 mb-2">
-                                    {translations.yourMessage || "Your message"}
-                                </label>
+                            <div className="mb-5">
                                 <textarea
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
-                                    placeholder={translations.messagePlaceholder || "Hi, I'd like to rent your trailer for these dates. Is it available?"}
-                                    rows={4}
-                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 resize-none"
+                                    placeholder={translations.messagePlaceholder || "Type here.."}
+                                    rows={5}
+                                    className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 resize-none"
                                 />
                             </div>
 
-                            <div className="flex justify-between space-x-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setStep(1)}
-                                    className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 transition-colors duration-200"
-                                >
-                                    {translations.back || "Back"}
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="flex-1 px-6 py-3 rounded-lg text-white font-semibold bg-blue-700 hover:bg-blue-800 transition-colors duration-200"
-                                >
-                                    {translations.sendBookingRequest || "Send Booking Request"}
-                                </button>
-                            </div>
+                            <button
+                                type="submit"
+                                className="w-full py-3 rounded-xl text-white font-semibold bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
+                            >
+                                {translations.sendMessage || "Send message"}
+                            </button>
                         </form>
                     </>
                 )}

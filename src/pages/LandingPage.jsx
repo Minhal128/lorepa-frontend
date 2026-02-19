@@ -468,6 +468,15 @@ const LandingPage = () => {
                         </div>
                         <img src={Host1} alt="Rent a Trailer" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
                     </motion.div>
+
+                    {/* Become a Host Card */}
+                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg w-full max-w-sm sm:max-w-md lg:max-w-lg overflow-hidden px-4 sm:px-5">
+                        <div className="py-7 sm:py-10">
+                            <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.becomeHostTitle}</h2>
+                            <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.becomeHostDescription}</p>
+                        </div>
+                        <img src={Host2} alt="Become a Host" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
+                    </motion.div>
                 </div>
             </div>
 

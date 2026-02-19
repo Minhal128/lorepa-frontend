@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
+import { adminTranslations } from '../translation/adminTranslations';
 
 const AddLocationModal = ({type, onClose, onSave }) => {
     const [locationName, setLocationName] = useState('');
     const [imageFile, setImageFile] = useState(null);
+    const lang = localStorage.getItem("lang") || "fr";
+    const t = adminTranslations[lang] || adminTranslations.fr;
+
+    const isCategory = type === "Category";
+    const modalTitle = isCategory ? t.addCategoryTitle : t.addLocationTitle;
+    const nameLabel = isCategory ? t.nameOfCategory : t.nameOfLocation;
+    const namePlaceholder = isCategory ? t.categoryPlaceholder : t.locationPlaceholder;
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
@@ -30,7 +38,7 @@ const AddLocationModal = ({type, onClose, onSave }) => {
             <div className='bg-white rounded-lg shadow-xl w-full max-w-md relative p-6 sm:p-8'>
                 {/* Modal Header */}
                 <div className='flex justify-between items-center mb-6'>
-                    <h2 className='text-xl text-gray-900'>Add {type}</h2>
+                    <h2 className='text-xl text-gray-900'>{modalTitle}</h2>
                     {/* Close button (X icon) */}
                     <button
                         onClick={onClose}
@@ -45,10 +53,10 @@ const AddLocationModal = ({type, onClose, onSave }) => {
 
                 {/* Modal Form */}
                 <form onSubmit={handleSubmit} className='space-y-6'>
-                    {/* Name of Location Input */}
+                    {/* Name Input */}
                     <div>
                         <label htmlFor='locationName' className='block text-sm  text-gray-700 mb-1'>
-                            Name of {type}
+                            {nameLabel}
                         </label>
                         <input
                             type='text'
@@ -56,7 +64,7 @@ const AddLocationModal = ({type, onClose, onSave }) => {
                             name='locationName'
                             value={locationName}
                             onChange={(e) => setLocationName(e.target.value)}
-                            placeholder='name of location'
+                            placeholder={namePlaceholder}
                             required
                             className='block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                         />
@@ -65,7 +73,7 @@ const AddLocationModal = ({type, onClose, onSave }) => {
                     {/* Image Upload Area */}
                     <div>
                         <label className='block text-sm  text-gray-700 mb-1'>
-                            Image
+                            {t.imageLabel}
                         </label>
                         <div className='mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-blue-400'>
                             <div className='space-y-1 text-center'>
@@ -78,7 +86,7 @@ const AddLocationModal = ({type, onClose, onSave }) => {
                                         htmlFor='file-upload'
                                         className='relative cursor-pointer bg-white rounded-md  text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500'
                                     >
-                                        <span>Upload image</span>
+                                        <span>{t.uploadImage}</span>
                                         <input
                                             id='file-upload'
                                             name='file-upload'
@@ -88,11 +96,11 @@ const AddLocationModal = ({type, onClose, onSave }) => {
                                             accept="image/*"
                                         />
                                     </label>
-                                    <p className='pl-1'>or drag and drop</p>
+                                    <p className='pl-1'>{t.orDragAndDrop}</p>
                                 </div>
-                                <p className='text-xs text-gray-500'>PNG, JPG, GIF up to 10MB</p>
+                                <p className='text-xs text-gray-500'>{t.imageConstraints}</p>
                                 {imageFile && (
-                                    <p className='text-sm text-gray-700 mt-2'>Selected: {imageFile.name}</p>
+                                    <p className='text-sm text-gray-700 mt-2'>{t.selectedFile} {imageFile.name}</p>
                                 )}
                             </div>
                         </div>
@@ -104,7 +112,7 @@ const AddLocationModal = ({type, onClose, onSave }) => {
                             type='submit'
                             className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm  text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
                         >
-                            Save
+                            {t.save}
                         </button>
                     </div>
                 </form>

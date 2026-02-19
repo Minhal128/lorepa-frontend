@@ -37,7 +37,7 @@ const Avatar = ({ initials, isOnline }) => {
 };
 
 // Conversation Item
-const ConversationItem = ({ conv, isActive, onClick }) => (
+const ConversationItem = ({ conv, isActive, onClick, translations }) => (
   <div
     onClick={() => onClick(conv._id)}
     className={`flex items-center p-4 cursor-pointer rounded-2xl transition-all duration-200 group ${isActive ? "bg-indigo-50" : "hover:bg-gray-50/80"
@@ -60,7 +60,7 @@ const ConversationItem = ({ conv, isActive, onClick }) => (
         className={`text-xs truncate leading-relaxed ${isActive ? "text-indigo-600 font-bold" : "text-gray-500 font-medium"
           }`}
       >
-        {conv.lastMessage || "No messages yet"}
+        {conv.lastMessage || translations.noMessagesYet}
       </p>
     </div>
   </div>
@@ -187,7 +187,7 @@ const BuyerMessaging = () => {
       {/* Sidebar - Conversations List */}
       <div className={`w-full md:w-80 lg:w-96 flex flex-col bg-white border-r border-gray-50 ${activeConversationId ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-6">
-          <h1 className="text-2xl font-black text-gray-900 mb-6">Messagerie</h1>
+          <h1 className="text-2xl font-black text-gray-900 mb-6">{translations.messagingTitle}</h1>
           <div className="relative">
             <IoSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -204,13 +204,14 @@ const BuyerMessaging = () => {
               conv={conv}
               isActive={conv._id === activeConversationId}
               onClick={fetchSingleChatMessage}
+              translations={translations}
             />
           )) : (
             <div className="px-6 py-10 text-center">
               <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <IoSearch className="text-gray-300 text-2xl" />
               </div>
-              <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Aucune conversation</p>
+              <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">{translations.noConversations}</p>
             </div>
           )}
         </div>
@@ -237,7 +238,7 @@ const BuyerMessaging = () => {
                   {activeConv?.participants[1].name}
                 </h3>
                 <p className="text-[10px] font-bold text-green-500 uppercase tracking-widest">
-                  {activeConv?.isOnline ? "Online" : "Away"}
+                  {activeConv?.isOnline ? translations.online : translations.away}
                 </p>
               </div>
             </div>
@@ -294,7 +295,7 @@ const BuyerMessaging = () => {
             <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mb-6">
               <IoSend className="text-3xl text-indigo-400 rotate-[-45deg]" />
             </div>
-            <h3 className="text-xl font-black text-gray-900 mb-2">Sélectionner une conversation</h3>
+            <h3 className="text-xl font-black text-gray-900 mb-2">{translations.selectConversationTitle}</h3>
             <p className="text-sm text-gray-500 font-medium max-w-[280px] leading-relaxed">
               {translations.selectConversation}
             </p>

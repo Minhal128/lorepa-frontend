@@ -17,7 +17,7 @@ const AdminHomePage = () => {
     recentTrailers: []
   });
 
-  const lang = localStorage.getItem("lang") || "en";
+  const lang = localStorage.getItem("lang") || "fr";
   const t = adminTranslations[lang] || adminTranslations.en;
 
   const fetchDashboardData = async () => {

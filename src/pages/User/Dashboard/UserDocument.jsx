@@ -106,7 +106,7 @@ const DocumentModal = ({ isOpen, onClose, document, translations }) => {
                     <div className="flex items-center space-x-2">
                         <h3 className="text-lg font-bold text-gray-900">{document?.documentType}</h3>
                         <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-green-50 text-green-600 uppercase tracking-wider">
-                            Contract
+                            {translations.contract}
                         </span>
                     </div>
                     <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
@@ -119,7 +119,7 @@ const DocumentModal = ({ isOpen, onClose, document, translations }) => {
                     </div>
                     <div className="text-center">
                         <p className="text-gray-900 font-bold">{document?.uploadType}</p>
-                        <p className="text-gray-500 text-sm mt-1">Secure Document Viewer</p>
+                        <p className="text-gray-500 text-sm mt-1">{translations.secureDocumentViewer}</p>
                     </div>
                     <button className="flex items-center justify-center w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-md shadow-blue-200">
                         <HiDownload className="mr-2 text-lg" />
@@ -190,7 +190,7 @@ const UserDocument = () => {
             setTrailers(res.data.data || []);
         } catch (err) {
             console.error(err);
-            toast.error("Failed to fetch trailers.");
+            toast.error(translations.failedToFetchTrailers);
         }
     };
 
@@ -201,7 +201,7 @@ const UserDocument = () => {
             setDocumentData(res.data.data);
         } catch (err) {
             console.log(err);
-            toast.error("Failed to fetch documents.");
+            toast.error(translations.failedToFetchDocuments);
         }
     };
 
@@ -214,7 +214,7 @@ const UserDocument = () => {
 
     const handleDownload = (fileUrl, fileName) => {
         if (!fileUrl) {
-            toast.error("File not found");
+            toast.error(translations.fileNotFound);
             return;
         }
         const link = document.createElement("a");
@@ -223,7 +223,7 @@ const UserDocument = () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        toast.success("Download started");
+        toast.success(translations.downloadStarted);
     };
 
     return (

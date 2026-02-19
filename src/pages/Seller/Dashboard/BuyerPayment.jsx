@@ -51,8 +51,8 @@ const EarningsDashboard = () => {
                 setTransactions(
                     res.data.data.map((t) => ({
                         ...t,
-                        date: new Date(t.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                        transactor: 'User',
+                        date: new Date(t.createdAt).toLocaleDateString(translations.dateLocale, { month: 'short', day: 'numeric', year: 'numeric' }),
+                        transactor: translations.userLabel,
                         fee: 0,
                         feeSource: 'Stripe',
                         receipt: t.status.toLowerCase() === 'paid',
@@ -94,8 +94,8 @@ const EarningsDashboard = () => {
 
         const docDefinition = {
             content: [
-                { text: 'LOREPA - Transaction Report', fontSize: 18, margin: [0, 0, 0, 10] },
-                { text: `Generated on: ${new Date().toLocaleString()}`, fontSize: 12, margin: [0, 0, 0, 20] },
+                { text: translations.pdfTitle, fontSize: 18, margin: [0, 0, 0, 10] },
+                { text: `${translations.pdfGeneratedOn} ${new Date().toLocaleString(translations.dateLocale)}`, fontSize: 12, margin: [0, 0, 0, 20] },
                 {
                     table: {
                         headerRows: 1,
@@ -131,7 +131,7 @@ const EarningsDashboard = () => {
             <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
                 <div>
                     <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight">{translations.pageTitle}</h1>
-                    <p className="text-gray-500 mt-2 font-medium">Suivez et gérez l'historique de vos revenus</p>
+                    <p className="text-gray-500 mt-2 font-medium">{translations.pageSubtitle}</p>
                 </div>
                 <button
                     onClick={() => generatePDF()}
@@ -245,7 +245,7 @@ const EarningsDashboard = () => {
                                                 className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-50 transition"
                                             >
                                                 <FaDownload className="w-3.5 h-3.5" />
-                                                Receipt
+                                                {translations.receipt}
                                             </button>
                                         ) : (
                                             <span className="text-[10px] text-gray-300 font-bold uppercase">{translations.receiptNA}</span>

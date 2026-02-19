@@ -45,7 +45,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             toast.success(res.data.msg);
             if (onSaveSuccess) onSaveSuccess();
         } catch (error) {
-            toast.error(error.response?.data?.msg || "Failed to update profile");
+            toast.error(error.response?.data?.msg || t.failedToUpdateProfile);
         } finally {
             setLoading(false);
         }
@@ -104,7 +104,7 @@ const SecuritySettings = ({ t }) => {
     const [loading, setLoading] = useState(false);
 
     const handleChangePassword = async () => {
-        if (newPassword !== confirmPassword) return toast.error("Passwords do not match");
+        if (newPassword !== confirmPassword) return toast.error(t.passwordsDoNotMatch);
         try {
             setLoading(true);
             const res = await axios.put(`${config.baseUrl}/account/change-password/${localStorage.getItem("userId")}`, {
@@ -113,7 +113,7 @@ const SecuritySettings = ({ t }) => {
             toast.success(res.data.msg);
             setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
         } catch (error) {
-            toast.error(error.response?.data?.msg || "Failed to change password");
+            toast.error(error.response?.data?.msg || t.failedToChangePassword);
         } finally {
             setLoading(false);
         }
@@ -134,7 +134,7 @@ const SecuritySettings = ({ t }) => {
     );
 };
 
-const DocumentUploadBlock = ({ side, file, onFileSelect }) => {
+const DocumentUploadBlock = ({ side, file, onFileSelect, t }) => {
     const inputRef = useRef(null);
 
     // Determine preview image
@@ -166,7 +166,7 @@ const DocumentUploadBlock = ({ side, file, onFileSelect }) => {
                         <FiUpload className='w-5 h-5 text-gray-500' />
                     </div>
                     <p className='font-semibold text-sm text-gray-800'>{side}</p>
-                    <p className='text-xs text-blue-600 font-medium'>Cliquer pour télécharger</p>
+                    <p className='text-xs text-blue-600 font-medium'>{t?.clickToUploadFile || t?.clickToUpload}</p>
                 </>
             )}
 
@@ -199,7 +199,7 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
             });
             toast.success(res.data.msg);
         } catch (error) {
-            toast.error(error.response?.data?.msg || "Failed to upload documents");
+            toast.error(error.response?.data?.msg || t.failedToUploadDocuments);
         } finally {
             setLoading(false);
         }
@@ -209,8 +209,8 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
         <div className='p-4 sm:p-6 lg:p-8'>
             <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-6'>{t.driversLicense}</h3>
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6'>
-                <DocumentUploadBlock side={t.front} file={userData.licenseFrontImage || userData.licenseFrontImageUrl} onFileSelect={e => setUserData({ ...userData, licenseFrontImage: e.target.files[0], licenseFrontImageUrl: URL.createObjectURL(e.target.files[0]) })} />
-                <DocumentUploadBlock side={t.back} file={userData.licenseBackImage || userData.licenseBackImageUrl} onFileSelect={e => setUserData({ ...userData, licenseBackImage: e.target.files[0], licenseBackImageUrl: URL.createObjectURL(e.target.files[0]) })} />
+                <DocumentUploadBlock t={t} side={t.front} file={userData.licenseFrontImage || userData.licenseFrontImageUrl} onFileSelect={e => setUserData({ ...userData, licenseFrontImage: e.target.files[0], licenseFrontImageUrl: URL.createObjectURL(e.target.files[0]) })} />
+                <DocumentUploadBlock t={t} side={t.back} file={userData.licenseBackImage || userData.licenseBackImageUrl} onFileSelect={e => setUserData({ ...userData, licenseBackImage: e.target.files[0], licenseBackImageUrl: URL.createObjectURL(e.target.files[0]) })} />
             </div>
             {
                 localStorage.getItem("role") === "owner" ?
@@ -218,15 +218,15 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
                         <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.trailerDocuments}</h3>
 
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 text-center'>
-                            <DocumentUploadBlock side={t?.trailerInsurancePolicyImage} file={userData.trailerInsurancePolicyImage || userData.trailerInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, trailerInsurancePolicyImage: e.target.files[0], trailerInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
-                            <DocumentUploadBlock side={t?.trailerRegistrationImage} file={userData.trailerRegistrationImage || userData.trailerRegistrationImageURL} onFileSelect={e => setUserData({ ...userData, trailerRegistrationImage: e.target.files[0], trailerRegistrationImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                            <DocumentUploadBlock t={t} side={t?.trailerInsurancePolicyImage} file={userData.trailerInsurancePolicyImage || userData.trailerInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, trailerInsurancePolicyImage: e.target.files[0], trailerInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                            <DocumentUploadBlock t={t} side={t?.trailerRegistrationImage} file={userData.trailerRegistrationImage || userData.trailerRegistrationImageURL} onFileSelect={e => setUserData({ ...userData, trailerRegistrationImage: e.target.files[0], trailerRegistrationImageURL: URL.createObjectURL(e.target.files[0]) })} />
                         </div>
                     </div>
                     :
                     <div>
                         <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.insurance}</h3>
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8'>
-                            <DocumentUploadBlock side={t.carInsurancePolicyImage} file={userData.carInsurancePolicyImage || userData.carInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, carInsurancePolicyImage: e.target.files[0], carInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                            <DocumentUploadBlock t={t} side={t.carInsurancePolicyImage} file={userData.carInsurancePolicyImage || userData.carInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, carInsurancePolicyImage: e.target.files[0], carInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
                         </div>
                     </div>
             }
@@ -255,7 +255,7 @@ const UserProfilePage = () => {
 
     // Listen for language changes
     useEffect(() => {
-        const handleStorageChange = () => setLang(localStorage.getItem('lang') || 'en');
+        const handleStorageChange = () => setLang(localStorage.getItem('lang') || 'fr');
         window.addEventListener('storage', handleStorageChange);
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
@@ -272,7 +272,7 @@ const UserProfilePage = () => {
             setUserData(res.data.data);
             setKycStatus(res.data.data.kycVerified ? "Verified" : "Not Verified");
         } catch (error) {
-            toast.error("Failed to fetch user profile");
+            toast.error(t.failedToFetchProfile);
         }
     };
 
@@ -304,7 +304,7 @@ const UserProfilePage = () => {
                     <div className='hidden lg:block p-4 rounded-xl bg-blue-50 border border-blue-100 space-y-2'>
                         <p className='text-sm font-bold text-gray-900'>{t.kycStatus}</p>
                         <span className={`text-xl font-extrabold ${getKycStatusStyle(kycStatus)}`}>{kycStatus === "Verified" ? t.verified : t.notVerified}</span>
-                        <p className='text-xs text-blue-700'>Vos documents d'identité sont à jour et approuvés.</p>
+                        <p className='text-xs text-blue-700'>{t.kycDocumentsUpToDate}</p>
                         <button onClick={() => setActiveTab("documents")} className='w-full mt-2 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-white transition'>{t.viewDocuments}</button>
                     </div>
                 </div>
@@ -319,7 +319,7 @@ const UserProfilePage = () => {
                     <p className='text-sm font-bold text-gray-900'>{t.kycStatus}</p>
                     <span className={`text-lg font-bold ${getKycStatusStyle(kycStatus)}`}>{kycStatus === "Verified" ? t.verified : t.notVerified}</span>
                 </div>
-                <p className='text-xs text-blue-700'>Vos documents d'identité sont à jour et approuvés.</p>
+                <p className='text-xs text-blue-700'>{t.kycDocumentsUpToDate}</p>
                 <button onClick={() => setActiveTab("documents")} className='w-full py-3 text-sm font-medium text-blue-600 border border-blue-600 rounded-xl hover:bg-white transition bg-white/50'>{t.viewDocuments}</button>
             </div>
         </div>

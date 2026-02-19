@@ -19,8 +19,8 @@ export const dashboardTranslations = {
     accepted: "Accepted",
     pending: "Pending",
     completed: "Completed",
+    noBookingsYet: "No bookings at the moment",
   },
-  fr: {
     welcome: "Bienvenue sur votre tableau de bord",
     subtitle: "Voici ce qui se passe avec vos remorques aujourd'hui.",
     totalEarnings: "Gains totaux",
@@ -40,8 +40,8 @@ export const dashboardTranslations = {
     accepted: "Acceptée",
     pending: "En attente",
     completed: "Terminée",
+    noBookingsYet: "Aucune réservation pour le moment",
   },
-  es: {
     welcome: "Bienvenido a tu panel",
     subtitle: "Esto es lo que está pasando con tus remolques hoy.",
     totalEarnings: "Ganancias totales",
@@ -61,8 +61,8 @@ export const dashboardTranslations = {
     accepted: "Aceptado",
     pending: "Pendiente",
     completed: "Completado",
+    noBookingsYet: "Sin reservas por el momento",
   },
-  cn: {
     welcome: "欢迎来到您的仪表板",
     subtitle: "这是您的拖车今天的动态。",
     totalEarnings: "总收入",
@@ -82,5 +82,6 @@ export const dashboardTranslations = {
     accepted: "已接受",
     pending: "待处理",
     completed: "已完成",
+    noBookingsYet: "暂无预订",
   },
 };

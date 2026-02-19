@@ -25,8 +25,8 @@ export const sidebarTranslations = {
     settings: "Platform Setting",
     logout: "Logout",
     language: "Language",
+    searchPlaceholder: "Search...",
   },
-  fr: {
     menu: "MENU",
     home: "Accueil",
     dashboard: "Tableau de bord",
@@ -45,8 +45,8 @@ export const sidebarTranslations = {
     settings: "Paramètres de la plateforme",
     logout: "Déconnexion",
     language: "Langue",
+    searchPlaceholder: "Rechercher...",
   },
-  es: {
     menu: "MENÚ",
     home: "Inicio",
     dashboard: "Panel",
@@ -65,8 +65,8 @@ export const sidebarTranslations = {
     settings: "Configuración de Plataforma",
     logout: "Cerrar sesión",
     language: "Idioma",
+    searchPlaceholder: "Buscar...",
   },
-  cn: {
     menu: "菜单",
     home: "首页",
     dashboard: "仪表板",
@@ -85,5 +85,6 @@ export const sidebarTranslations = {
     settings: "平台设置",
     logout: "退出登录",
     language: "语言",
+    searchPlaceholder: "搜索...",
   },
 };

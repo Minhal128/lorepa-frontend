@@ -11,7 +11,7 @@ const AdminUserPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [modalImage, setModalImage] = useState(null); // <-- NEW for modal image
 
-  const lang = localStorage.getItem("lang") || "en";
+  const lang = localStorage.getItem("lang") || "fr";
   const t = adminTranslations[lang] || adminTranslations.en;
 
   const itemsPerPage = 10;

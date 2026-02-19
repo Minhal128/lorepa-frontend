@@ -19,7 +19,7 @@ const documentTypes = [
     "Photos de Départ",
 ];
 
-const DocumentCard = ({ doc, onView, onDownload }) => {
+const DocumentCard = ({ doc, onView, onDownload, translations }) => {
     const getChipStyles = (type) => {
         switch (type) {
             case "Contract":
@@ -72,15 +72,15 @@ const DocumentCard = ({ doc, onView, onDownload }) => {
 
                 <div className="space-y-3 mb-6">
                     <div className="flex items-center text-xs text-gray-500 font-medium">
-                        <span className="w-16 shrink-0 font-bold text-gray-400 uppercase tracking-tighter">Trailer</span>
+                        <span className="w-16 shrink-0 font-bold text-gray-400 uppercase tracking-tighter">{translations.trailer}</span>
                         <span className="truncate text-gray-900 font-bold">{doc.trailerId?.title}</span>
                     </div>
                     <div className="flex items-center text-xs text-gray-500 font-medium">
-                        <span className="w-16 shrink-0 font-bold text-gray-400 uppercase tracking-tighter">Uploaded</span>
+                        <span className="w-16 shrink-0 font-bold text-gray-400 uppercase tracking-tighter">{translations.uploaded}</span>
                         <span className="text-gray-900 font-bold">{formatReadableDate(doc.createdAt)}</span>
                     </div>
                     <div className="flex items-center text-xs text-gray-500 font-medium">
-                        <span className="w-16 shrink-0 font-bold text-gray-400 uppercase tracking-tighter">Status</span>
+                        <span className="w-16 shrink-0 font-bold text-gray-400 uppercase tracking-tighter">{translations.status}</span>
                         <span className={`font-black uppercase tracking-widest text-[10px] ${getStatusStyles(doc.status)}`}>{doc.trailerId?.status}</span>
                     </div>
                 </div>
@@ -90,7 +90,7 @@ const DocumentCard = ({ doc, onView, onDownload }) => {
                         onClick={() => onView(doc)}
                         className="flex-1 px-4 py-2.5 bg-blue-50 text-blue-600 text-xs font-black rounded-xl hover:bg-blue-600 hover:text-white transition active:scale-[0.98]"
                     >
-                        View Document
+                        {translations.viewDocument}
                     </button>
                     <button
                         onClick={() => onDownload(doc.fileUrl, doc.uploadType)}
@@ -105,7 +105,7 @@ const DocumentCard = ({ doc, onView, onDownload }) => {
 };
 
 
-const DocumentModal = ({ isOpen, onClose, document }) => {
+const DocumentModal = ({ isOpen, onClose, document, translations }) => {
     if (!isOpen) return null;
 
     return (
@@ -120,7 +120,7 @@ const DocumentModal = ({ isOpen, onClose, document }) => {
                         <div>
                             <h3 className="text-lg font-black text-gray-900 leading-tight">{document?.documentType}</h3>
                             <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
-                                Secure Document
+                                {translations.secureDocument}
                             </span>
                         </div>
                     </div>
@@ -135,14 +135,14 @@ const DocumentModal = ({ isOpen, onClose, document }) => {
                         <MdOutlineDocumentScanner className="text-gray-300 text-5xl" />
                     </div>
                     <div>
-                        <p className="text-gray-900 font-bold mb-2">Secure Document Viewer</p>
+                        <p className="text-gray-900 font-bold mb-2">{translations.secureDocumentViewer}</p>
                         <p className="text-sm text-gray-500 font-medium max-w-[240px] leading-relaxed">
-                            For security purposes, please download the document to view its full content.
+                            {translations.secureDocPurpose}
                         </p>
                     </div>
                     <button className="w-full flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 transition active:scale-[0.98]">
                         <HiDownload className="mr-2 text-lg" />
-                        Download Document
+                        {translations.downloadDocument}
                     </button>
                 </div>
             </div>
@@ -154,9 +154,9 @@ const BuyerDocument = () => {
     const [isViewerModalOpen, setIsViewerModalOpen] = useState(false);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState('Tous');
     const lang = localStorage.getItem('lang') || 'fr';
     const translations = documentPageTranslations[lang] || documentPageTranslations.fr;
+    const [activeTab, setActiveTab] = useState(translations.tabs[0]);
     const [searchTerm, setSearchTerm] = useState('');
     const [trailers, setTrailers] = useState([]);
     const [documentsData, setDocumentData] = useState([])
@@ -177,13 +177,11 @@ const BuyerDocument = () => {
         setIsUploadModalOpen(false);
     };
     const filteredDocuments = documentsData?.filter(doc => {
-        const matchesTab = activeTab === 'Tous' || doc.documentType === activeTab;
+        const matchesTab = activeTab === translations.tabs[0] || doc.documentType === activeTab;
         const matchesSearch = doc.documentType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             doc.description?.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesTab && matchesSearch;
     });
-
-    const tabs = ['Tous', 'Contrats', 'Photos d\'arrivée', 'Photos de départ', 'Rapports'];
 
     const fetchTrailers = async () => {
         try {
@@ -192,7 +190,7 @@ const BuyerDocument = () => {
             setTrailers(allTrailers);
         } catch (err) {
             console.error(err);
-            toast.error("Failed to fetch trailers.");
+            toast.error(translations.failedToFetchTrailers);
         }
     };
 
@@ -205,7 +203,7 @@ const BuyerDocument = () => {
             setDocumentData(res.data.data);
         } catch (err) {
             console.log(err);
-            toast.error("Failed to fetch documents.");
+            toast.error(translations.failedToFetchDocuments);
         }
     };
 
@@ -218,7 +216,7 @@ const BuyerDocument = () => {
 
     const handleDownload = (fileUrl, fileName) => {
         if (!fileUrl) {
-            toast.error("File not found");
+            toast.error(translations.fileNotFound);
             return;
         }
 
@@ -229,7 +227,7 @@ const BuyerDocument = () => {
         link.click();
         document.body.removeChild(link);
 
-        toast.success("Download started");
+        toast.success(translations.downloadStarted);
     };
 
 
@@ -240,15 +238,15 @@ const BuyerDocument = () => {
                 {/* Header and Add Button */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
                     <div>
-                        <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight">Mes Documents</h1>
-                        <p className="text-gray-500 mt-2 font-medium">Stockage sécurisé pour vos documents de remorque</p>
+                        <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight">{translations.myDocuments}</h1>
+                        <p className="text-gray-500 mt-2 font-medium">{translations.secureDocStorage}</p>
                     </div>
                     <button
                         onClick={openUploadModal}
                         className="w-full sm:w-auto flex items-center justify-center px-6 py-3.5 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 transition active:scale-[0.98]"
                     >
                         <FaPlus className="mr-2" />
-                        Ajouter un Document
+                        {translations.addDocument}
                     </button>
                 </div>
 
@@ -256,7 +254,7 @@ const BuyerDocument = () => {
                 <div className="flex flex-col xl:flex-row justify-between items-stretch xl:items-center gap-6 mb-10">
                     {/* Tab Navigation */}
                     <div className="flex overflow-x-auto scrollbar-hide border-b border-gray-100 -mx-4 px-4 sm:mx-0 sm:px-0 gap-2">
-                        {tabs.map((tab) => (
+                        {translations.tabs.map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
@@ -276,7 +274,7 @@ const BuyerDocument = () => {
                             <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
                             <input
                                 type="text"
-                                placeholder="Rechercher par nom de remorque..."
+                                placeholder={translations.searchPlaceholder}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-11 pr-4 py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition"
@@ -292,11 +290,11 @@ const BuyerDocument = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredDocuments.length > 0 ? (
                         filteredDocuments.map((doc) => (
-                            <DocumentCard key={doc._id} doc={doc} onView={openViewerModal} onDownload={handleDownload} />
+                            <DocumentCard key={doc._id} doc={doc} onView={openViewerModal} onDownload={handleDownload} translations={translations} />
                         ))
                     ) : (
                         <p className="col-span-full text-center text-gray-500 py-10">
-                            Aucun document ne correspond à vos critères.
+                            {translations.noDocumentsFound}
                         </p>
                     )}
                 </div>
@@ -306,6 +304,7 @@ const BuyerDocument = () => {
                     isOpen={isViewerModalOpen}
                     onClose={closeViewerModal}
                     document={selectedDocument}
+                    translations={translations}
                 />
 
                 {/* NEW: Upload New Document Modal */}

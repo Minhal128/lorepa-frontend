@@ -179,7 +179,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
     const remainingSlots = MAX_IMAGES - (images.length + existingImages.length);
 
     if (remainingSlots <= 0) {
-      toast.error(`Maximum ${MAX_IMAGES} photos allowed.`);
+      toast.error(`${MAX_IMAGES} ${t("maxPhotosAllowed")}`);
       return;
     }
 
@@ -188,7 +188,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
     setImages((prev) => [...prev, ...filesToAdd]);
 
     if (files.length > remainingSlots) {
-      toast.error(`Only ${remainingSlots} more photo(s) can be added.`);
+      toast.error(`${remainingSlots} ${t("onlyNMorePhotos")}`);
     }
     e.target.value = "";
   };

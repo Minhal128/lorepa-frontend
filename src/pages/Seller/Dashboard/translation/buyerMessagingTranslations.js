@@ -1,30 +1,54 @@
 export const buyerMessagingTranslations = {
     en: {
+        messagingTitle: 'Messaging',
         newMessage: 'New Message',
         searchPlaceholder: 'Search Conversation',
         typeMessage: 'Type Your Message',
         noMessages: 'No messages yet',
-        selectConversation: 'Select a conversation to start chatting'
+        noMessagesYet: 'No messages yet',
+        selectConversation: 'Select a conversation to start chatting',
+        selectConversationTitle: 'Select a conversation',
+        noConversations: 'No conversations',
+        online: 'Online',
+        away: 'Away',
     },
     es: {
+        messagingTitle: 'Mensajería',
         newMessage: 'Nuevo Mensaje',
         searchPlaceholder: 'Buscar Conversación',
         typeMessage: 'Escribe tu Mensaje',
         noMessages: 'Aún no hay mensajes',
-        selectConversation: 'Selecciona una conversación para comenzar a chatear'
+        noMessagesYet: 'Aún no hay mensajes',
+        selectConversation: 'Selecciona una conversación para comenzar a chatear',
+        selectConversationTitle: 'Seleccionar una conversación',
+        noConversations: 'Sin conversaciones',
+        online: 'En línea',
+        away: 'Ausente',
     },
     fr: {
+        messagingTitle: 'Messagerie',
         newMessage: 'Nouveau Message',
         searchPlaceholder: 'Rechercher une Conversation',
         typeMessage: 'Tapez votre message',
         noMessages: 'Pas encore de messages',
-        selectConversation: 'Sélectionnez une conversation pour commencer à discuter'
+        noMessagesYet: 'Pas encore de messages',
+        selectConversation: 'Sélectionnez une conversation pour commencer à discuter',
+        selectConversationTitle: 'Sélectionner une conversation',
+        noConversations: 'Aucune conversation',
+        online: 'En ligne',
+        away: 'Absent',
     },
     cn: {
+        messagingTitle: '消息',
         newMessage: '新消息',
         searchPlaceholder: '搜索会话',
         typeMessage: '输入您的消息',
         noMessages: '尚无消息',
-        selectConversation: '选择一个对话以开始聊天'
+        noMessagesYet: '尚无消息',
+        selectConversation: '选择一个对话以开始聊天',
+        selectConversationTitle: '选择一个对话',
+        noConversations: '没有对话',
+        online: '在线',
+        away: '离开',
     }
 };

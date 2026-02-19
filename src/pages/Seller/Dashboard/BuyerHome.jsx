@@ -159,7 +159,7 @@ export default function App() {
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
                 <FaCalendarAlt className="text-4xl mb-2" />
-                <p className="text-sm font-medium">Aucune réservation pour le moment</p>
+                <p className="text-sm font-medium">{t("noBookingsYet")}</p>
               </div>
             )}
           </div>

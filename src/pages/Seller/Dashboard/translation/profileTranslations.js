@@ -32,7 +32,14 @@ export const profileTranslations = {
     back: "Back",
     carInsurancePolicyImage: "Car Insurance Policy",
     trailerInsurancePolicyImage: "Trailer Insurance Policy",
-    trailerRegistrationImage: "Trailer Registration"
+    trailerRegistrationImage: "Trailer Registration",
+    failedToUpdateProfile: "Failed to update profile",
+    passwordsDoNotMatch: "Passwords do not match",
+    failedToChangePassword: "Failed to change password",
+    failedToUploadDocuments: "Failed to upload documents",
+    failedToFetchProfile: "Failed to fetch user profile",
+    kycDocumentsUpToDate: "Your identity documents are up to date and approved.",
+    clickToUploadFile: "Click to upload",
   },
   es: {
     profileSettings: "Perfil y Configuración",
@@ -67,7 +74,14 @@ export const profileTranslations = {
     back: "Dorso",
     carInsurancePolicyImage: "Póliza de Seguro de Coche",
     trailerInsurancePolicyImage: "Póliza de Seguro del Remolque",
-    trailerRegistrationImage: "Registro del Remolque"
+    trailerRegistrationImage: "Registro del Remolque",
+    failedToUpdateProfile: "Error al actualizar el perfil",
+    passwordsDoNotMatch: "Las contraseñas no coinciden",
+    failedToChangePassword: "Error al cambiar la contraseña",
+    failedToUploadDocuments: "Error al subir los documentos",
+    failedToFetchProfile: "Error al obtener el perfil de usuario",
+    kycDocumentsUpToDate: "Sus documentos de identidad están actualizados y aprobados.",
+    clickToUploadFile: "Haga clic para subir",
   },
   fr: {
     profileSettings: "Profil & Paramètres",
@@ -102,7 +116,14 @@ export const profileTranslations = {
     back: "Verso",
     carInsurancePolicyImage: "Police d'Assurance Voiture",
     trailerInsurancePolicyImage: "Police d'Assurance Remorque",
-    trailerRegistrationImage: "Enregistrement Remorque"
+    trailerRegistrationImage: "Enregistrement Remorque",
+    failedToUpdateProfile: "Échec de la mise à jour du profil",
+    passwordsDoNotMatch: "Les mots de passe ne correspondent pas",
+    failedToChangePassword: "Échec du changement de mot de passe",
+    failedToUploadDocuments: "Échec du téléchargement des documents",
+    failedToFetchProfile: "Échec de récupération du profil utilisateur",
+    kycDocumentsUpToDate: "Vos documents d'identité sont à jour et approuvés.",
+    clickToUploadFile: "Cliquez pour télécharger",
   },
   cn: {
     profileSettings: "个人资料与设置",
@@ -137,6 +158,13 @@ export const profileTranslations = {
     back: "背面",
     carInsurancePolicyImage: "汽车保险单",
     trailerInsurancePolicyImage: "拖车保险单",
-    trailerRegistrationImage: "拖车登记"
+    trailerRegistrationImage: "拖车登记",
+    failedToUpdateProfile: "更新个人资料失败",
+    passwordsDoNotMatch: "密码不匹配",
+    failedToChangePassword: "更改密码失败",
+    failedToUploadDocuments: "上传文件失败",
+    failedToFetchProfile: "获取用户资料失败",
+    kycDocumentsUpToDate: "您的身份证件已更新并已获批。",
+    clickToUploadFile: "点击上传",
   }
 };

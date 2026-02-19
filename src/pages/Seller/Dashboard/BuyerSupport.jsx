@@ -20,7 +20,7 @@ const FaqSection = ({ faqs, t }) => {
         <div className="animate-in fade-in duration-500">
             <div className="mb-10">
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{t.helpCenter}</h3>
-                <p className="text-sm text-gray-500 font-medium leading-relaxed">Trouvez des réponses aux questions courantes sur l'utilisation de Lorepa en tant qu'hôte.</p>
+                <p className="text-sm text-gray-500 font-medium leading-relaxed">{t.faqSubtitle}</p>
             </div>
 
             <div className="relative mb-8">
@@ -87,11 +87,11 @@ const TicketsTable = ({ tickets, onViewTicket, t }) => {
                 <table className="w-full text-left">
                     <thead>
                         <tr className="bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                            <th className="px-8 py-4">Ticket ID</th>
-                            <th className="px-8 py-4">Subject</th>
-                            <th className="px-8 py-4">Status</th>
-                            <th className="px-8 py-4">Last Update</th>
-                            <th className="px-8 py-4 text-center">Actions</th>
+                            <th className="px-8 py-4">{t.ticketId}</th>
+                            <th className="px-8 py-4">{t.ticketSubject}</th>
+                            <th className="px-8 py-4">{t.ticketStatus}</th>
+                            <th className="px-8 py-4">{t.lastUpdate}</th>
+                            <th className="px-8 py-4 text-center">{t.actions}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -135,13 +135,13 @@ const TicketsTable = ({ tickets, onViewTicket, t }) => {
                             </span>
                         </div>
                         <div className="flex justify-between items-center">
-                            <p className="text-xs text-gray-500 font-medium">Updated: {ticket.updatedAt?.slice(0, 10)}</p>
+                            <p className="text-xs text-gray-500 font-medium">{t.updated} {ticket.updatedAt?.slice(0, 10)}</p>
                             <button
                                 onClick={() => onViewTicket(ticket)}
                                 className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition"
                             >
                                 <FaEye className="text-sm" />
-                                Details
+                                {t.details}
                             </button>
                         </div>
                     </div>
@@ -167,7 +167,7 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, t }) => {
                 <div className="p-6 sm:p-8 border-b border-gray-50 flex justify-between items-center">
                     <div>
                         <h3 className="text-xl font-black text-gray-900 leading-tight">{t.createSupportTicket}</h3>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Our team typically responds in 24 hours</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">{t.teamResponseTime}</p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-gray-50 rounded-xl transition text-gray-400">
                         <FaTimes className="text-xl" />
@@ -194,7 +194,7 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, t }) => {
                         <div className="space-y-1.5">
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-3">{t.subject}</label>
                             <input
-                                placeholder="Briefly summarize the issue"
+                                placeholder={t.subjectPlaceholder}
                                 className="w-full bg-gray-50 border border-transparent focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50 py-3.5 px-5 rounded-2xl text-sm font-medium transition outline-none"
                                 value={subject}
                                 onChange={e => setSubject(e.target.value)}
@@ -227,7 +227,7 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, t }) => {
                         <div className="space-y-1.5">
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-3">{t.describeIssue}</label>
                             <textarea
-                                placeholder="Be as descriptive as possible..."
+                                placeholder={t.descriptionPlaceholder}
                                 className="w-full bg-gray-50 border border-transparent focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50 py-4 px-5 rounded-2xl text-sm font-medium transition outline-none resize-none"
                                 rows="4"
                                 value={description}
@@ -299,7 +299,7 @@ const BuyerSupport = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
                 <div>
                     <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight">{t.pageTitle}</h1>
-                    <p className="text-gray-500 mt-2 font-medium">Nous sommes là pour vous aider à réussir en tant qu'hôte</p>
+                    <p className="text-gray-500 mt-2 font-medium">{t.hereToHelpSubtitle}</p>
                 </div>
                 {mainView !== 'chat' && (
                     <button

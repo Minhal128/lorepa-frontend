@@ -15,6 +15,11 @@ const defaultTranslations = {
         dragDrop: "Glissez-déposez les fichiers ici, ou parcourez",
         maxFileSize: "Taille maximale du fichier : 10 Mo",
         uploadButton: "Téléverser le Document",
+        fileSizeExceeds: "La taille du fichier dépasse la limite de 10 Mo.",
+        fillAllFields: "Veuillez remplir tous les champs requis",
+        uploading: "Téléversement du document...",
+        uploadSuccess: "Document téléversé avec succès !",
+        uploadFailed: "Échec du téléversement",
     },
     documentTypes: {
         rentalContract: "Contrat de Location",
@@ -54,13 +59,13 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
         if (uploadedFile && uploadedFile.size <= 10 * 1024 * 1024) {
             setFile(uploadedFile);
         } else if (uploadedFile) {
-            toast.error("File size exceeds 10MB limit.");
+            toast.error(t.uploadModal.fileSizeExceeds);
         }
     };
 
     const handleUploadDocument = async () => {
         if (!selectedDocumentType || !selectedTrailer || !file) {
-            toast.error("Please fill all required fields");
+            toast.error(t.uploadModal.fillAllFields);
             return;
         }
 
@@ -74,19 +79,19 @@ const UploadNewDocumentModal = ({ isOpen, onClose, trailers, documentTypes, tran
         form.append("description", description);
         form.append("file", file);
 
-        const loadingId = toast.loading("Uploading document...");
+        const loadingId = toast.loading(t.uploadModal.uploading);
 
         try {
             await axios.post(`${config.baseUrl}/document/create`, form, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
 
-            toast.success("Document uploaded successfully!", { id: loadingId });
+            toast.success(t.uploadModal.uploadSuccess, { id: loadingId });
             onClose();
 
         } catch (err) {
             console.log(err);
-            toast.error("Upload failed", { id: loadingId });
+            toast.error(t.uploadModal.uploadFailed, { id: loadingId });
         }
     };
 

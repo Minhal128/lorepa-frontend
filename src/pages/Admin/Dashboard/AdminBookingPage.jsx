@@ -9,7 +9,7 @@ const AdminBookingPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    const lang = localStorage.getItem("lang") || "en";
+    const lang = localStorage.getItem("lang") || "fr";
     const t = adminTranslations[lang] || adminTranslations.en;
 
     const fetchBookings = async () => {
