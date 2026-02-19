@@ -90,7 +90,7 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
     const handleDateNext = (e) => {
         e.preventDefault();
 
-        if (!startDate || !endDate || numberOfDays <= 0 || price <= 0) {
+        if (!startDate || !endDate || numberOfDays <= 0) {
             toast.error(translations.selectValidDates || "Please select valid dates");
             return;
         }
@@ -207,8 +207,8 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={price <= 0}
-                                    className={`px-6 py-3 rounded-lg text-white font-semibold transition-colors duration-200 ${price > 0 ? 'bg-blue-700 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'}`}
+                                    disabled={!startDate || !endDate || numberOfDays <= 0}
+                                    className={`px-6 py-3 rounded-lg text-white font-semibold transition-colors duration-200 ${startDate && endDate && numberOfDays > 0 ? 'bg-blue-700 hover:bg-blue-800' : 'bg-gray-400 cursor-not-allowed'}`}
                                 >
                                     {translations.next || "Next"}
                                 </button>
