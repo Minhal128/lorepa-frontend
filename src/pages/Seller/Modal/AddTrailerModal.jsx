@@ -345,14 +345,24 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
       let country = "";
       let state = "";
 
-      result.address_components.forEach((c) => {
-        if (c.types.includes("locality")) city = c.long_name;
-        if (!city && c.types.includes("sublocality_level_1")) city = c.long_name;
-        if (!city && c.types.includes("administrative_area_level_2")) city = c.long_name;
-        if (!city && c.types.includes("administrative_area_level_1")) city = c.long_name;
-        if (c.types.includes("administrative_area_level_1")) state = c.short_name;
-        if (c.types.includes("country")) country = c.long_name;
-      });
+      const components = result.address_components || [];
+      const get = (types) => components.find(c => types.some(t => c.types.includes(t)));
+
+      city =
+        get(["locality"])?.long_name ||
+        get(["sublocality_level_1", "sublocality"])?.long_name ||
+        get(["administrative_area_level_2"])?.long_name ||
+        get(["administrative_area_level_1"])?.long_name ||
+        "";
+
+      const admin1 = get(["administrative_area_level_1"]);
+      if (admin1) state = admin1.short_name || admin1.long_name;
+      country = get(["country"])?.long_name || "";
+
+      // If city still empty, use first part of the suggestion description
+      if (!city && item.description) {
+        city = item.description.split(",")[0].trim();
+      }
 
       setLocation({
         latitude: result.geometry.location.lat,
@@ -378,22 +388,69 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
         { params: { lat, lng } }
       );
       if (res.data.status === "OK") {
-        setLocation({
-          latitude: lat,
-          longitude: lng,
-          city: res.data.city || "",
-          country: res.data.country || "",
-          state: res.data.state || "",
-        });
-        setLocationInput(res.data.formatted_address || `${res.data.city}, ${res.data.country}`);
+        let city = res.data.city || "";
+        const country = res.data.country || "";
+        const state = res.data.state || "";
+        const formattedAddress = res.data.formatted_address || "";
+
+        // If city is still empty, try to extract from formatted_address
+        // e.g. "24 Street, Karachi, Sindh, Pakistan" → "Karachi"
+        if (!city && formattedAddress) {
+          const parts = formattedAddress.split(",").map((p) => p.trim());
+          // The city is usually the 2nd or 3rd part (skip street number/name)
+          if (parts.length >= 2) city = parts[parts.length >= 3 ? parts.length - 3 : 1];
+        }
+
+        setLocation({ latitude: lat, longitude: lng, city, country, state });
+        setLocationInput(
+          city
+            ? `${city}${state ? `, ${state}` : ""}${country ? `, ${country}` : ""}`
+            : formattedAddress || `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+        );
       } else {
-        setLocation({ latitude: lat, longitude: lng, city: "", country: "", state: "" });
-        setLocationInput(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+        // Backend returned ZERO_RESULTS — try Nominatim directly from frontend
+        try {
+          const nomRes = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+            params: { format: "json", lat, lon: lng, "accept-language": "en", zoom: 10 },
+            headers: { "User-Agent": "LorepaApp/1.0" },
+          });
+          const addr = nomRes.data?.address || {};
+          const city = addr.city || addr.town || addr.village || addr.suburb || addr.county || "";
+          const country = addr.country || "";
+          const state = addr.state || "";
+          setLocation({ latitude: lat, longitude: lng, city, country, state });
+          setLocationInput(
+            city
+              ? `${city}${state ? `, ${state}` : ""}${country ? `, ${country}` : ""}`
+              : nomRes.data?.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+          );
+        } catch {
+          setLocation({ latitude: lat, longitude: lng, city: "", country: "", state: "" });
+          setLocationInput(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+        }
       }
     } catch (err) {
       console.error("Reverse geocode error:", err);
-      setLocation({ latitude: lat, longitude: lng, city: "", country: "", state: "" });
-      setLocationInput(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+      // Final fallback: try Nominatim directly
+      try {
+        const nomRes = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+          params: { format: "json", lat, lon: lng, "accept-language": "en", zoom: 10 },
+          headers: { "User-Agent": "LorepaApp/1.0" },
+        });
+        const addr = nomRes.data?.address || {};
+        const city = addr.city || addr.town || addr.village || addr.suburb || addr.county || "";
+        const country = addr.country || "";
+        const state = addr.state || "";
+        setLocation({ latitude: lat, longitude: lng, city, country, state });
+        setLocationInput(
+          city
+            ? `${city}${state ? `, ${state}` : ""}${country ? `, ${country}` : ""}`
+            : nomRes.data?.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+        );
+      } catch {
+        setLocation({ latitude: lat, longitude: lng, city: "", country: "", state: "" });
+        setLocationInput(`${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+      }
     }
   };
 
