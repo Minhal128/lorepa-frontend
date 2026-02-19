@@ -27,6 +27,7 @@ export const sidebarTranslations = {
     language: "Language",
     searchPlaceholder: "Search...",
   },
+  fr: {
     menu: "MENU",
     home: "Accueil",
     dashboard: "Tableau de bord",
@@ -47,6 +48,7 @@ export const sidebarTranslations = {
     language: "Langue",
     searchPlaceholder: "Rechercher...",
   },
+  es: {
     menu: "MENÚ",
     home: "Inicio",
     dashboard: "Panel",
@@ -67,6 +69,7 @@ export const sidebarTranslations = {
     language: "Idioma",
     searchPlaceholder: "Buscar...",
   },
+  cn: {
     menu: "菜单",
     home: "首页",
     dashboard: "仪表板",

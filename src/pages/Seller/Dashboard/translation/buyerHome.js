@@ -21,6 +21,7 @@ export const dashboardTranslations = {
     completed: "Completed",
     noBookingsYet: "No bookings at the moment",
   },
+  fr: {
     welcome: "Bienvenue sur votre tableau de bord",
     subtitle: "Voici ce qui se passe avec vos remorques aujourd'hui.",
     totalEarnings: "Gains totaux",
@@ -42,6 +43,7 @@ export const dashboardTranslations = {
     completed: "Terminée",
     noBookingsYet: "Aucune réservation pour le moment",
   },
+  es: {
     welcome: "Bienvenido a tu panel",
     subtitle: "Esto es lo que está pasando con tus remolques hoy.",
     totalEarnings: "Ganancias totales",
@@ -63,6 +65,7 @@ export const dashboardTranslations = {
     completed: "Completado",
     noBookingsYet: "Sin reservas por el momento",
   },
+  zh: {
     welcome: "欢迎来到您的仪表板",
     subtitle: "这是您的拖车今天的动态。",
     totalEarnings: "总收入",
