@@ -161,6 +161,28 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
       } else {
         setLocationInput("");
       }
+    } else {
+      // Reset all fields for "Add Trailer" mode
+      setTitle("");
+      setCategory("Utility");
+      setDescription("");
+      setImages([]);
+      setExistingImages([]);
+      setClosedDates([]);
+      setLocation({ latitude: null, longitude: null, city: "", country: "", state: "" });
+      setLocationInput("");
+      setDailyRate(0);
+      setDepositRate(0);
+      setHitchType("");
+      setLightPlug("");
+      setWeightCapacity("");
+      setMake("");
+      setModel("");
+      setYear("");
+      setLength("");
+      setBallSize("");
+      setDimensions("");
+      setListingEnabled(true);
     }
   }, [trailerData]);
 
