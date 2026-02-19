@@ -230,6 +230,15 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
     setExistingImages(existingImages.filter((i) => i !== img));
 
   const handleSubmitTrailer = async () => {
+    // If user typed something but never selected/resolved it to coords, try to geocode now
+    if ((!location.latitude || !location.longitude) && locationInput.trim().length >= 2) {
+      const toastId = toast.loading(t("searchingLocations") || "Resolving location...");
+      const resolved = await geocodeText(locationInput);
+      toast.dismiss(toastId);
+      if (!resolved) {
+        return toast.error(t("locationRequired") || "Could not resolve location. Please select from the suggestions or click on the map.");
+      }
+    }
     if (!location.latitude || !location.longitude)
       return toast.error(t("locationRequired"));
     if (
@@ -479,6 +488,30 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
     await reverseGeocode(lat, lng);
   };
 
+  // Geocode a free-text city/address using Nominatim
+  const geocodeText = async (text) => {
+    if (!text || text.trim().length < 2) return false;
+    setIsLocating(true);
+    try {
+      const res = await axios.get("https://nominatim.openstreetmap.org/search", {
+        params: { q: text.trim(), format: "json", limit: 1, "accept-language": "en" },
+        headers: { "User-Agent": "LorepaApp/1.0" },
+      });
+      if (res.data && res.data.length > 0) {
+        const item = res.data[0];
+        const lat = parseFloat(item.lat);
+        const lng = parseFloat(item.lon);
+        await reverseGeocode(lat, lng);
+        setIsLocating(false);
+        return true;
+      }
+    } catch (err) {
+      console.error("Geocode text error:", err);
+    }
+    setIsLocating(false);
+    return false;
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -569,16 +602,32 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                       onChange={(e) => {
                         const value = e.target.value;
                         setLocationInput(value);
-                        if (!value) {
-                          setLocation({
-                            latitude: null,
-                            longitude: null,
-                            city: "",
-                            country: "",
-                            state: "",
-                          });
-                        }
+                        // Always clear old resolved location when user types
+                        // so stale coordinates don't persist
+                        setLocation({
+                          latitude: null,
+                          longitude: null,
+                          city: "",
+                          country: "",
+                          state: "",
+                        });
                         fetchSuggestions(value);
+                      }}
+                      onKeyDown={async (e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          setSuggestions([]);
+                          setShowSuggestions(false);
+                          if (locationInput.trim().length >= 2) {
+                            await geocodeText(locationInput);
+                          }
+                        }
+                      }}
+                      onBlur={async () => {
+                        // If user left the field with text but no resolved location, geocode it
+                        if (locationInput.trim().length >= 2 && !location.latitude) {
+                          await geocodeText(locationInput);
+                        }
                       }}
                     />
                     <button
