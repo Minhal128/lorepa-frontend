@@ -86,6 +86,18 @@ const MapCenterHandler = ({ center }) => {
   return null;
 };
 
+// Component to handle map reszing when toggled
+const MapResizer = ({ showMap }) => {
+  const map = useMap();
+  useEffect(() => {
+    const t = setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+    return () => clearTimeout(t);
+  }, [showMap, map]);
+  return null;
+};
+
 const TrailersListing = () => {
   const nav = useNavigate();
   const query = useQuery();
@@ -426,7 +438,8 @@ const TrailersListing = () => {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <MapCenterHandler center={mapCenter} />
-                
+                <MapResizer showMap={showMap} />
+
                 {/* Red marker for search location */}
                 {cityFromQuery && mapCenter && (
                   <Marker
@@ -441,14 +454,14 @@ const TrailersListing = () => {
                     </Popup>
                   </Marker>
                 )}
-                
+
                 {filteredTrailers.map((trailer) => {
                   const lat = parseFloat(trailer.latitude);
                   const lng = parseFloat(trailer.longitude);
-                  
+
                   // Skip if invalid coordinates
                   if (isNaN(lat) || isNaN(lng)) return null;
-                  
+
                   return (
                     <Marker
                       key={trailer._id}
@@ -463,7 +476,7 @@ const TrailersListing = () => {
                           <h3 className="font-semibold text-sm">{trailer.title}</h3>
                           <p className="text-blue-600 font-medium">${trailer.dailyRate}{translations.perDay}</p>
                           <p className="text-gray-600 text-xs">{trailer.city}, {trailer.state}</p>
-                          <button 
+                          <button
                             onClick={() => handleCardClick(trailer._id)}
                             className="mt-2 bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700 w-full"
                           >
