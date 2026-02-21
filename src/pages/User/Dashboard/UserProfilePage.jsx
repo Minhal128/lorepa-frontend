@@ -67,25 +67,25 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             <div className="flex flex-col items-center pb-6 border-b border-gray-200 mb-6">
                 <input type="file" ref={profileInputRef} className="hidden" onChange={handleProfileChange} accept="image/*" />
                 <img
-                    onClick={() => profileInputRef.current.click()}
+                    onClick={() => profileInputRef.current && profileInputRef.current.click()}
                     className="w-20 h-20 rounded-full object-cover mb-3 shadow-lg ring-4 ring-blue-100 cursor-pointer"
-                    src={userData.profilePictureUrl || userData.profilePicture || "https://placehold.co/100x100/A0C4FF/000000?text=JD"}
+                    src={userData?.profilePictureUrl || userData?.profilePicture || "https://placehold.co/100x100/A0C4FF/000000?text=JD"}
                     alt="Profile Avatar"
                 />
-                <h2 className="text-lg font-semibold text-gray-900">{userData.name}</h2>
-                <p className="text-sm text-gray-500">Membre depuis : {new Date(userData.createdAt).getFullYear()}</p>
+                <h2 className="text-lg font-semibold text-gray-900">{userData?.name || "User"}</h2>
+                <p className="text-sm text-gray-500">Membre depuis : {userData?.createdAt ? new Date(userData.createdAt).getFullYear() : new Date().getFullYear()}</p>
             </div>
 
             <h3 className='text-xl font-bold text-gray-900 mb-6'>{t.personalInfo}</h3>
 
             <form>
-                <InputField label={t.fullName} value={userData.name} onChange={e => setUserData({ ...userData, name: e.target.value })} />
-                <InputField label={t.email} value={userData.email} readOnly />
-                <InputField label={t.phone} value={userData.phone} onChange={e => setUserData({ ...userData, phone: e.target.value })} />
-                <InputField label={t.country} value={userData.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} />
-                <InputField label={t.state} value={userData.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} />
-                <InputField label={t.address} value={userData.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} />
-                <InputField label={t.street} value={userData.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
+                <InputField label={t.fullName} value={userData?.name || ""} onChange={e => setUserData({ ...userData, name: e.target.value })} />
+                <InputField label={t.email} value={userData?.email || ""} readOnly />
+                <InputField label={t.phone} value={userData?.phone || ""} onChange={e => setUserData({ ...userData, phone: e.target.value })} />
+                <InputField label={t.country} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} />
+                <InputField label={t.state} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} />
+                <InputField label={t.address} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} />
+                <InputField label={t.street} value={userData?.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
 
                 <div className="flex justify-end mt-6">
                     <button type="button" disabled={loading} onClick={handleSave} className="w-full sm:w-auto px-6 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150 shadow-md">
@@ -269,8 +269,8 @@ const UserProfilePage = () => {
     const fetchUserProfile = async () => {
         try {
             const res = await axios.get(`${config.baseUrl}/account/single/${localStorage.getItem("userId")}`);
-            setUserData(res.data.data);
-            setKycStatus(res.data.data.kycVerified ? "Verified" : "Not Verified");
+            setUserData(res.data.data || {});
+            setKycStatus(res.data.data?.kycVerified ? "Verified" : "Not Verified");
         } catch (error) {
             toast.error(t.failedToFetchProfile);
         }

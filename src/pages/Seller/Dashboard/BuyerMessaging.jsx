@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { IoSearch, IoSend, IoArrowBack } from "react-icons/io5";
+import { IoSearch, IoSend, IoArrowBack, IoCheckmark, IoCheckmarkDone } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa";
 import { IoIosArrowRoundBack } from 'react-icons/io';
 import axios from "axios";
@@ -37,37 +37,59 @@ const Avatar = ({ initials, isOnline }) => {
 };
 
 // Conversation Item
-const ConversationItem = ({ conv, isActive, onClick, translations }) => (
-  <div
-    onClick={() => onClick(conv._id)}
-    className={`flex items-center p-4 cursor-pointer rounded-2xl transition-all duration-200 group ${isActive ? "bg-indigo-50" : "hover:bg-gray-50/80"
-      }`}
-  >
-    <Avatar initials={conv.participants[1].name[0]} isOnline={conv.isOnline} />
-    <div className="ml-4 flex-1 overflow-hidden">
-      <div className="flex justify-between items-center mb-1">
-        <p
-          className={`text-sm font-bold truncate ${isActive ? "text-indigo-900" : "text-gray-900"
-            }`}
-        >
-          {conv.participants[1].name}
-        </p>
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter shrink-0 ml-2">
-          {new Date(conv.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </span>
+const ConversationItem = ({ conv, currentUserId, activeConversationId, typingUsers, isActive, onClick, translations }) => {
+  const otherParticipant = conv.participants.find(p => p._id !== currentUserId) || conv.participants[0];
+  const isTyping = typingUsers[conv._id] && typingUsers[conv._id] !== currentUserId;
+  // Calculate unread messages (assuming backend returns unreadCount or we calculate it safely if messages are populated)
+  const unreadCount = conv.unreadCount || 0; // Replace with actual unread logic if passed from backend
+
+  return (
+    <div
+      onClick={() => onClick(conv._id)}
+      className={`flex items-center p-4 cursor-pointer rounded-2xl transition-all duration-200 group relative ${isActive ? "bg-indigo-50" : "hover:bg-gray-50/80"
+        }`}
+    >
+      <div className="relative">
+        <Avatar initials={otherParticipant?.name?.[0] || "?"} isOnline={conv.isOnline} />
+        {unreadCount > 0 && (
+          <div className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm ring-1 ring-red-100">
+            {unreadCount > 9 ? "9+" : unreadCount}
+          </div>
+        )}
       </div>
-      <p
-        className={`text-xs truncate leading-relaxed ${isActive ? "text-indigo-600 font-bold" : "text-gray-500 font-medium"
-          }`}
-      >
-        {conv.lastMessage || translations.noMessagesYet}
-      </p>
+
+      <div className="ml-4 flex-1 overflow-hidden">
+        <div className="flex justify-between items-center mb-1">
+          <p
+            className={`text-sm font-bold truncate ${isActive ? "text-indigo-900" : "text-gray-900"
+              }`}
+          >
+            {otherParticipant?.name || "User"}
+          </p>
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter shrink-0 ml-2">
+            {new Date(conv.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        </div>
+
+        {isTyping ? (
+          <p className="text-xs text-indigo-500 font-bold truncate animate-pulse">
+            {translations.typing || "typing..."}
+          </p>
+        ) : (
+          <p
+            className={`text-xs truncate leading-relaxed ${isActive ? "text-indigo-600 font-bold" : "text-gray-500 font-medium"
+              } ${unreadCount > 0 && !isActive ? "text-gray-900 font-bold" : ""}`}
+          >
+            {conv.lastMessage || translations.noMessagesYet}
+          </p>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Chat Message
-const ChatMessage = ({ message, currentUserId }) => {
+const ChatMessage = ({ message, currentUserId, otherUserId }) => {
   const isBuyer = message.sender._id === currentUserId;
   const align = isBuyer ? "justify-end" : "justify-start";
   const bubble = isBuyer
@@ -78,7 +100,7 @@ const ChatMessage = ({ message, currentUserId }) => {
     <div className={`flex ${align} mb-6`}>
       {!isBuyer && (
         <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-bold text-xs text-gray-400 mr-2 self-end mb-4">
-          {message.sender.name[0]}
+          {message.sender?.name?.[0] || "?"}
         </div>
       )}
       <div className={`max-w-[85%] sm:max-w-[70%] lg:max-w-[60%] flex flex-col`}>
@@ -86,10 +108,19 @@ const ChatMessage = ({ message, currentUserId }) => {
           <p className="text-sm font-medium leading-relaxed break-words">{message.content}</p>
         </div>
         <span
-          className={`text-[10px] font-bold uppercase tracking-widest mt-2 px-1 ${isBuyer ? "text-gray-400 text-right" : "text-gray-400"
+          className={`text-[10px] font-bold uppercase tracking-widest mt-2 px-1 flex items-center gap-1 ${isBuyer ? "text-gray-400 justify-end" : "text-gray-400 justify-start"
             }`}
         >
           {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          {isBuyer && (
+            <span>
+              {message.readBy && message.readBy.includes(otherUserId) ? (
+                <IoCheckmarkDone className="text-blue-500 text-sm" />
+              ) : (
+                <IoCheckmark className="text-gray-400 text-sm" />
+              )}
+            </span>
+          )}
         </span>
       </div>
     </div>
@@ -102,7 +133,9 @@ const BuyerMessaging = () => {
   const [messages, setMessages] = useState([]);
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [newMessage, setNewMessage] = useState("");
+  const [typingUsers, setTypingUsers] = useState({});
   const messagesEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
   const currentUserId = localStorage.getItem("userId");
 
   // Translations based on localStorage
@@ -130,12 +163,58 @@ const BuyerMessaging = () => {
 
   useEffect(() => {
     fetchChats();
-    socket.on("receiveMessage", (msg) => {
-      if (msg.chatId === activeConversationId)
-        setMessages((prev) => [...prev, msg]);
+
+    // Define handler separately to avoid anonymous function recreation references
+    const handleReceiveMessage = (msg) => {
+      if (String(msg.chatId) === String(activeConversationId)) {
+        setMessages((prev) => {
+          // Prevent duplicates securely by checking ID
+          if (prev.some(m => m._id === msg._id)) return prev;
+          return [...prev, msg];
+        });
+        if (msg.sender._id !== currentUserId) {
+          socket.emit("markAsRead", { messageId: msg._id, chatId: msg.chatId, userId: currentUserId });
+        }
+      }
       fetchChats();
+    };
+
+    socket.on("receiveMessage", handleReceiveMessage);
+
+    socket.on("userTyping", ({ chatId, userId }) => {
+      setTypingUsers(prev => ({ ...prev, [String(chatId)]: userId }));
     });
-    return () => socket.off("receiveMessage");
+
+    socket.on("userStoppedTyping", ({ chatId, userId }) => {
+      setTypingUsers(prev => {
+        const newTyping = { ...prev };
+        delete newTyping[String(chatId)];
+        return newTyping;
+      });
+    });
+
+    socket.on("messageRead", (updatedMsg) => {
+      setMessages(prev => prev.map(m => m._id === updatedMsg._id ? updatedMsg : m));
+    });
+
+    socket.on("chatRead", ({ chatId, userId }) => {
+      if (String(chatId) === String(activeConversationId)) {
+        setMessages(prev => prev.map(m => {
+          if (m.sender._id !== userId && !m.readBy?.includes(userId)) {
+            return { ...m, readBy: [...(m.readBy || []), userId] };
+          }
+          return m;
+        }));
+      }
+    });
+
+    return () => {
+      socket.off("receiveMessage");
+      socket.off("userTyping");
+      socket.off("userStoppedTyping");
+      socket.off("messageRead");
+      socket.off("chatRead");
+    }
   }, [activeConversationId]);
 
   useEffect(() => scrollToBottom(), [messages]);
@@ -157,6 +236,7 @@ const BuyerMessaging = () => {
       const res = await axios.get(`${config.baseUrl}/chat/messages/${chatId}`);
       setMessages(res.data.data);
       socket.emit("joinChat", chatId);
+      socket.emit("markChatAsRead", { chatId, userId: currentUserId });
     } catch (err) {
       console.error(err);
     }
@@ -172,11 +252,36 @@ const BuyerMessaging = () => {
         content: newMessage.trim(),
       };
       const res = await axios.post(`${config.baseUrl}/chat/send`, payload);
-      socket.emit("sendMessage", res.data.data);
+      // Format the returned message specifically to look populated enough for local rendering instantly
+      const savedMessage = res.data.data;
+      if (typeof savedMessage.sender === 'string') {
+        savedMessage.sender = { _id: currentUserId, name: [] };
+      }
+
+      socket.emit("broadcastMessage", savedMessage);
+
+      setMessages((prev) => {
+        if (prev.some(m => m._id === savedMessage._id)) return prev;
+        return [...prev, savedMessage];
+      });
+
+      socket.emit("stopTyping", { chatId: activeConversationId, userId: currentUserId });
       setNewMessage("");
       fetchChats();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleTyping = (e) => {
+    setNewMessage(e.target.value);
+    if (activeConversationId) {
+      socket.emit("typing", { chatId: activeConversationId, userId: currentUserId });
+
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit("stopTyping", { chatId: activeConversationId, userId: currentUserId });
+      }, 1500);
     }
   };
 
@@ -202,6 +307,9 @@ const BuyerMessaging = () => {
             <ConversationItem
               key={conv._id}
               conv={conv}
+              currentUserId={currentUserId}
+              activeConversationId={activeConversationId}
+              typingUsers={typingUsers}
               isActive={conv._id === activeConversationId}
               onClick={fetchSingleChatMessage}
               translations={translations}
@@ -230,12 +338,12 @@ const BuyerMessaging = () => {
                 <IoIosArrowRoundBack className="text-2xl" />
               </button>
               <Avatar
-                initials={activeConv?.participants[1].name[0] || "?"}
+                initials={activeConv?.participants?.find(p => p._id !== currentUserId)?.name?.[0] || "?"}
                 isOnline={activeConv?.isOnline}
               />
               <div className="ml-4">
                 <h3 className="text-base font-bold text-gray-900 leading-none mb-1">
-                  {activeConv?.participants[1].name}
+                  {activeConv?.participants?.find(p => p._id !== currentUserId)?.name || "User"}
                 </h3>
                 <p className="text-[10px] font-bold text-green-500 uppercase tracking-widest">
                   {activeConv?.isOnline ? translations.online : translations.away}
@@ -252,12 +360,23 @@ const BuyerMessaging = () => {
                       key={msg._id}
                       message={msg}
                       currentUserId={currentUserId}
+                      otherUserId={activeConv?.participants?.find(p => p._id !== currentUserId)?._id}
                     />
                   ))
                 ) : (
                   <div className="flex flex-col items-center justify-center py-20 grayscale opacity-30">
                     <IoSend className="text-6xl text-gray-300 mb-6 rotate-[-45deg]" />
                     <p className="text-sm font-bold uppercase tracking-widest text-gray-500">{translations.noMessages}</p>
+                  </div>
+                )}
+
+                {typingUsers[activeConversationId] && typingUsers[activeConversationId] !== currentUserId && (
+                  <div className="flex justify-start mb-6 mt-2">
+                    <div className="bg-white border border-gray-100 text-gray-400 rounded-2xl rounded-tl-none px-4 py-3 min-h-[44px] flex items-center justify-center shadow-sm w-fit gap-1.5">
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                      <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+                    </div>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -273,7 +392,7 @@ const BuyerMessaging = () => {
                 <input
                   type="text"
                   value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
+                  onChange={handleTyping}
                   placeholder={translations.typeMessage}
                   className="flex-1 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 py-4 px-6 pr-16 rounded-2xl text-sm font-medium transition outline-none"
                 />
