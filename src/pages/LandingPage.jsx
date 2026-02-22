@@ -224,7 +224,7 @@ const LandingPage = () => {
     const wrapperRef = useRef(null);
     const [location, setLocation] = useState('');
     const [fromDate, setFromDate] = useState('');
-    const [fromTime, setFromTime] = useState("10:00");
+    const [fromTime, setFromTime] = useState("08:00");
     const [untilDate, setUntilDate] = useState('');
     const [untilTime, setUntilTime] = useState("22:00");
     const [suggestions, setSuggestions] = useState([]);

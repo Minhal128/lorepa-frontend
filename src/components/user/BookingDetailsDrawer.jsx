@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import RequestBookingChangeDrawer from "./RequestBookingChangeDrawer";
 import { userReservationTranslations } from "../../pages/User/Dashboard/translation/userReservationTranslations";
 
-const PHOTO_CATEGORIES = ["Front side", "Back side", "Side", "Side"];
+const PHOTO_CATEGORIES = ["Front side", "Back side", "Left side", "Right side", "Interior", "Hitch / Coupling", "Tires", "License Plate"];
 
 const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) => {
     if (!reservation) return null;
