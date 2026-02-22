@@ -474,6 +474,22 @@ const LandingPage = () => {
                         <div className="py-7 sm:py-10">
                             <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.becomeHostTitle}</h2>
                             <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.becomeHostDescription}</p>
+                            <button
+                                onClick={() => {
+                                    const userId = localStorage.getItem('userId');
+                                    const role = localStorage.getItem('role');
+                                    if (!userId) {
+                                        nav('/login');
+                                    } else if (role === 'owner') {
+                                        nav('/seller/dashboard/listing');
+                                    } else {
+                                        nav('/list');
+                                    }
+                                }}
+                                className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent"
+                            >
+                                {translationsData.becomeHostButton}
+                            </button>
                         </div>
                         <img src={Host2} alt="Become a Host" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
                     </motion.div>
