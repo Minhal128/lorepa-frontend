@@ -469,22 +469,15 @@ const LandingPage = () => {
                         <img src={Host1} alt="Rent a Trailer" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
                     </motion.div>
 
-                    {/* Become a Host Card */}
+                    {/* Become a Host Card - only visible to non-logged-in users */}
+                    {!isLogin && (
                     <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg w-full max-w-sm sm:max-w-md lg:max-w-lg overflow-hidden px-4 sm:px-5">
                         <div className="py-7 sm:py-10">
                             <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.becomeHostTitle}</h2>
                             <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.becomeHostDescription}</p>
                             <button
                                 onClick={() => {
-                                    const userId = localStorage.getItem('userId');
-                                    const role = localStorage.getItem('role');
-                                    if (!userId) {
-                                        nav('/login');
-                                    } else if (role === 'owner') {
-                                        nav('/seller/dashboard/listing');
-                                    } else {
-                                        nav('/list');
-                                    }
+                                    nav('/login');
                                 }}
                                 className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent"
                             >
@@ -493,6 +486,7 @@ const LandingPage = () => {
                         </div>
                         <img src={Host2} alt="Become a Host" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
                     </motion.div>
+                    )}
                 </div>
             </div>
 
