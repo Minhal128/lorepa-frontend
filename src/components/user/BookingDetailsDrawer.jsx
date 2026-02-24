@@ -79,8 +79,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
         (1000 * 60 * 60 * 24)
     );
 
-    // User views check-in photos (uploaded by owner) - view only
-    const canUploadCheckIn = false;
+    // User can upload check-in photos (pre-rental) when booking is accepted or paid
+    const canUploadCheckIn = reservation.status === "accepted" || reservation.status === "paid";
     // User uploads check-out photos when status is paid
     const canUploadCheckOut = reservation.status === "paid";
 
