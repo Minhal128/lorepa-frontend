@@ -29,6 +29,10 @@ export const userReservationTranslations = {
     uploadCheckOutPrompt: "Upload Check-out Photos",
     uploadCheckOutPromptDesc: "When returning the trailer, upload check-out photos to document the trailer's condition.",
     goToPhotos: "Go to Photos",
+    preRentalOwnerOnly: "Uploaded by the owner",
+    preRentalOwnerOnlyDesc: "Pre-rental photos document the trailer's condition before pickup. Only the trailer owner can upload these.",
+    postRentalAfterPayment: "Available after payment",
+    postRentalAfterPaymentDesc: "You can upload post-rental photos once your booking is active (paid).",
   },
   es: {
     myReservations: "Mis Reservas",
@@ -60,6 +64,10 @@ export const userReservationTranslations = {
     uploadCheckOutPrompt: "Subir fotos de devolución",
     uploadCheckOutPromptDesc: "Al devolver el remolque, sube fotos de devolución para documentar su estado.",
     goToPhotos: "Ir a Fotos",
+    preRentalOwnerOnly: "Subido por el propietario",
+    preRentalOwnerOnlyDesc: "Las fotos previas al alquiler documentan el estado del remolque antes de la recogida. Solo el propietario puede subirlas.",
+    postRentalAfterPayment: "Disponible tras el pago",
+    postRentalAfterPaymentDesc: "Puedes subir fotos posteriores al alquiler una vez que tu reserva esté activa (pagada).",
   },
   fr: {
     myReservations: "Mes Réservations",
@@ -91,6 +99,10 @@ export const userReservationTranslations = {
     uploadCheckOutPrompt: "Télécharger les photos de retour",
     uploadCheckOutPromptDesc: "Lors du retour de la remorque, téléchargez des photos de retour pour documenter son état.",
     goToPhotos: "Aller aux Photos",
+    preRentalOwnerOnly: "Téléchargé par le propriétaire",
+    preRentalOwnerOnlyDesc: "Les photos avant location documentent l'état de la remorque avant la prise en charge. Seul le propriétaire peut les télécharger.",
+    postRentalAfterPayment: "Disponible après paiement",
+    postRentalAfterPaymentDesc: "Vous pouvez télécharger des photos après location une fois votre réservation active (payée).",
   },
   cn: {
     myReservations: "我的预订",
@@ -122,5 +134,9 @@ export const userReservationTranslations = {
     uploadCheckOutPrompt: "上传退房照片",
     uploadCheckOutPromptDesc: "退还拖车时，请上传退房照片以记录拖车状况。",
     goToPhotos: "前往照片",
+    preRentalOwnerOnly: "由车主上传",
+    preRentalOwnerOnlyDesc: "租前照片记录取车前拖车的状况，只有车主可以上传这些照片。",
+    postRentalAfterPayment: "付款后可用",
+    postRentalAfterPaymentDesc: "您的预订生效（已付款）后，即可上传租后照片。",
   }
 };

@@ -89,6 +89,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
     const checkOutDocs = bookingDocs.filter(d => d.documentType === "Check-out Photo");
 
     const canUploadCheckIn = reservation.status === "accepted" || reservation.status === "paid";
+    // Owner/Seller can ONLY upload pre-rental (check-in) photos — post-rental is for the renter
     const canUploadCheckOut = false;
 
     const VerificationIcon = ({ isVerified, icon: Icon }) => (
@@ -425,6 +426,26 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 {t.postRentalPhotos || "Post-rental photos"}
                                             </button>
                                         </div>
+
+                                        {/* Role-based info banners */}
+                                        {photoSubTab === "pre-rental" && reservation.status !== "accepted" && reservation.status !== "paid" && (
+                                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-start gap-3">
+                                                <span className="text-lg flex-shrink-0">ℹ️</span>
+                                                <div>
+                                                    <p className="font-semibold text-gray-800 text-sm">{t.preRentalAfterAccept || "Available after accepting"}</p>
+                                                    <p className="text-gray-600 text-xs">{t.preRentalAfterAcceptDesc || "You can upload pre-rental photos once the booking is accepted."}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {photoSubTab === "post-rental" && (
+                                            <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 flex items-start gap-3">
+                                                <span className="text-lg flex-shrink-0">📸</span>
+                                                <div>
+                                                    <p className="font-semibold text-orange-800 text-sm">{t.postRentalRenterOnly || "Uploaded by the renter"}</p>
+                                                    <p className="text-orange-700 text-xs">{t.postRentalRenterOnlyDesc || "Post-rental photos are taken by the renter on return. You can review them here but cannot upload on their behalf."}</p>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         <div className="flex-1">
                                             {renderPhotoSlots(currentPhotoDocs, currentCanUpload, currentDocType)}

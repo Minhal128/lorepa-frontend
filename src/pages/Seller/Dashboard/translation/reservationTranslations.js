@@ -35,6 +35,10 @@ export const reservationTranslations = {
         acceptReturn: "Accept Return & Complete Booking",
         returnAccepted: "Return accepted! Booking completed.",
         returnAcceptFailed: "Failed to accept return",
+        preRentalAfterAccept: "Available after accepting",
+        preRentalAfterAcceptDesc: "You can upload pre-rental photos once the booking is accepted.",
+        postRentalRenterOnly: "Uploaded by the renter",
+        postRentalRenterOnlyDesc: "Post-rental photos are taken by the renter on return. You can review them here but cannot upload on their behalf.",
     },
     es: {
         pageTitle: "Mis Reservas",
@@ -72,6 +76,10 @@ export const reservationTranslations = {
         acceptReturn: "Aceptar devolución y completar reserva",
         returnAccepted: "¡Devolución aceptada! Reserva completada.",
         returnAcceptFailed: "Error al aceptar la devolución",
+        preRentalAfterAccept: "Disponible tras aceptar",
+        preRentalAfterAcceptDesc: "Puedes subir fotos previas al alquiler una vez que la reserva sea aceptada.",
+        postRentalRenterOnly: "Subido por el arrendatario",
+        postRentalRenterOnlyDesc: "Las fotos posteriores al alquiler son tomadas por el arrendatario al devolver el vehículo. Puedes revisarlas aquí pero no puedes subirlas en su nombre.",
     },
     fr: {
         pageTitle: "Mes Réservations",
@@ -109,6 +117,10 @@ export const reservationTranslations = {
         acceptReturn: "Accepter le retour et terminer la réservation",
         returnAccepted: "Retour accepté ! Réservation terminée.",
         returnAcceptFailed: "Échec de l'acceptation du retour",
+        preRentalAfterAccept: "Disponible après acceptation",
+        preRentalAfterAcceptDesc: "Vous pouvez télécharger des photos avant location une fois la réservation acceptée.",
+        postRentalRenterOnly: "Téléchargé par le locataire",
+        postRentalRenterOnlyDesc: "Les photos après location sont prises par le locataire au retour. Vous pouvez les consulter ici mais ne pouvez pas les télécharger en son nom.",
     },
     cn: {
         pageTitle: "我的预订",
@@ -146,6 +158,10 @@ export const reservationTranslations = {
         acceptReturn: "接受退还并完成预订",
         returnAccepted: "退还已接受！预订已完成。",
         returnAcceptFailed: "接受退还失败",
+        preRentalAfterAccept: "接受后可用",
+        preRentalAfterAcceptDesc: "预订被接受后，您可以上传租前照片。",
+        postRentalRenterOnly: "由租户上传",
+        postRentalRenterOnlyDesc: "租后照片由租户在归还时拍摄。您可以在此查看，但无法代他们上传。",
     }
 };
 export const statusTranslations = {

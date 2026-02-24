@@ -14,7 +14,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
     const [uploadingSlot, setUploadingSlot] = useState(null);
     const [bookingDocs, setBookingDocs] = useState([]);
     const [activeTab, setActiveTab] = useState("details");
-    const [photoSubTab, setPhotoSubTab] = useState("pre-rental");
+    const [photoSubTab, setPhotoSubTab] = useState("post-rental");
     const [showPhotoBanner, setShowPhotoBanner] = useState(true);
 
     const lang = localStorage.getItem("lang") || "en";
@@ -79,8 +79,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
         (1000 * 60 * 60 * 24)
     );
 
-    // User can upload check-in photos (pre-rental) when booking is accepted or paid
-    const canUploadCheckIn = reservation.status === "accepted" || reservation.status === "paid";
+    // User (renter) uploads ONLY post-rental (check-out) photos — pre-rental is for the owner
+    const canUploadCheckIn = false;
     // User uploads check-out photos when status is paid
     const canUploadCheckOut = reservation.status === "paid";
 
@@ -572,6 +572,26 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 {t.postRentalPhotos || "Post-rental photos"}
                                             </button>
                                         </div>
+
+                                        {/* Role-based info banners */}
+                                        {photoSubTab === "pre-rental" && (
+                                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-3">
+                                                <span className="text-lg flex-shrink-0">📷</span>
+                                                <div>
+                                                    <p className="font-semibold text-blue-800 text-sm">{t.preRentalOwnerOnly || "Uploaded by the owner"}</p>
+                                                    <p className="text-blue-700 text-xs">{t.preRentalOwnerOnlyDesc || "Pre-rental photos document the trailer's condition before pickup. Only the trailer owner can upload these."}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {photoSubTab === "post-rental" && reservation.status !== "paid" && (
+                                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-start gap-3">
+                                                <span className="text-lg flex-shrink-0">ℹ️</span>
+                                                <div>
+                                                    <p className="font-semibold text-gray-800 text-sm">{t.postRentalAfterPayment || "Available after payment"}</p>
+                                                    <p className="text-gray-600 text-xs">{t.postRentalAfterPaymentDesc || "You can upload post-rental photos once your booking is active (paid)."}</p>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         <div className="flex-1">
                                             {renderPhotoSlots(currentPhotoDocs, currentCanUpload, currentDocType)}
