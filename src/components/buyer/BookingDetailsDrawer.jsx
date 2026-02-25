@@ -88,7 +88,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
     const checkInDocs = bookingDocs.filter(d => d.documentType === "Check-in Photo");
     const checkOutDocs = bookingDocs.filter(d => d.documentType === "Check-out Photo");
 
-    const canUploadCheckIn = reservation.status === "accepted" || reservation.status === "paid";
+    // Owner can ONLY upload pre-rental photos after payment is confirmed
+    const canUploadCheckIn = reservation.status === "paid";
     // Owner/Seller can ONLY upload pre-rental (check-in) photos — post-rental is for the renter
     const canUploadCheckOut = false;
 
@@ -428,12 +429,21 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                         </div>
 
                                         {/* Role-based info banners */}
-                                        {photoSubTab === "pre-rental" && reservation.status !== "accepted" && reservation.status !== "paid" && (
+                                        {photoSubTab === "pre-rental" && reservation.status === "pending" && (
                                             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-start gap-3">
                                                 <span className="text-lg flex-shrink-0">ℹ️</span>
                                                 <div>
-                                                    <p className="font-semibold text-gray-800 text-sm">{t.preRentalAfterAccept || "Available after accepting"}</p>
-                                                    <p className="text-gray-600 text-xs">{t.preRentalAfterAcceptDesc || "You can upload pre-rental photos once the booking is accepted."}</p>
+                                                    <p className="font-semibold text-gray-800 text-sm">{t.preRentalAfterPayment || "Available after renter pays"}</p>
+                                                    <p className="text-gray-600 text-xs">{t.preRentalAfterPaymentDesc || "You can upload pre-rental photos once the renter completes payment."}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {photoSubTab === "pre-rental" && reservation.status === "accepted" && (
+                                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-3">
+                                                <span className="text-lg flex-shrink-0">⏳</span>
+                                                <div>
+                                                    <p className="font-semibold text-yellow-800 text-sm">{t.preRentalWaitingPayment || "Waiting for renter's payment"}</p>
+                                                    <p className="text-yellow-700 text-xs">{t.preRentalWaitingPaymentDesc || "The renter has signed the contract. Once they complete payment, you will be able to upload pre-rental photos."}</p>
                                                 </div>
                                             </div>
                                         )}
