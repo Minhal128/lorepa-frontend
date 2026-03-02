@@ -56,6 +56,10 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
         return calculatePrice(startDate, endDate, trailer?.dailyRate);
     }, [startDate, endDate, trailer?.dailyRate]);
 
+    const SERVICE_FEE_RATE = 0.05;
+    const serviceFee = parseFloat((price * SERVICE_FEE_RATE).toFixed(2));
+    const totalWithFee = parseFloat((price + serviceFee).toFixed(2));
+
     const dailyRate = trailer?.dailyRate || 0;
 
     const start = startDate ? new Date(startDate) : null;
@@ -191,9 +195,17 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
                                     <span className="font-semibold">{translations.rentalDays || "Rental Days"}:</span>
                                     <span>{numberOfDays}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-2xl font-bold text-gray-900">
-                                    <span>{translations.totalCost || "Total Cost"}:</span>
+                                <div className="flex justify-between items-center text-gray-700">
+                                    <span className="font-semibold">{translations.rentalPrice || "Rental Price"}:</span>
                                     <span>${price.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-gray-700 border-b border-dashed pb-2 mb-2">
+                                    <span className="font-semibold">{translations.serviceFee || "Lorepa Service Fee (5%)"}:</span>
+                                    <span>+${serviceFee.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-2xl font-bold text-gray-900">
+                                    <span>{translations.totalPayable || "Total Payable"}:</span>
+                                    <span>${totalWithFee.toFixed(2)}</span>
                                 </div>
                             </div>
 

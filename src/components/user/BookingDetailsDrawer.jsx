@@ -383,15 +383,19 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span>Rental fee ({rentalDays} days)</span>
-                                                    <span>${reservation?.price}</span>
+                                                    <span>${parseFloat(reservation?.price || 0).toFixed(2)}</span>
                                                 </div>
-                                                <div className="flex justify-between">
-                                                    <span>Amount</span>
-                                                    <span>${reservation?.price}</span>
+                                                <div className="flex justify-between border-b border-dashed pb-2">
+                                                    <span>Lorepa Service Fee (5%)</span>
+                                                    <span>+${parseFloat(reservation?.service_fee || (reservation?.price * 0.05) || 0).toFixed(2)}</span>
+                                                </div>
+                                                <div className="flex justify-between font-semibold text-gray-800">
+                                                    <span>Total Payable</span>
+                                                    <span>${parseFloat(reservation?.total_with_fee || (reservation?.price * 1.05) || 0).toFixed(2)}</span>
                                                 </div>
                                                 <div className="pt-2 flex justify-between font-bold text-lg text-gray-900">
                                                     <span>Total Paid</span>
-                                                    <span className="text-blue-600">${reservation?.total_paid}</span>
+                                                    <span className="text-blue-600">${parseFloat(reservation?.total_paid || 0).toFixed(2)}</span>
                                                 </div>
                                             </div>
                                         </div>
