@@ -708,7 +708,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                     )}
                   </MapContainer>
                 </div>
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       {t("pricePerDay")}
@@ -717,6 +717,19 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                       type="number"
                       value={dailyRate}
                       onChange={(e) => setDailyRate(e.target.value)}
+                      className="w-full border border-gray-300 rounded-md py-2 px-3 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Security Deposit ($)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={depositRate}
+                      onChange={(e) => setDepositRate(e.target.value)}
+                      placeholder="e.g. 200"
                       className="w-full border border-gray-300 rounded-md py-2 px-3 outline-none"
                     />
                   </div>
