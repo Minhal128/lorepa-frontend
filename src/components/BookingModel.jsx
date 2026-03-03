@@ -208,12 +208,10 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
                                     <span>{translations.totalPayable || "Total Payable"}:</span>
                                     <span>${totalWithFee.toFixed(2)}</span>
                                 </div>
-                                {depositRate > 0 && (
-                                    <div className="flex justify-between items-center text-gray-600 text-sm">
-                                        <span className="font-semibold">{translations.securityDeposit || "Security Deposit (held)"}:</span>
-                                        <span>+${depositRate.toFixed(2)}</span>
-                                    </div>
-                                )}
+                                <div className="flex justify-between items-center text-gray-600 text-sm border-t border-dashed pt-2">
+                                    <span className="font-semibold">{translations.securityDeposit || "Security Deposit (held)"}:</span>
+                                    <span>+${depositRate.toFixed(2)}</span>
+                                </div>
                             </div>
 
                             <div className="flex justify-end space-x-4">
