@@ -59,6 +59,7 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
     const SERVICE_FEE_RATE = 0.05;
     const serviceFee = parseFloat((price * SERVICE_FEE_RATE).toFixed(2));
     const totalWithFee = parseFloat((price + serviceFee).toFixed(2));
+    const depositRate = parseFloat(trailer?.depositRate || 0);
 
     const dailyRate = trailer?.dailyRate || 0;
 
@@ -203,10 +204,16 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
                                     <span className="font-semibold">{translations.serviceFee || "Lorepa Service Fee (5%)"}:</span>
                                     <span>+${serviceFee.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-2xl font-bold text-gray-900">
+                                <div className="flex justify-between items-center text-2xl font-bold text-gray-900 border-b border-dashed pb-2 mb-2">
                                     <span>{translations.totalPayable || "Total Payable"}:</span>
                                     <span>${totalWithFee.toFixed(2)}</span>
                                 </div>
+                                {depositRate > 0 && (
+                                    <div className="flex justify-between items-center text-gray-600 text-sm">
+                                        <span className="font-semibold">{translations.securityDeposit || "Security Deposit (held)"}:</span>
+                                        <span>+${depositRate.toFixed(2)}</span>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex justify-end space-x-4">

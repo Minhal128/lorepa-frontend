@@ -393,6 +393,12 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                     <span>Total Payable</span>
                                                     <span>${parseFloat(reservation?.total_with_fee || (reservation?.price * 1.05) || 0).toFixed(2)}</span>
                                                 </div>
+                                                {parseFloat(reservation?.trailerId?.depositRate || 0) > 0 && (
+                                                    <div className="flex justify-between text-gray-600 border-t border-dashed pt-2">
+                                                        <span>Security Deposit (held)</span>
+                                                        <span>+${parseFloat(reservation?.trailerId?.depositRate || 0).toFixed(2)}</span>
+                                                    </div>
+                                                )}
                                                 <div className="pt-2 flex justify-between font-bold text-lg text-gray-900">
                                                     <span>Total Paid</span>
                                                     <span className="text-blue-600">${parseFloat(reservation?.total_paid || 0).toFixed(2)}</span>
