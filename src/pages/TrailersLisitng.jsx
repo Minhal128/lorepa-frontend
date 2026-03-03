@@ -135,6 +135,10 @@ const TrailersListing = () => {
 
   const handleBookNowClick = (e, trailer) => {
     e.stopPropagation();
+    if (!isLogin) {
+      nav('/login');
+      return;
+    }
     setSelectedTrailerForBooking(trailer);
     setIsBookingModalOpen(true);
   };
@@ -401,15 +405,12 @@ const TrailersListing = () => {
                     <p className="text-gray-500 text-xs sm:text-sm mb-2">{trailer.city}, {trailer.state}</p>
                     <div className='flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2'>
                       <p className="text-black font-medium text-base sm:text-lg">${trailer.dailyRate}{translations.perDay}</p>
-                      {
-                        (isLogin && role !== "owner") &&
-                        <button
-                          className='bg-blue-600 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full xs:w-auto text-center'
-                          onClick={(e) => handleBookNowClick(e, trailer)}
-                        >
-                          {translations.bookNow}
-                        </button>
-                      }
+                      <button
+                        className='bg-blue-600 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full xs:w-auto text-center'
+                        onClick={(e) => handleBookNowClick(e, trailer)}
+                      >
+                        {translations.bookNow}
+                      </button>
                     </div>
                   </div>
                 </motion.div>
