@@ -76,10 +76,41 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
         setUpdatingStatus(true);
         try {
             await axios.put(`${config.baseUrl}/booking/status/${reservation?._id}`, { status: "completed" });
+
+            // Automatically release the deposit hold when the booking is marked completed
+            if (reservation?.depositStatus === "held" && reservation?.depositIntentId) {
+                try {
+                    await axios.post(`${config.baseUrl}/stripe/release-deposit/${reservation._id}`, {
+                        userId: localStorage.getItem("userId"),
+                    });
+                    toast.success(t.depositReleaseSuccess || "Deposit released to renter");
+                } catch (depositErr) {
+                    console.warn("Deposit release failed:", depositErr?.response?.data?.msg || depositErr.message);
+                }
+            }
+
             toast.success(t.returnAccepted || "Return accepted! Booking completed.");
             if (onRefresh) onRefresh();
         } catch (err) {
             toast.error(t.returnAcceptFailed || "Failed to accept return");
+        } finally {
+            setUpdatingStatus(false);
+        }
+    };
+
+    const handleChargeDeposit = async () => {
+        const confirmed = window.confirm(t.chargeDepositConfirm || "Are you sure you want to charge the full security deposit? This will charge the renter's card and cannot be undone.");
+        if (!confirmed) return;
+
+        setUpdatingStatus(true);
+        try {
+            await axios.post(`${config.baseUrl}/stripe/capture-deposit/${reservation?._id}`, {
+                userId: localStorage.getItem("userId"),
+            });
+            toast.success(t.chargeDepositSuccess || "Deposit charged successfully");
+            if (onRefresh) onRefresh();
+        } catch (err) {
+            toast.error(t.chargeDepositFailed || "Failed to charge deposit");
         } finally {
             setUpdatingStatus(false);
         }
@@ -329,7 +360,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                         </div>
 
                                         <div>
-                                            <h3 className="text-lg font-semibold text-gray-800 mb-3">Booking & Payment Summary</h3>
+                                            <h3 className="text-lg font-semibold text-gray-800 mb-3">Booking &amp; Payment Summary</h3>
                                             <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm text-gray-700">
                                                 <div className="flex justify-between border-b pb-1">
                                                     <span className="font-medium">Booking Dates</span>
@@ -348,6 +379,35 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                     <span className="text-blue-600">${reservation?.total_paid || 0}</span>
                                                 </div>
                                             </div>
+
+                                            {/* Deposit status indicator */}
+                                            {reservation?.depositStatus === "held" && (
+                                                <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+                                                    <span className="text-lg flex-shrink-0">🔒</span>
+                                                    <div>
+                                                        <p className="font-semibold text-blue-800 text-sm">{t.depositHeld || "Security Deposit Held"}</p>
+                                                        <p className="text-blue-700 text-xs mt-0.5">{t.depositHeldDesc || "A security deposit is currently held on the renter's card."}</p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {reservation?.depositStatus === "released" && (
+                                                <div className="mt-3 bg-green-50 border border-green-200 rounded-lg p-3 flex items-start gap-2">
+                                                    <span className="text-lg flex-shrink-0">✅</span>
+                                                    <div>
+                                                        <p className="font-semibold text-green-800 text-sm">{t.depositReleased || "Deposit Released"}</p>
+                                                        <p className="text-green-700 text-xs mt-0.5">{t.depositReleasedDesc || "The security deposit has been released back to the renter's card."}</p>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {reservation?.depositStatus === "captured" && (
+                                                <div className="mt-3 bg-orange-50 border border-orange-200 rounded-lg p-3 flex items-start gap-2">
+                                                    <span className="text-lg flex-shrink-0">⚠️</span>
+                                                    <div>
+                                                        <p className="font-semibold text-orange-800 text-sm">{t.depositCaptured || "Deposit Charged"}</p>
+                                                        <p className="text-orange-700 text-xs mt-0.5">{t.depositCapturedDesc || "The security deposit was charged due to reported damage."}</p>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
 
                                         {reservation?.status === "pending" && (
@@ -357,6 +417,28 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 </button>
                                                 <button onClick={handleRejectBooking} disabled={updatingStatus} className="flex-1 p-3 bg-red-600 rounded-lg text-white font-medium hover:bg-red-700 transition flex items-center justify-center gap-2 disabled:opacity-50">
                                                     <FaTimesCircle /> Reject
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {/* Deposit actions for paid bookings with an active hold */}
+                                        {reservation?.status === "paid" && reservation?.depositStatus === "held" && (
+                                            <div className="space-y-2">
+                                                <button
+                                                    onClick={handleAcceptReturn}
+                                                    disabled={updatingStatus}
+                                                    className="w-full p-3 bg-green-600 rounded-lg text-white font-medium hover:bg-green-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                                                >
+                                                    <FaCheck className="flex-shrink-0" />
+                                                    {updatingStatus ? (t.processing || "Processing...") : (t.completeAndRelease || "Accept Return & Release Deposit")}
+                                                </button>
+                                                <button
+                                                    onClick={handleChargeDeposit}
+                                                    disabled={updatingStatus}
+                                                    className="w-full p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 font-medium hover:bg-red-600 hover:text-white transition disabled:opacity-50 flex items-center justify-center gap-2"
+                                                >
+                                                    <FaExclamationTriangle className="flex-shrink-0" />
+                                                    {t.chargeDeposit || "Charge Deposit for Damage"}
                                                 </button>
                                             </div>
                                         )}
@@ -487,9 +569,16 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                                                     <p className="text-sm text-blue-800 font-medium">{t.reviewCheckOutPrompt || "Review the check-out photos. If the trailer is in good condition, accept the return to complete the booking."}</p>
                                                 </div>
-                                                <button onClick={handleAcceptReturn} disabled={updatingStatus} className="w-full p-3 bg-green-600 rounded-lg text-white font-medium hover:bg-green-700 transition disabled:opacity-50">
-                                                    {updatingStatus ? "Processing..." : (t.acceptReturn || "Accept Return & Complete Booking")}
+                                                <button onClick={handleAcceptReturn} disabled={updatingStatus} className="w-full p-3 bg-green-600 rounded-lg text-white font-medium hover:bg-green-700 transition disabled:opacity-50 flex items-center justify-center gap-2">
+                                                    <FaCheck className="flex-shrink-0" />
+                                                    {updatingStatus ? (t.processing || "Processing...") : (t.completeAndRelease || "Accept Return & Release Deposit")}
                                                 </button>
+                                                {reservation?.depositStatus === "held" && (
+                                                    <button onClick={handleChargeDeposit} disabled={updatingStatus} className="w-full p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 font-medium hover:bg-red-600 hover:text-white transition disabled:opacity-50 flex items-center justify-center gap-2">
+                                                        <FaExclamationTriangle className="flex-shrink-0" />
+                                                        {t.chargeDeposit || "Charge Deposit for Damage"}
+                                                    </button>
+                                                )}
                                             </div>
                                         )}
 

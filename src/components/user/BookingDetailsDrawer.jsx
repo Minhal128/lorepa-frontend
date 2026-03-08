@@ -166,8 +166,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-3">
                         <FaHourglass className="text-yellow-500 mt-0.5 flex-shrink-0" />
                         <div>
-                            <p className="font-semibold text-yellow-800 text-sm">Pending Approval</p>
-                            <p className="text-yellow-700 text-xs">Your booking request is pending approval from the trailer owner.</p>
+                            <p className="font-semibold text-yellow-800 text-sm">{t.pendingApprovalTitle || "Pending Approval"}</p>
+                            <p className="text-yellow-700 text-xs">{t.pendingApprovalMsg || "Your booking request is pending approval from the trailer owner."}</p>
                         </div>
                     </div>
                 );
@@ -177,8 +177,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-3">
                             <FaFileContract className="text-blue-500 mt-0.5 flex-shrink-0" />
                             <div>
-                                <p className="font-semibold text-blue-800 text-sm">Booking Approved!</p>
-                                <p className="text-blue-700 text-xs">Please sign the contract to proceed.</p>
+                                <p className="font-semibold text-blue-800 text-sm">{t.bookingApprovedTitle || "Booking Approved!"}</p>
+                                <p className="text-blue-700 text-xs">{t.bookingApprovedMsg || "Please sign the contract to proceed."}</p>
                             </div>
                         </div>
                     );
@@ -187,8 +187,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                         <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-start gap-3">
                             <FaCreditCard className="text-green-500 mt-0.5 flex-shrink-0" />
                             <div>
-                                <p className="font-semibold text-green-800 text-sm">Contract Signed!</p>
-                                <p className="text-green-700 text-xs">Proceed to checkout to complete your payment.</p>
+                                <p className="font-semibold text-green-800 text-sm">{t.contractSignedBannerTitle || "Contract Signed!"}</p>
+                                <p className="text-green-700 text-xs">{t.contractSignedBannerMsg || "Proceed to checkout to complete your payment."}</p>
                             </div>
                         </div>
                     );
@@ -198,8 +198,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                     <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-start gap-3">
                         <FaCheckCircle className="text-green-500 mt-0.5 flex-shrink-0" />
                         <div>
-                            <p className="font-semibold text-green-800 text-sm">Payment Complete</p>
-                            <p className="text-green-700 text-xs">You can now pick up the trailer on your booking date. Review the check-in photos in the Photos tab.</p>
+                            <p className="font-semibold text-green-800 text-sm">{t.paymentCompleteTitle || "Payment Complete"}</p>
+                            <p className="text-green-700 text-xs">{t.paymentCompleteMsg || "You can now pick up the trailer on your booking date. Review the check-in photos in the Photos tab."}</p>
                         </div>
                     </div>
                 );
@@ -208,8 +208,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                     <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-3">
                         <FaTimesCircle className="text-red-500 mt-0.5 flex-shrink-0" />
                         <div>
-                            <p className="font-semibold text-red-800 text-sm">Booking Rejected</p>
-                            <p className="text-red-700 text-xs">The owner has rejected your booking request.</p>
+                            <p className="font-semibold text-red-800 text-sm">{t.bookingRejectedTitle || "Booking Rejected"}</p>
+                            <p className="text-red-700 text-xs">{t.bookingRejectedMsg || "The owner has rejected your booking request."}</p>
                         </div>
                     </div>
                 );
@@ -218,8 +218,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                     <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-start gap-3">
                         <FaTimesCircle className="text-gray-500 mt-0.5 flex-shrink-0" />
                         <div>
-                            <p className="font-semibold text-gray-800 text-sm">Booking Cancelled</p>
-                            <p className="text-gray-700 text-xs">This booking has been cancelled.</p>
+                            <p className="font-semibold text-gray-800 text-sm">{t.bookingCancelledTitle || "Booking Cancelled"}</p>
+                            <p className="text-gray-700 text-xs">{t.bookingCancelledMsg || "This booking has been cancelled."}</p>
                         </div>
                     </div>
                 );
@@ -365,40 +365,59 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                         <div>
                                             <div className="flex items-center gap-x-3 mb-1">
                                                 <FaCalendar className="text-blue-600" />
-                                                <p className="font-semibold">Period</p>
+                                                <p className="font-semibold">{t.period || "Period"}</p>
                                                 <p className="text-[#666666]">{reservation?.startDate} - {reservation?.endDate}</p>
                                             </div>
                                             <div className="flex items-center gap-x-1 mb-1">
                                                 <FaUser className="text-blue-600" />
-                                                <p className="font-semibold">Contact Owner</p>
+                                                <p className="font-semibold">{t.contactOwnerLabel || "Contact Owner"}</p>
                                                 <p className="text-[#666666] text-sm">{reservation?.owner_id?.name?.split(" ")[0]} <span className="text-blue-600">({reservation?.owner_id?.email})</span></p>
                                             </div>
                                         </div>
 
                                         <div>
-                                            <h3 className="text-lg font-semibold text-gray-800 mb-3">Booking & Payment Summary</h3>
+                                            <h3 className="text-lg font-semibold text-gray-800 mb-3">{t.bookingPaymentSummary || "Booking & Payment Summary"}</h3>
                                             <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm text-gray-700">
                                                 <div className="flex justify-between border-b pb-1">
-                                                    <span className="font-medium">Price Breakdown</span>
+                                                    <span className="font-medium">{t.priceBreakdown || "Price Breakdown"}</span>
                                                 </div>
                                                 <div className="flex justify-between">
-                                                    <span>Rental fee ({rentalDays} days)</span>
+                                                    <span>{t.rentalFeeLabel || "Rental fee"} ({rentalDays} {t.days || "days"})</span>
                                                     <span>${parseFloat(reservation?.price || 0).toFixed(2)}</span>
                                                 </div>
                                                 <div className="flex justify-between border-b border-dashed pb-2">
-                                                    <span>Lorepa Service Fee (5%)</span>
+                                                    <span>{t.loreparServiceFeeLabel || "Lorepa Service Fee (5%)"}</span>
                                                     <span>+${parseFloat(reservation?.service_fee || (reservation?.price * 0.05) || 0).toFixed(2)}</span>
                                                 </div>
                                                 <div className="flex justify-between font-semibold text-gray-800">
-                                                    <span>Total Payable</span>
+                                                    <span>{t.totalPayableLabel || "Total Payable"}</span>
                                                     <span>${parseFloat(reservation?.total_with_fee || (reservation?.price * 1.05) || 0).toFixed(2)}</span>
                                                 </div>
-                                                <div className="flex justify-between text-gray-600 border-t border-dashed pt-2">
-                                                    <span>Security Deposit (held)</span>
-                                                    <span>+${parseFloat(reservation?.trailerId?.depositRate || 0).toFixed(2)}</span>
-                                                </div>
+                                                {parseFloat(reservation?.trailerId?.depositRate || 0) > 0 && (
+                                                    <div className="flex justify-between text-blue-700 border-t border-dashed pt-2">
+                                                        <span className="font-medium">{t.securityDepositHeldLabel || "Security Deposit (held on card)"}</span>
+                                                        <span>+${parseFloat(reservation?.trailerId?.depositRate || 0).toFixed(2)}</span>
+                                                    </div>
+                                                )}
+                                                {parseFloat(reservation?.trailerId?.depositRate || 0) > 0 && (
+                                                    <p className="text-xs text-blue-600 italic">{t.depositHeldNote || "This amount is held on your card and will be released when the rental is completed."}</p>
+                                                )}
+
+                                                {/* Live deposit status for the renter */}
+                                                {reservation?.depositStatus === "released" && parseFloat(reservation?.trailerId?.depositRate || 0) > 0 && (
+                                                    <div className="mt-1 flex items-center gap-1.5 text-xs text-green-700 font-medium bg-green-50 rounded px-2 py-1">
+                                                        <span>✅</span>
+                                                        <span>{t.depositReleasedRenter || "Your deposit has been released and will appear on your card within 3–5 business days."}</span>
+                                                    </div>
+                                                )}
+                                                {reservation?.depositStatus === "captured" && parseFloat(reservation?.trailerId?.depositRate || 0) > 0 && (
+                                                    <div className="mt-1 flex items-center gap-1.5 text-xs text-red-700 font-medium bg-red-50 rounded px-2 py-1">
+                                                        <span>⚠️</span>
+                                                        <span>{t.depositChargedRenter || "Your deposit has been charged due to reported damage. Please contact support if you have questions."}</span>
+                                                    </div>
+                                                )}
                                                 <div className="pt-2 flex justify-between font-bold text-lg text-gray-900">
-                                                    <span>Total Paid</span>
+                                                    <span>{t.totalPaidLabel || "Total Paid"}</span>
                                                     <span className="text-blue-600">${parseFloat(reservation?.total_paid || 0).toFixed(2)}</span>
                                                 </div>
                                             </div>
@@ -408,27 +427,33 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                             <div className="border border-blue-200 bg-blue-50 rounded-lg p-4 space-y-3">
                                                 <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                                                     <FaFileContract className="text-blue-600" />
-                                                    Contract Agreement
+                                                    {t.contractAgreementTitle || "Contract Agreement"}
                                                 </h3>
                                                 <div className="bg-white rounded-lg p-3 max-h-48 overflow-y-auto text-xs text-gray-600 border">
-                                                    <p className="font-semibold mb-2">Rental Terms</p>
+                                                    <p className="font-semibold mb-2">{t.rentalTermsTitle || "Rental Terms"}</p>
                                                     <ul className="list-disc pl-4 space-y-1">
-                                                        <li>The renter agrees to return the trailer in the same condition as received.</li>
-                                                        <li>Any damage beyond normal wear will be charged to the renter.</li>
-                                                        <li>The renter is responsible for the trailer during the rental period.</li>
-                                                        <li>Late returns may incur additional daily charges.</li>
-                                                        <li>A security deposit may be required and will be refunded upon safe return.</li>
-                                                        <li>Cancellation within 24 hours of pickup may result in a cancellation fee.</li>
+                                                        {(t.rentalTermsList || [
+                                                            "The renter agrees to return the trailer in the same condition as received.",
+                                                            "Any damage beyond normal wear will be charged to the renter.",
+                                                            "The renter is responsible for the trailer during the rental period.",
+                                                            "Late returns may incur additional daily charges.",
+                                                            "A security deposit may be required and will be refunded upon safe return.",
+                                                            "Cancellation within 24 hours of pickup may result in a cancellation fee.",
+                                                        ]).map((item, i) => <li key={i}>{item}</li>)}
                                                     </ul>
-                                                    <p className="font-semibold mt-3 mb-2">Guarantee Fund and Insurance</p>
+                                                    <p className="font-semibold mt-3 mb-2">{t.guaranteeFundTitle || "Guarantee Fund and Insurance"}</p>
                                                     <ul className="list-disc pl-4 space-y-1">
-                                                        <li>The renter must have adequate insurance for the rental period.</li>
-                                                        <li>A guarantee fund may be required for the rental.</li>
+                                                        {(t.guaranteeFundList || [
+                                                            "The renter must have adequate insurance for the rental period.",
+                                                            "A guarantee fund may be required for the rental.",
+                                                        ]).map((item, i) => <li key={i}>{item}</li>)}
                                                     </ul>
-                                                    <p className="font-semibold mt-3 mb-2">Damage Policy</p>
+                                                    <p className="font-semibold mt-3 mb-2">{t.damagePolicyTitle || "Damage Policy"}</p>
                                                     <ul className="list-disc pl-4 space-y-1">
-                                                        <li>Pre-rental and post-rental photos are mandatory.</li>
-                                                        <li>Renters are responsible for any liner damage or structural issues.</li>
+                                                        {(t.damagePolicyList || [
+                                                            "Pre-rental and post-rental photos are mandatory.",
+                                                            "Renters are responsible for any liner damage or structural issues.",
+                                                        ]).map((item, i) => <li key={i}>{item}</li>)}
                                                     </ul>
                                                 </div>
                                                 <label className="flex items-center gap-2 cursor-pointer">
@@ -438,14 +463,14 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                         onChange={(e) => setContractChecked(e.target.checked)}
                                                         className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                                                     />
-                                                    <span className="text-sm text-gray-700">I acknowledge I have read and agree to all contract terms</span>
+                                                    <span className="text-sm text-gray-700">{t.contractAcknowledge || "I acknowledge I have read and agree to all contract terms"}</span>
                                                 </label>
                                                 <button
                                                     onClick={handleSignContract}
                                                     disabled={!contractChecked || signingContract}
                                                     className={`w-full p-3 rounded-lg text-white font-medium transition ${contractChecked && !signingContract ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}
                                                 >
-                                                    {signingContract ? "Signing..." : "Sign Contract"}
+                                                    {signingContract ? (t.signing || "Signing...") : (t.signContract || "Sign Contract")}
                                                 </button>
                                             </div>
                                         )}
@@ -454,11 +479,11 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                             <div className="border border-green-200 bg-green-50 rounded-lg p-4 space-y-3">
                                                 <div className="flex items-center gap-2 text-green-700">
                                                     <FaCheckCircle />
-                                                    <span className="font-semibold">Contract Successfully Signed</span>
+                                                    <span className="font-semibold">{t.contractSuccessTitle || "Contract Successfully Signed"}</span>
                                                 </div>
-                                                <p className="text-sm text-gray-600">Your rental agreement has been submitted. You can now proceed to checkout.</p>
+                                                <p className="text-sm text-gray-600">{t.contractSuccessMsg || "Your rental agreement has been submitted. You can now proceed to checkout."}</p>
                                                 <button onClick={handleProceedToPayment} className="w-full p-3 rounded-lg text-white font-medium bg-blue-600 hover:bg-blue-700 transition">
-                                                    Proceed to Checkout
+                                                    {t.proceedToCheckout || "Proceed to Checkout"}
                                                 </button>
                                             </div>
                                         )}
@@ -481,13 +506,13 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                             {(reservation?.status === "pending" || reservation?.status === "accepted") && (
                                                 <button onClick={handleChatWithOwner} className="w-full p-3 border border-blue-600 rounded-lg text-blue-600 font-medium hover:bg-blue-50 transition flex items-center justify-center gap-2">
                                                     <FaComments />
-                                                    Chat with Owner
+                                                    {t.chatWithOwnerBtn || "Chat with Owner"}
                                                 </button>
                                             )}
 
                                             {reservation?.status === "pending" && (
                                                 <button onClick={handleRequestChange} className="w-full p-3 border border-blue-600 rounded-lg text-blue-600 font-medium hover:bg-blue-50 transition">
-                                                    Request Change
+                                                    {t.requestChangeBtn || "Request Change"}
                                                 </button>
                                             )}
 
@@ -495,23 +520,23 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 <>
                                                     {!showCancelConfirm ? (
                                                         <button onClick={() => setShowCancelConfirm(true)} className="w-full p-3 border border-[#EA4335] rounded-lg text-[#EA4335] font-medium bg-transparent transition">
-                                                            Cancel Booking
+                                                            {t.cancelBookingBtn || "Cancel Booking"}
                                                         </button>
                                                     ) : (
                                                         <div className="border border-red-200 bg-red-50 rounded-lg p-4 space-y-3">
                                                             <div className="flex items-center gap-2">
                                                                 <span className="text-3xl">⚠️</span>
                                                                 <div>
-                                                                    <p className="font-semibold text-red-800">Cancel request</p>
-                                                                    <p className="text-sm text-red-700">Are you sure you want to cancel this booking? This action cannot be undone.</p>
+                                                                    <p className="font-semibold text-red-800">{t.cancelRequestTitle || "Cancel request"}</p>
+                                                                    <p className="text-sm text-red-700">{t.cancelRequestMsg || "Are you sure you want to cancel this booking? This action cannot be undone."}</p>
                                                                 </div>
                                                             </div>
                                                             <div className="flex gap-2">
                                                                 <button onClick={() => setShowCancelConfirm(false)} className="flex-1 p-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition">
-                                                                    No
+                                                                    {t.confirmNo || "No"}
                                                                 </button>
                                                                 <button onClick={handleCancelBooking} className="flex-1 p-2 bg-[#EA4335] rounded-lg text-white font-medium hover:bg-red-600 transition">
-                                                                    Yes
+                                                                    {t.confirmYes || "Yes"}
                                                                 </button>
                                                             </div>
                                                         </div>

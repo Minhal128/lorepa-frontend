@@ -251,16 +251,15 @@ const LandingPage = () => {
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                const [trustedRes, locationRes, trailerRes] = await Promise.all([
+                const [trustedRes, locationRes, trailerRes] = await Promise.allSettled([
                     axios.get(`${config.baseUrl}/content/trusted`),
                     axios.get(`${config.baseUrl}/content/locations`),
                     axios.get(`${config.baseUrl}/content/trailers`),
-                    // Removed the direct FAQ API call here as we are now using static content
                 ]);
 
-                setTrustedBy(trustedRes.data.data);
-                setLocations(locationRes.data.data);
-                setTrailers(trailerRes.data.data);
+                if (trustedRes.status === "fulfilled") setTrustedBy(trustedRes.value.data.data);
+                if (locationRes.status === "fulfilled") setLocations(locationRes.value.data.data);
+                if (trailerRes.status === "fulfilled") setTrailers(trailerRes.value.data.data);
             } catch (error) {
                 console.error("Failed to fetch landing content:", error);
             }

@@ -12,6 +12,7 @@ const PaymentSuccess = () => {
     const confirmBooking = async () => {
       const bookingId = params.get("bookingId");
       const price = params.get("price");
+      const sessionId = params.get("session_id");
 
       if (bookingId) {
         // New flow: Update existing booking status to "paid"
@@ -19,7 +20,14 @@ const PaymentSuccess = () => {
           await axios.put(`${config.baseUrl}/booking/status/${bookingId}`, {
             status: "paid"
           });
-          toast.success("Payment successful! Your booking is confirmed.");
+
+          // Fire-and-forget: create deposit hold on the card (non-blocking — booking is already confirmed)
+          if (sessionId) {
+            axios.post(`${config.baseUrl}/stripe/create-deposit-hold`, { bookingId, sessionId })
+              .catch((err) => console.warn("Deposit hold failed (non-critical):", err?.response?.data?.msg || err.message));
+          }
+
+          toast.success("Paiement réussi ! Votre réservation est confirmée.");
           navigate("/user/dashboard/reservation");
         } catch (err) {
           toast.error("Failed to update booking status");
@@ -38,7 +46,7 @@ const PaymentSuccess = () => {
         try {
           let res = await axios.post(`${config.baseUrl}/booking/create`, payload);
           if (res) {
-            toast.success("Booking confirmed!");
+            toast.success("Réservation confirmée !");
             navigate("/user/dashboard/reservation");
           }
         } catch (err) {
@@ -54,8 +62,8 @@ const PaymentSuccess = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">
       <div className="text-center space-y-4">
         <div className="w-16 h-16 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-lg font-medium text-gray-700">Processing your payment...</p>
-        <p className="text-sm text-gray-500">Please wait while we confirm your booking.</p>
+        <p className="text-lg font-medium text-gray-700">Traitement de votre paiement...</p>
+        <p className="text-sm text-gray-500">Veuillez patienter pendant que nous confirmons votre réservation.</p>
       </div>
     </div>
   );
