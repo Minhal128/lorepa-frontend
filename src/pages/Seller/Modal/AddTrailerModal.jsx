@@ -317,8 +317,10 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
     setIsSearching(true);
     try {
+      // Get base URL without /api/v1 suffix
+      const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
       const res = await axios.get(
-        `${config.baseUrl.replace("/api/v1", "")}/api/autocomplete`,
+        `${baseUrlWithoutApiV1}/api/autocomplete`,
         {
           params: { input: inputText },
         }
@@ -334,6 +336,8 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
       }
     } catch (error) {
       console.error("Error fetching suggestions:", error);
+      setSuggestions([]);
+      setShowSuggestions(false);
     } finally {
       setIsSearching(false);
     }
@@ -341,8 +345,10 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
   const handleSelect = async (item) => {
     try {
+      // Get base URL without /api/v1 suffix
+      const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
       const res = await axios.get(
-        `${config.baseUrl.replace("/api/v1", "")}/api/place-details`,
+        `${baseUrlWithoutApiV1}/api/place-details`,
         {
           params: { placeId: item.place_id },
         }
@@ -392,8 +398,10 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
   const reverseGeocode = async (lat, lng) => {
     try {
+      // Get base URL without /api/v1 suffix
+      const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
       const res = await axios.get(
-        `${config.baseUrl.replace("/api/v1", "")}/api/reverse-geocode`,
+        `${baseUrlWithoutApiV1}/api/reverse-geocode`,
         { params: { lat, lng } }
       );
       if (res.data.status === "OK") {

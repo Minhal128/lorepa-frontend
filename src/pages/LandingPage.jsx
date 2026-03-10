@@ -270,11 +270,14 @@ const LandingPage = () => {
     const fetchSuggestions = async (inputText) => {
         if (!inputText) {
             setSuggestions([]);
+            setShowSuggestions(false);
             return;
         }
 
         try {
-            const res = await axios.get(`${config.baseUrl.replace("/api/v1", "")}/api/autocomplete`, {
+            // Get base URL without /api/v1 suffix
+            const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
+            const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, {
                 params: { input: inputText },
             });
 
@@ -292,6 +295,8 @@ const LandingPage = () => {
             }
         } catch (error) {
             console.error("Error fetching suggestions:", error);
+            setSuggestions([]);
+            setShowSuggestions(false);
         }
     };
 

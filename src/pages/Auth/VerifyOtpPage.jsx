@@ -35,9 +35,15 @@ const VerifyOtpPage = () => {
   }, [email]);
 
   const verifyOtp = async () => {
+    if (!otp) {
+      toast.error("Please enter OTP");
+      return;
+    }
+    
     try {
-      await axios.post(`${config.baseUrl}/account/verify/otp`, { email, otp });
+      const { data } = await axios.post(`${config.baseUrl}/account/verify/otp`, { email, otp });
       toast.success("OTP Verified");
+      // Navigate to change password page with email in state
       nav("/change-password", { state: { email } });
     } catch (err) {
       toast.error(err.response?.data?.msg || "OTP verification failed");

@@ -66,9 +66,11 @@ const Navbar2 = () => {
     };
 
     const fetchSuggestions = async (inputText) => {
-        if (!inputText) { setSuggestions([]); return; }
+        if (!inputText) { setSuggestions([]); setShowSuggestions(false); return; }
         try {
-            const res = await axios.get(`${config.baseUrl.replace("/api/v1", "")}/api/autocomplete`, { params: { input: inputText } });
+            // Get base URL without /api/v1 suffix
+            const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
+            const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, { params: { input: inputText } });
             if (res.data.status === "OK") {
                 const filtered = res.data.predictions.filter(pred =>
                     pred.types.includes("locality") || pred.types.includes("country") || pred.types.includes("administrative_area_level_1")
@@ -76,7 +78,11 @@ const Navbar2 = () => {
                 setSuggestions(filtered);
                 setShowSuggestions(true);
             } else { setSuggestions([]); setShowSuggestions(false); }
-        } catch (error) { console.error("Error fetching suggestions:", error); }
+        } catch (error) { 
+            console.error("Error fetching suggestions:", error); 
+            setSuggestions([]); 
+            setShowSuggestions(false);
+        }
     };
 
     const handleSelect = (item) => { setLocation(item.description); setSuggestions([]); setShowSuggestions(false); };
