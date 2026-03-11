@@ -48,6 +48,8 @@ const translations = {
         carHauler: "Browse Trailers",
         faq: "Frequently asked questions",
         seeAllFaq: "See all FAQ",
+        searching: "Searching...",
+        noResults: "No results found",
         guests: "Guests",
         hosts: "Hosts",
         faqContent: {
@@ -92,6 +94,8 @@ const translations = {
         "carHauler": "Explorar Remolques",
         faq: "Preguntas frecuentes",
         seeAllFaq: "Ver todas las FAQ",
+        searching: "Buscando...",
+        noResults: "No se encontraron resultados",
         guests: "Invitados",
         hosts: "Anfitriones",
         faqContent: {
@@ -136,6 +140,8 @@ const translations = {
         carHauler: "浏览拖车",
         faq: "常见问题",
         seeAllFaq: "查看所有 FAQ",
+        searching: "搜索中...",
+        noResults: "未找到结果",
         guests: "客人",
         hosts: "房东",
         faqContent: {
@@ -180,6 +186,8 @@ const translations = {
         carHauler: "Parcourir les remorques",
         faq: "Questions fréquemment posées",
         seeAllFaq: "Voir toutes les FAQ",
+        searching: "Recherche en cours...",
+        noResults: "Aucun résultat trouvé",
         guests: "Invités",
         hosts: "Hôtes",
         faqContent: {
@@ -222,6 +230,7 @@ const LandingPage = () => {
         return translations[storedLang] || translations.fr;
     });
     const wrapperRef = useRef(null);
+    const debounceRef = useRef(null);
     const [location, setLocation] = useState('');
     const [fromDate, setFromDate] = useState('');
     const [fromTime, setFromTime] = useState("08:00");
@@ -229,6 +238,7 @@ const LandingPage = () => {
     const [untilTime, setUntilTime] = useState("22:00");
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
+    const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
     const isLogin = localStorage.getItem("userId")
     const nav = useNavigate()
     useEffect(() => {
@@ -268,36 +278,49 @@ const LandingPage = () => {
         fetchContent();
     }, []);
     const fetchSuggestions = async (inputText) => {
-        if (!inputText) {
+        if (!inputText || inputText.trim().length < 2) {
             setSuggestions([]);
             setShowSuggestions(false);
+            setIsLoadingSuggestions(false);
             return;
         }
 
+        setIsLoadingSuggestions(true);
         try {
             // Get base URL without /api/v1 suffix
             const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
             const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, {
-                params: { input: inputText },
+                params: { input: inputText.trim() },
             });
 
-            if (res.data.status === "OK") {
-                const filtered = res.data.predictions.filter((prediction) =>
-                    prediction.types.includes("locality") ||
-                    prediction.types.includes("country") ||
-                    prediction.types.includes("administrative_area_level_1")
-                );
-                setSuggestions(filtered);
+            if (res.data.status === "OK" && res.data.predictions.length > 0) {
+                setSuggestions(res.data.predictions);
                 setShowSuggestions(true);
             } else {
                 setSuggestions([]);
-                setShowSuggestions(false);
+                setShowSuggestions(inputText.trim().length >= 2); // show "no results" feedback
             }
         } catch (error) {
             console.error("Error fetching suggestions:", error);
             setSuggestions([]);
             setShowSuggestions(false);
+        } finally {
+            setIsLoadingSuggestions(false);
         }
+    };
+
+    const handleLocationChange = (e) => {
+        const value = e.target.value;
+        setLocation(value);
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        if (!value || value.trim().length < 2) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            setIsLoadingSuggestions(false);
+            return;
+        }
+        setIsLoadingSuggestions(true);
+        debounceRef.current = setTimeout(() => fetchSuggestions(value), 300);
     };
 
 
@@ -306,6 +329,13 @@ const LandingPage = () => {
         setSuggestions([]);
         setShowSuggestions(false);
     };
+
+    // Cleanup debounce timer on unmount
+    useEffect(() => {
+        return () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        };
+    }, []);
 
     // Hide suggestions on outside click
     useEffect(() => {
@@ -344,18 +374,31 @@ const LandingPage = () => {
                             <h1 className="text-sm">{translationsData?.where}</h1>
                             <input
                                 value={location}
-                                onChange={(e) => { fetchSuggestions(e.target.value); setLocation(e.target.value); }}
+                                onChange={handleLocationChange}
                                 type="text"
+                                autoComplete="off"
                                 placeholder={translationsData?.placeholder}
-                                className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] flex-1 text-sm"
+                                className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] flex-1 text-sm w-full"
                             />
-                            {showSuggestions && suggestions.length > 0 && (
-                                <ul className="absolute z-50 top-[4rem] left-0 right-0 bg-white shadow-md rounded-md mt-1 max-h-60 overflow-y-auto">
-                                    {suggestions.map((item, index) => (
-                                        <li key={index} onMouseDown={() => handleSelect(item)} className="p-2 hover:bg-gray-100 cursor-pointer text-sm">
-                                            {item.description}
-                                        </li>
-                                    ))}
+                            {showSuggestions && (
+                                <ul className="absolute z-50 top-[4rem] left-0 right-0 bg-white shadow-lg border border-gray-100 rounded-md mt-1 max-h-60 overflow-y-auto">
+                                    {isLoadingSuggestions ? (
+                                        <li className="p-3 text-sm text-gray-400 text-center">{translationsData?.searching}</li>
+                                    ) : suggestions.length > 0 ? (
+                                        suggestions.map((item, index) => (
+                                            <li key={item.place_id || index} onMouseDown={() => handleSelect(item)} className="p-2 hover:bg-blue-50 cursor-pointer text-sm flex items-start gap-2">
+                                                <span className="text-gray-400 mt-0.5">&#x2315;</span>
+                                                <span>
+                                                    <span className="font-medium text-gray-800">{item.structured_formatting?.main_text || item.description.split(',')[0]}</span>
+                                                    {item.structured_formatting?.secondary_text && (
+                                                        <span className="text-gray-400">, {item.structured_formatting.secondary_text}</span>
+                                                    )}
+                                                </span>
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li className="p-3 text-sm text-gray-400 text-center">{translationsData?.noResults}</li>
+                                    )}
                                 </ul>
                             )}
                         </div>
@@ -397,18 +440,31 @@ const LandingPage = () => {
                             <h1 className="text-sm">{translationsData?.where}</h1>
                             <input
                                 value={location}
-                                onChange={(e) => { fetchSuggestions(e.target.value); setLocation(e.target.value); }}
+                                onChange={handleLocationChange}
                                 type="text"
+                                autoComplete="off"
                                 placeholder={translationsData?.placeholder}
-                                className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] flex-1 text-sm"
+                                className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] flex-1 text-sm w-full"
                             />
-                            {showSuggestions && suggestions.length > 0 && (
-                                <ul className="absolute z-50 top-[4rem] left-0 right-0 bg-white shadow-md rounded-md mt-1 max-h-60 overflow-y-auto">
-                                    {suggestions.map((item, index) => (
-                                        <li key={index} onClick={() => handleSelect(item)} className="p-2 hover:bg-gray-100 cursor-pointer text-sm">
-                                            {item.description}
-                                        </li>
-                                    ))}
+                            {showSuggestions && (
+                                <ul className="absolute z-50 top-[4rem] left-0 right-0 bg-white shadow-lg border border-gray-100 rounded-md mt-1 max-h-60 overflow-y-auto">
+                                    {isLoadingSuggestions ? (
+                                        <li className="p-3 text-sm text-gray-400 text-center">{translationsData?.searching}</li>
+                                    ) : suggestions.length > 0 ? (
+                                        suggestions.map((item, index) => (
+                                            <li key={item.place_id || index} onClick={() => handleSelect(item)} className="p-2 hover:bg-blue-50 cursor-pointer text-sm flex items-start gap-2">
+                                                <span className="text-gray-400 mt-0.5">&#x2315;</span>
+                                                <span>
+                                                    <span className="font-medium text-gray-800">{item.structured_formatting?.main_text || item.description.split(',')[0]}</span>
+                                                    {item.structured_formatting?.secondary_text && (
+                                                        <span className="text-gray-400">, {item.structured_formatting.secondary_text}</span>
+                                                    )}
+                                                </span>
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li className="p-3 text-sm text-gray-400 text-center">{translationsData?.noResults}</li>
+                                    )}
                                 </ul>
                             )}
                         </div>
