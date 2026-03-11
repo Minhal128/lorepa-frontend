@@ -99,6 +99,16 @@ export const userReservationTranslations = {
     preRentalOwnerOnlyDesc: "Pre-rental photos document the trailer's condition before pickup. Only the trailer owner can upload these.",
     postRentalAfterPayment: "Available after payment",
     postRentalAfterPaymentDesc: "You can upload post-rental photos once your booking is active (paid).",
+    photoCategories: {
+      "Front side": "Front side",
+      "Back side": "Back side",
+      "Left side": "Left side",
+      "Right side": "Right side",
+      "Interior": "Interior",
+      "Hitch / Coupling": "Hitch / Coupling",
+      "Tires": "Tires",
+      "License Plate": "License Plate",
+    },
   },
   es: {
     myReservations: "Mis Reservas",
@@ -195,6 +205,16 @@ export const userReservationTranslations = {
     preRentalOwnerOnlyDesc: "Las fotos previas al alquiler documentan el estado del remolque antes de la recogida. Solo el propietario puede subirlas.",
     postRentalAfterPayment: "Disponible tras el pago",
     postRentalAfterPaymentDesc: "Puedes subir fotos posteriores al alquiler una vez que tu reserva esté activa (pagada).",
+    photoCategories: {
+      "Front side": "Parte delantera",
+      "Back side": "Parte trasera",
+      "Left side": "Lado izquierdo",
+      "Right side": "Lado derecho",
+      "Interior": "Interior",
+      "Hitch / Coupling": "Enganche / Acoplamiento",
+      "Tires": "Neumáticos",
+      "License Plate": "Matrícula",
+    },
   },
   fr: {
     myReservations: "Mes Réservations",
@@ -291,6 +311,16 @@ export const userReservationTranslations = {
     preRentalOwnerOnlyDesc: "Les photos avant location documentent l'état de la remorque avant la prise en charge. Seul le propriétaire peut les télécharger.",
     postRentalAfterPayment: "Disponible après paiement",
     postRentalAfterPaymentDesc: "Vous pouvez télécharger des photos après location une fois votre réservation active (payée).",
+    photoCategories: {
+      "Front side": "Côté avant",
+      "Back side": "Côté arrière",
+      "Left side": "Côté gauche",
+      "Right side": "Côté droit",
+      "Interior": "Intérieur",
+      "Hitch / Coupling": "Attelage / Couplage",
+      "Tires": "Pneus",
+      "License Plate": "Plaque d'immatriculation",
+    },
   },
   cn: {
     myReservations: "我的预订",
@@ -387,5 +417,15 @@ export const userReservationTranslations = {
     preRentalOwnerOnlyDesc: "租前照片记录取车前拖车的状况，只有车主可以上传这些照片。",
     postRentalAfterPayment: "付款后可用",
     postRentalAfterPaymentDesc: "您的预订生效（已付款）后，即可上传租后照片。",
+    photoCategories: {
+      "Front side": "正面",
+      "Back side": "背面",
+      "Left side": "左侧",
+      "Right side": "右侧",
+      "Interior": "内部",
+      "Hitch / Coupling": "挂钩 / 联轴器",
+      "Tires": "轮胎",
+      "License Plate": "车牌",
+    },
   }
 };

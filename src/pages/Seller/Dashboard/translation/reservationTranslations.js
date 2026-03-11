@@ -53,6 +53,16 @@ export const reservationTranslations = {
         depositReleaseFailed: "Failed to release deposit",
         completeAndRelease: "Accept Return & Release Deposit",
         processing: "Processing...",
+        photoCategories: {
+            "Front side": "Front side",
+            "Back side": "Back side",
+            "Left side": "Left side",
+            "Right side": "Right side",
+            "Interior": "Interior",
+            "Hitch / Coupling": "Hitch / Coupling",
+            "Tires": "Tires",
+            "License Plate": "License Plate",
+        },
     },
     es: {
         pageTitle: "Mis Reservas",
@@ -108,6 +118,16 @@ export const reservationTranslations = {
         depositReleaseFailed: "Error al liberar el depósito",
         completeAndRelease: "Aceptar devolución y liberar depósito",
         processing: "Procesando...",
+        photoCategories: {
+            "Front side": "Parte delantera",
+            "Back side": "Parte trasera",
+            "Left side": "Lado izquierdo",
+            "Right side": "Lado derecho",
+            "Interior": "Interior",
+            "Hitch / Coupling": "Enganche / Acoplamiento",
+            "Tires": "Neumáticos",
+            "License Plate": "Matrícula",
+        },
     },
     fr: {
         pageTitle: "Mes Réservations",
@@ -163,6 +183,16 @@ export const reservationTranslations = {
         depositReleaseFailed: "Échec de la libération de la caution",
         completeAndRelease: "Accepter le retour et libérer la caution",
         processing: "Traitement en cours...",
+        photoCategories: {
+            "Front side": "Côté avant",
+            "Back side": "Côté arrière",
+            "Left side": "Côté gauche",
+            "Right side": "Côté droit",
+            "Interior": "Intérieur",
+            "Hitch / Coupling": "Attelage / Couplage",
+            "Tires": "Pneus",
+            "License Plate": "Plaque d'immatriculation",
+        },
     },
     cn: {
         pageTitle: "我的预订",
@@ -218,6 +248,16 @@ export const reservationTranslations = {
         depositReleaseFailed: "押金释放失败",
         completeAndRelease: "接受归还并释放押金",
         processing: "处理中...",
+        photoCategories: {
+            "Front side": "正面",
+            "Back side": "背面",
+            "Left side": "左侧",
+            "Right side": "右侧",
+            "Interior": "内部",
+            "Hitch / Coupling": "挂钩 / 联轴器",
+            "Tires": "轮胎",
+            "License Plate": "车牌",
+        },
     }
 };
 export const statusTranslations = {

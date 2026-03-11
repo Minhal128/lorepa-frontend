@@ -235,7 +235,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
             const slotDoc = sameCategoryDocs[sameNameBefore] || null;
             const slotKey = `${docType}-${idx}`;
             const isUploading = uploadingSlot === slotKey;
-            return { category, slotDoc, slotKey, isUploading, idx, canUpload, docType };
+            const label = t.photoCategories?.[category] || category;
+            return { category, label, slotDoc, slotKey, isUploading, idx, canUpload, docType };
         });
     };
 
@@ -245,16 +246,16 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
             <div className="space-y-4">
                 {slots.map((slot) => (
                     <div key={slot.slotKey}>
-                        <p className="text-sm font-semibold text-gray-800 mb-2">{slot.category}</p>
+                        <p className="text-sm font-semibold text-gray-800 mb-2">{slot.label}</p>
                         <div className="border border-gray-200 rounded-lg p-3 flex items-center justify-between">
                             {slot.slotDoc ? (
                                 <>
                                     <div className="flex items-center gap-3 flex-1 min-w-0">
                                         <a href={slot.slotDoc.fileUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded border overflow-hidden flex-shrink-0">
-                                            <img src={slot.slotDoc.fileUrl} className="w-full h-full object-cover" alt={slot.category} />
+                                            <img src={slot.slotDoc.fileUrl} className="w-full h-full object-cover" alt={slot.label} />
                                         </a>
                                         <FaFile className="text-gray-400 flex-shrink-0" />
-                                        <span className="text-sm text-gray-700 truncate">{slot.category + " photo"}</span>
+                                        <span className="text-sm text-gray-700 truncate">{slot.label + " photo"}</span>
                                     </div>
                                     {canUpload && (
                                         <button onClick={() => handleDeleteDoc(slot.slotDoc._id)} className="text-red-400 hover:text-red-600 ml-2 flex-shrink-0">
@@ -265,13 +266,13 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                             ) : slot.isUploading ? (
                                 <div className="flex items-center gap-3">
                                     <FaFile className="text-gray-400" />
-                                    <span className="text-sm text-gray-500">{slot.category + " photo"}</span>
+                                    <span className="text-sm text-gray-500">{slot.label + " photo"}</span>
                                     <FaSpinner className="animate-spin text-blue-600" />
                                 </div>
                             ) : canUpload ? (
                                 <label className="flex items-center gap-3 cursor-pointer w-full">
                                     <FaFile className="text-gray-300" />
-                                    <span className="text-sm text-gray-400">{slot.category + " photo"}</span>
+                                    <span className="text-sm text-gray-400">{slot.label + " photo"}</span>
                                     <input
                                         type="file"
                                         accept="image/*"
