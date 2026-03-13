@@ -21,13 +21,19 @@ const PaymentSuccess = () => {
             status: "paid"
           });
 
-          // Fire-and-forget: create deposit hold on the card (non-blocking — booking is already confirmed)
           if (sessionId) {
-            axios.post(`${config.baseUrl}/stripe/create-deposit-hold`, { bookingId, sessionId })
-              .catch((err) => console.warn("Deposit hold failed (non-critical):", err?.response?.data?.msg || err.message));
+            try {
+              await axios.post(`${config.baseUrl}/stripe/create-deposit-hold`, { bookingId, sessionId });
+              toast.success("Paiement réussi et caution sécurisée !");
+            } catch (err) {
+              console.error("Deposit hold failed:", err?.response?.data || err.message);
+              toast.error("Paiement réussi, mais la caution de sécurité a échoué. Veuillez contacter le support.", { duration: 6000 });
+              // Mark booking deposit status explicitly or handle gracefully
+            }
+          } else {
+            toast.success("Paiement réussi ! Votre réservation est confirmée.");
           }
 
-          toast.success("Paiement réussi ! Votre réservation est confirmée.");
           navigate("/user/dashboard/reservation");
         } catch (err) {
           toast.error("Failed to update booking status");

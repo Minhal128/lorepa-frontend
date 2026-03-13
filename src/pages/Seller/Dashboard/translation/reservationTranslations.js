@@ -70,6 +70,15 @@ export const reservationTranslations = {
             "Tires": "Tires",
             "License Plate": "License Plate",
         },
+        newBookingRequestTitle: "New Booking Request",
+        newBookingRequestDesc: "A renter has requested to book your trailer. Please review and approve or reject the request.",
+        renterMessage: "Renter's message:",
+        contractSignedByRenter: "Contract Signed by Renter",
+        waitingForContractSignature: "Waiting for Contract Signature",
+        renterSignedProceedPayment: "The renter has signed the contract and will proceed to payment.",
+        approvedWaitingForSignature: "You approved this booking. Waiting for the renter to sign the contract.",
+        approve: "Approve",
+        reject: "Reject"
     },
     es: {
         pageTitle: "Mis Reservas",
@@ -142,6 +151,15 @@ export const reservationTranslations = {
             "Tires": "Neumáticos",
             "License Plate": "Matrícula",
         },
+        newBookingRequestTitle: "Nueva solicitud de reserva",
+        newBookingRequestDesc: "Un arrendatario ha solicitado reservar su remolque. Por favor, revise y apruebe o rechace la solicitud.",
+        renterMessage: "Mensaje del arrendatario:",
+        contractSignedByRenter: "Contrato firmado por el arrendatario",
+        waitingForContractSignature: "Esperando firma del contrato",
+        renterSignedProceedPayment: "El arrendatario ha firmado el contrato y procederá al pago.",
+        approvedWaitingForSignature: "Aprobó esta reserva. Esperando que el arrendatario firme el contrato.",
+        approve: "Aprobar",
+        reject: "Rechazar"
     },
     fr: {
         pageTitle: "Mes Réservations",
@@ -214,6 +232,15 @@ export const reservationTranslations = {
             "Tires": "Pneus",
             "License Plate": "Plaque d'immatriculation",
         },
+        newBookingRequestTitle: "Nouvelle demande de réservation",
+        newBookingRequestDesc: "Un locataire a demandé à réserver votre remorque. Veuillez examiner et approuver ou rejeter la demande.",
+        renterMessage: "Message du locataire :",
+        contractSignedByRenter: "Contrat signé par le locataire",
+        waitingForContractSignature: "En attente de signature du contrat",
+        renterSignedProceedPayment: "Le locataire a signé le contrat et passera au paiement.",
+        approvedWaitingForSignature: "Vous avez approuvé cette réservation. En attente de la signature du locataire.",
+        approve: "Approuver",
+        reject: "Rejeter"
     },
     cn: {
         pageTitle: "我的预订",
@@ -286,6 +313,15 @@ export const reservationTranslations = {
             "Tires": "轮胎",
             "License Plate": "车牌",
         },
+        newBookingRequestTitle: "新预订请求",
+        newBookingRequestDesc: "租客请求预订您的拖车。请审查并批准或拒绝该请求。",
+        renterMessage: "租客留言：",
+        contractSignedByRenter: "租客已签署合同",
+        waitingForContractSignature: "等待合同签署",
+        renterSignedProceedPayment: "租客已签署合同，将继续付款。",
+        approvedWaitingForSignature: "您已批准此预订。等待租客签署合同。",
+        approve: "批准",
+        reject: "拒绝"
     }
 };
 export const statusTranslations = {

@@ -299,11 +299,11 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-3">
                                                 <span className="text-2xl">📋</span>
                                                 <div>
-                                                    <p className="font-semibold text-yellow-800 text-sm">New Booking Request</p>
-                                                    <p className="text-yellow-700 text-xs">A renter has requested to book your trailer. Please review and approve or reject the request.</p>
+                                                    <p className="font-semibold text-yellow-800 text-sm">{t.newBookingRequestTitle || "New Booking Request"}</p>
+                                                    <p className="text-yellow-700 text-xs">{t.newBookingRequestDesc || "A renter has requested to book your trailer. Please review and approve or reject the request."}</p>
                                                     {reservation?.message && (
                                                         <div className="mt-2 bg-white rounded p-2 text-xs text-gray-700 border">
-                                                            <p className="font-semibold text-gray-600 mb-1">Renter's message:</p>
+                                                            <p className="font-semibold text-gray-600 mb-1">{t.renterMessage || "Renter's message:"}</p>
                                                             <p className="italic">"{reservation.message}"</p>
                                                         </div>
                                                     )}
@@ -316,12 +316,12 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 <span className="text-2xl">{reservation?.contractSigned ? '✅' : '📄'}</span>
                                                 <div>
                                                     <p className={`font-semibold text-sm ${reservation?.contractSigned ? 'text-green-800' : 'text-blue-800'}`}>
-                                                        {reservation?.contractSigned ? 'Contract Signed by Renter' : 'Waiting for Contract Signature'}
+                                                        {reservation?.contractSigned ? (t.contractSignedByRenter || 'Contract Signed by Renter') : (t.waitingForContractSignature || 'Waiting for Contract Signature')}
                                                     </p>
                                                     <p className={`text-xs ${reservation?.contractSigned ? 'text-green-700' : 'text-blue-700'}`}>
                                                         {reservation?.contractSigned
-                                                            ? 'The renter has signed the contract and will proceed to payment.'
-                                                            : 'You approved this booking. Waiting for the renter to sign the contract.'}
+                                                            ? (t.renterSignedProceedPayment || 'The renter has signed the contract and will proceed to payment.')
+                                                            : (t.approvedWaitingForSignature || 'You approved this booking. Waiting for the renter to sign the contract.')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -430,10 +430,10 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                         {reservation?.status === "pending" && (
                                             <div className="flex gap-2">
                                                 <button onClick={handleAcceptBooking} disabled={updatingStatus} className="flex-1 p-3 bg-green-600 rounded-lg text-white font-medium hover:bg-green-700 transition flex items-center justify-center gap-2 disabled:opacity-50">
-                                                    <FaCheck /> Approve
+                                                    <FaCheck /> {t.approve || "Approve"}
                                                 </button>
                                                 <button onClick={handleRejectBooking} disabled={updatingStatus} className="flex-1 p-3 bg-red-600 rounded-lg text-white font-medium hover:bg-red-700 transition flex items-center justify-center gap-2 disabled:opacity-50">
-                                                    <FaTimesCircle /> Reject
+                                                    <FaTimesCircle /> {t.reject || "Reject"}
                                                 </button>
                                             </div>
                                         )}

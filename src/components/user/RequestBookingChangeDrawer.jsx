@@ -1,9 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaCalendar, FaTimes } from "react-icons/fa";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import axios from "axios";
 import config from "../../config";
+import { userReservationTranslations } from "../../pages/User/Dashboard/translation/userReservationTranslations";
+
+const normalizeLang = (value) => {
+  const lang = (value || "").toLowerCase();
+  if (lang.startsWith("fr")) return "fr";
+  if (lang.startsWith("es")) return "es";
+  if (lang.startsWith("cn") || lang.startsWith("zh")) return "cn";
+  return "en";
+};
 
 const RequestBookingChangeDrawer = ({
   reservation,
@@ -14,17 +23,28 @@ const RequestBookingChangeDrawer = ({
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [notificationPreference, setNotificationPreference] = useState("Email");
 
+  const [lang, setLang] = useState(normalizeLang(localStorage.getItem("lang")));
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setLang(normalizeLang(localStorage.getItem("lang")));
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const t = userReservationTranslations[lang] || userReservationTranslations.en;
+
   if (!reservation) return null;
 
   const currentPickupDate = format(new Date(reservation.startDate), "MMM d");
   const currentReturnDate = format(new Date(reservation.endDate), "yyyy, MMM d");
-  const trailerTitle = reservation?.trailerId?.title || "Unknown Trailer";
+  const trailerTitle = reservation?.trailerId?.title || t.unknownTrailer || "Unknown Trailer";
 
   const handleSubmitChangeRequest = async (e) => {
     e.preventDefault();
 
     if (!newPickupDate && !newReturnDate) {
-      toast.error("Please select at least one date for the change request.");
+      toast.error(t.selectDateError || "Please select at least one date for the change request.");
       return;
     }
 
@@ -38,11 +58,11 @@ const RequestBookingChangeDrawer = ({
         }
       );
 
-      toast.success("Change request submitted successfully!");
+      toast.success(t.submitSuccess || "Change request submitted successfully!");
       onClose();
     } catch (err) {
       console.log(err);
-      toast.error("Failed to submit change request");
+      toast.error(t.submitFailed || "Failed to submit change request");
     }
   };
 
@@ -64,8 +84,8 @@ const RequestBookingChangeDrawer = ({
                 {/* Header */}
                 <div className="p-4 sm:p-6 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white z-10">
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">Request Booking Change</h2>
-                    <p className="text-sm text-gray-700 mt-1">Submit a change request to the owner of{" "} <span className="font-semibold text-blue-600">{trailerTitle}</span></p>
+                    <h2 className="text-xl font-bold text-gray-900">{t.requestChangeTitle || "Request Booking Change"}</h2>
+                    <p className="text-sm text-gray-700 mt-1">{t.requestChangeDesc || "Submit a change request to the owner of"}{" "} <span className="font-semibold text-blue-600">{trailerTitle}</span></p>
                   </div>
                   <button type="button" className="text-gray-400 hover:text-gray-500" onClick={onClose}>
                     <FaTimes className="w-6 h-6" />
@@ -77,11 +97,11 @@ const RequestBookingChangeDrawer = ({
 
                   {/* 1. Date Change */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-800">1. Date Change</h3>
+                    <h3 className="text-lg font-semibold text-gray-800">{t.dateChangeTitle || "1. Date Change"}</h3>
 
                     {/* New Pickup Date */}
                     <div>
-                      <label htmlFor="newPickupDate" className="block text-sm font-medium text-gray-700">New Pickup Date (<span className="text-gray-500">Currently: {currentPickupDate}</span>)</label>
+                      <label htmlFor="newPickupDate" className="block text-sm font-medium text-gray-700">{t.newPickupDate || "New Pickup Date"} (<span className="text-gray-500">{t.currently || "Currently"}: {currentPickupDate}</span>)</label>
                       <div className="mt-1 relative rounded-md shadow-sm">
                         <input type="date" id="newPickupDate" name="newPickupDate" value={newPickupDate} onChange={(e) => setNewPickupDate(e.target.value)} placeholder="mm/dd/yyyy" className="w-full p-2 border-[#C3C3C3] border rounded-md outline-none mt-2" />
                       </div>
@@ -89,7 +109,7 @@ const RequestBookingChangeDrawer = ({
 
                     {/* New Return Date */}
                     <div>
-                      <label htmlFor="newReturnDate" className="block text-sm font-medium text-gray-700">New Return Date (<span className="text-gray-500">Currently: {currentReturnDate}</span>)</label>
+                      <label htmlFor="newReturnDate" className="block text-sm font-medium text-gray-700">{t.newReturnDate || "New Return Date"} (<span className="text-gray-500">{t.currently || "Currently"}: {currentReturnDate}</span>)</label>
                       <div className="mt-1 relative rounded-md shadow-sm">
                         <input type="date" id="newReturnDate" name="newReturnDate" value={newReturnDate} onChange={(e) => setNewReturnDate(e.target.value)} placeholder="mm/dd/yyyy" className="w-full p-2 border-[#C3C3C3] border rounded-md outline-none mt-2" />
                       </div>
@@ -97,27 +117,27 @@ const RequestBookingChangeDrawer = ({
 
                     {/* Note */}
                     <div className="p-3 text-sm rounded-md bg-blue-50 border-l-4 border-blue-400 text-blue-700">
-                      <span className="font-bold">Note:</span> Date changes are subject to owner approval.
+                      <span className="font-bold">Note:</span> {t.dateChangeNote || "Date changes are subject to owner approval."}
                     </div>
                   </div>
 
                   {/* 2. Additional Notes */}
                   <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-gray-800">2. Additional Notes</h3>
+                    <h3 className="text-lg font-semibold text-gray-800">{t.additionalNotesTitle || "2. Additional Notes"}</h3>
                     <textarea
                       id="additionalNotes"
                       name="additionalNotes"
                       rows="4"
                       value={additionalNotes}
                       onChange={(e) => setAdditionalNotes(e.target.value)}
-                      placeholder="Explain what you'd like to change and why..."
+                      placeholder={t.additionalNotesPlaceholder || "Explain what you'd like to change and why..."}
                       className="shadow-sm outline-none p-2 block w-full sm:text-sm border-[#C3C3C3] border rounded-md"
                     ></textarea>
                   </div>
 
                   {/* 3. Notification Preference */}
                   <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-gray-800">3. Notification Preference</h3>
+                    <h3 className="text-lg font-semibold text-gray-800">{t.notificationPrefTitle || "3. Notification Preference"}</h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
                         <input
@@ -130,7 +150,7 @@ const RequestBookingChangeDrawer = ({
                           className="border-[#C3C3C3] border"
                         />
                         <label htmlFor="notifyEmail" className="ml-3 block text-sm font-medium text-gray-700">
-                          Notify me by Email
+                          {t.notifyEmail || "Notify me by Email"}
                         </label>
                       </div>
                       <div className="flex items-center">
@@ -144,7 +164,7 @@ const RequestBookingChangeDrawer = ({
                           className="border-[#C3C3C3] border"
                         />
                         <label htmlFor="inAppOnly" className="ml-3 block text-sm font-medium text-gray-700">
-                          In-app only
+                          {t.inAppOnly || "In-app only"}
                         </label>
                       </div>
                     </div>
@@ -154,10 +174,10 @@ const RequestBookingChangeDrawer = ({
                 {/* Footer / Action Buttons */}
                 <div className="pt-2 py-4 px-4">
                   <button onClick={handleSubmitChangeRequest} className="w-full p-3 border border-blue-600 rounded-lg text-blue-600 font-medium hover:bg-blue-50 transition">
-                    Send Request
+                    {t.sendRequest || "Send Request"}
                   </button>
                   <button onClick={onClose} className="w-full p-3 mt-2 border border-[#EA4335] rounded-lg text-[#EA4335] font-medium bg-transparent transition">
-                    Cancel
+                    {t.cancelRequest || "Cancel"}
                   </button>
 
                 </div>
