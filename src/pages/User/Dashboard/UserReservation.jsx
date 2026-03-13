@@ -9,6 +9,15 @@ import { userReservationTranslations } from './translation/userReservationTransl
 
 const TABS = ['All', 'Upcoming', 'Past', 'Cancel'];
 
+const normalizeLang = (value) => {
+  const lang = (value || '').toLowerCase();
+  if (lang.startsWith('fr')) return 'fr';
+  if (lang.startsWith('es')) return 'es';
+  if (lang.startsWith('cn') || lang.startsWith('zh')) return 'cn';
+  if (lang.startsWith('en')) return 'en';
+  return 'fr';
+};
+
 // --- Status Styles ---
 const STATUS_STYLES = {
   pending: 'text-yellow-700 bg-yellow-100',
@@ -32,7 +41,7 @@ const ReservationItem = ({ reservation, onSelectReservation, createChat, t }) =>
         <div className="flex justify-between items-start mb-2">
           <p className="font-bold text-gray-900 text-lg leading-tight truncate">{reservation.trailerId?.title}</p>
           <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider ${STATUS_STYLES[reservation.status] || 'text-gray-700 bg-gray-100'}`}>
-            {reservation.status}
+            {t.statusLabels?.[reservation.status] || reservation.status}
           </span>
         </div>
 
@@ -69,7 +78,7 @@ const UserReservation = () => {
   const [bookings, setBookings] = useState([]);
   const [selectedReservation, setSelectedReservation] = useState(null);
   const [t, setT] = useState(() => {
-    const lang = localStorage.getItem("lang") || "fr";
+    const lang = normalizeLang(localStorage.getItem("lang"));
     return userReservationTranslations[lang] || userReservationTranslations.fr;
   });
 
@@ -111,7 +120,7 @@ const UserReservation = () => {
       const result = await axios.get(`${config.baseUrl}/booking/buyer/${localStorage.getItem("userId")}`);
       setBookings(result.data.data);
     } catch (err) {
-      toast.error("Failed to fetch bookings");
+      toast.error(t.fetchError || "Failed to fetch bookings");
     }
   };
 
@@ -120,7 +129,7 @@ const UserReservation = () => {
 
     // Handle language changes dynamically
     const handleLangChange = () => {
-      const lang = localStorage.getItem("lang") || "fr";
+      const lang = normalizeLang(localStorage.getItem("lang"));
       setT(userReservationTranslations[lang] || userReservationTranslations.fr);
     };
 
@@ -172,7 +181,7 @@ const UserReservation = () => {
             ))
           ) : (
             <div className="text-center py-8 text-gray-500">
-              {t.noReservations.replace("{tab}", activeTab === "All" ? "" : activeTab.toLowerCase())}
+              {t.noReservations.replace("{tab}", activeTab === "All" ? "" : (t.tabs[TABS.indexOf(activeTab)] || activeTab))}
             </div>
           )}
         </div>
@@ -184,7 +193,7 @@ const UserReservation = () => {
         onRefresh={fetchBookings}
         StatusBadge={({ status }) => (
           <span className={`text-xs font-medium px-2 py-1 rounded-md w-fit ${STATUS_STYLES[status] || 'text-gray-700 bg-gray-100'}`}>
-            {status}
+            {t.statusLabels?.[status] || status}
           </span>
         )}
       />

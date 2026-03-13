@@ -9,6 +9,15 @@ import { userReservationTranslations } from "../../pages/User/Dashboard/translat
 
 const PHOTO_CATEGORIES = ["Front side", "Back side", "Left side", "Right side", "Interior", "Hitch / Coupling", "Tires", "License Plate"];
 
+const normalizeLang = (value) => {
+    const lang = (value || "").toLowerCase();
+    if (lang.startsWith("fr")) return "fr";
+    if (lang.startsWith("es")) return "es";
+    if (lang.startsWith("cn") || lang.startsWith("zh")) return "cn";
+    if (lang.startsWith("en")) return "en";
+    return "fr";
+};
+
 const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) => {
     if (!reservation) return null;
     const [uploadingSlot, setUploadingSlot] = useState(null);
@@ -16,15 +25,22 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
     const [activeTab, setActiveTab] = useState("details");
     const [photoSubTab, setPhotoSubTab] = useState("post-rental");
     const [showPhotoBanner, setShowPhotoBanner] = useState(true);
+    const [lang, setLang] = useState(normalizeLang(localStorage.getItem("lang")));
 
-    const lang = localStorage.getItem("lang") || "en";
-    const t = userReservationTranslations[lang] || userReservationTranslations.en;
+    const t = userReservationTranslations[lang] || userReservationTranslations.fr;
 
     useEffect(() => {
         if (reservation?._id) {
+            setLang(normalizeLang(localStorage.getItem("lang")));
             fetchBookingDocs();
         }
     }, [reservation?._id]);
+
+    useEffect(() => {
+        const handleLangChange = () => setLang(normalizeLang(localStorage.getItem("lang")));
+        window.addEventListener("storage", handleLangChange);
+        return () => window.removeEventListener("storage", handleLangChange);
+    }, []);
 
     const fetchBookingDocs = async () => {
         try {
@@ -94,12 +110,12 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
         try {
             const result = await axios.put(`${config.baseUrl}/booking/status/${reservation?._id}`, { status: "cancelled" });
             if (result) {
-                toast.success("Booking cancelled successfully");
+                toast.success(t.cancelBookingSuccess || "Booking cancelled successfully");
                 setShowCancelConfirm(false);
                 if (onRefresh) onRefresh();
             }
         } catch (err) {
-            toast.error("Failed to cancel booking");
+            toast.error(t.cancelBookingFailed || "Failed to cancel booking");
         }
     };
 
@@ -123,7 +139,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
 
     const handleSignContract = async () => {
         if (!contractChecked) {
-            toast.error("Please check the contract checkbox to sign");
+            toast.error(t.contractCheckboxRequired || "Please check the contract checkbox to sign");
             return;
         }
         setSigningContract(true);
@@ -255,7 +271,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                             <img src={slot.slotDoc.fileUrl} className="w-full h-full object-cover" alt={slot.label} />
                                         </a>
                                         <FaFile className="text-gray-400 flex-shrink-0" />
-                                        <span className="text-sm text-gray-700 truncate">{slot.label + " photo"}</span>
+                                        <span className="text-sm text-gray-700 truncate">{`${slot.label} ${t.photoLabelSuffix || "photo"}`}</span>
                                     </div>
                                     {canUpload && (
                                         <button onClick={() => handleDeleteDoc(slot.slotDoc._id)} className="text-red-400 hover:text-red-600 ml-2 flex-shrink-0">
@@ -266,13 +282,13 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                             ) : slot.isUploading ? (
                                 <div className="flex items-center gap-3">
                                     <FaFile className="text-gray-400" />
-                                    <span className="text-sm text-gray-500">{slot.label + " photo"}</span>
+                                    <span className="text-sm text-gray-500">{`${slot.label} ${t.photoLabelSuffix || "photo"}`}</span>
                                     <FaSpinner className="animate-spin text-blue-600" />
                                 </div>
                             ) : canUpload ? (
                                 <label className="flex items-center gap-3 cursor-pointer w-full">
                                     <FaFile className="text-gray-300" />
-                                    <span className="text-sm text-gray-400">{slot.label + " photo"}</span>
+                                    <span className="text-sm text-gray-400">{`${slot.label} ${t.photoLabelSuffix || "photo"}`}</span>
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -637,7 +653,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                         {currentPhotoDocs.filter(d => !d.description).map((doc, idx) => (
                                                             <div key={idx} className="relative aspect-square rounded border overflow-hidden group">
                                                                 <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer">
-                                                                    <img src={doc.fileUrl} className="w-full h-full object-cover" alt="Photo" />
+                                                                    <img src={doc.fileUrl} className="w-full h-full object-cover" alt={t.genericPhotoAlt || "Photo"} />
                                                                 </a>
                                                                 {currentCanUpload && (
                                                                     <button onClick={() => handleDeleteDoc(doc._id)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">

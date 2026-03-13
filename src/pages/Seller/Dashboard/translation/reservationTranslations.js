@@ -53,6 +53,13 @@ export const reservationTranslations = {
         depositReleaseFailed: "Failed to release deposit",
         completeAndRelease: "Accept Return & Release Deposit",
         processing: "Processing...",
+        memberSinceLabel: "Member since",
+        reliabilityScoreLabel: "Reliability Score",
+        bookingDatesLabel: "Booking Dates",
+        amountLabel: "Amount",
+        securityDepositLabel: "Security Deposit",
+        photoLabelSuffix: "photo",
+        genericPhotoAlt: "Photo",
         photoCategories: {
             "Front side": "Front side",
             "Back side": "Back side",
@@ -118,6 +125,13 @@ export const reservationTranslations = {
         depositReleaseFailed: "Error al liberar el depósito",
         completeAndRelease: "Aceptar devolución y liberar depósito",
         processing: "Procesando...",
+        memberSinceLabel: "Miembro desde",
+        reliabilityScoreLabel: "Puntuación de fiabilidad",
+        bookingDatesLabel: "Fechas de reserva",
+        amountLabel: "Importe",
+        securityDepositLabel: "Depósito de seguridad",
+        photoLabelSuffix: "foto",
+        genericPhotoAlt: "Foto",
         photoCategories: {
             "Front side": "Parte delantera",
             "Back side": "Parte trasera",
@@ -183,6 +197,13 @@ export const reservationTranslations = {
         depositReleaseFailed: "Échec de la libération de la caution",
         completeAndRelease: "Accepter le retour et libérer la caution",
         processing: "Traitement en cours...",
+        memberSinceLabel: "Membre depuis",
+        reliabilityScoreLabel: "Score de fiabilité",
+        bookingDatesLabel: "Dates de réservation",
+        amountLabel: "Montant",
+        securityDepositLabel: "Dépôt de garantie",
+        photoLabelSuffix: "photo",
+        genericPhotoAlt: "Photo",
         photoCategories: {
             "Front side": "Côté avant",
             "Back side": "Côté arrière",
@@ -248,6 +269,13 @@ export const reservationTranslations = {
         depositReleaseFailed: "押金释放失败",
         completeAndRelease: "接受归还并释放押金",
         processing: "处理中...",
+        memberSinceLabel: "会员自",
+        reliabilityScoreLabel: "可靠性评分",
+        bookingDatesLabel: "预订日期",
+        amountLabel: "金额",
+        securityDepositLabel: "押金",
+        photoLabelSuffix: "照片",
+        genericPhotoAlt: "照片",
         photoCategories: {
             "Front side": "正面",
             "Back side": "背面",
@@ -261,8 +289,8 @@ export const reservationTranslations = {
     }
 };
 export const statusTranslations = {
-    en: { pending: "Pending", accepted: "Accepted", completed: "Completed", cancelled: "Cancelled" },
-    es: { pending: "Pendiente", accepted: "Aceptada", completed: "Completada", cancelled: "Cancelada" },
-    fr: { pending: "En attente", accepted: "Acceptée", completed: "Terminée", cancelled: "Annulée" },
-    cn: { pending: "待处理", accepted: "已接受", completed: "已完成", cancelled: "已取消" }
+    en: { pending: "Pending", accepted: "Accepted", paid: "Paid", completed: "Completed", rejected: "Rejected", cancelled: "Cancelled" },
+    es: { pending: "Pendiente", accepted: "Aceptada", paid: "Pagada", completed: "Completada", rejected: "Rechazada", cancelled: "Cancelada" },
+    fr: { pending: "En attente", accepted: "Acceptée", paid: "Payée", completed: "Terminée", rejected: "Refusée", cancelled: "Annulée" },
+    cn: { pending: "待处理", accepted: "已接受", paid: "已支付", completed: "已完成", rejected: "已拒绝", cancelled: "已取消" }
 };

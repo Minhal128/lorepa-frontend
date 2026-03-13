@@ -17,6 +17,15 @@ const STATUS_STYLES = {
 
 const TABS = ['All', 'Upcoming', 'Past', 'Cancel'];
 
+const normalizeLang = (value) => {
+    const lang = (value || '').toLowerCase();
+    if (lang.startsWith('fr')) return 'fr';
+    if (lang.startsWith('es')) return 'es';
+    if (lang.startsWith('cn') || lang.startsWith('zh')) return 'cn';
+    if (lang.startsWith('en')) return 'en';
+    return 'fr';
+};
+
 const StatusBadge = ({ status, lang }) => (
     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full w-fit uppercase tracking-widest ${STATUS_STYLES[status] || 'text-gray-700 bg-gray-100'}`}>
         {statusTranslations[lang]?.[status] || status}
@@ -107,8 +116,8 @@ const BuyerReservation = () => {
     const [activeTab, setActiveTab] = useState('All');
     const [selectedReservation, setSelectedReservation] = useState(null);
     const [bookings, setBookings] = useState([]);
-    const [lang, setLang] = useState(localStorage.getItem('lang') || 'fr');
-    const t = reservationTranslations[lang];
+    const [lang, setLang] = useState(normalizeLang(localStorage.getItem('lang')));
+    const t = reservationTranslations[lang] || reservationTranslations.fr;
 
     const filteredReservations = bookings.filter((booking) => {
         const today = new Date();
@@ -134,7 +143,7 @@ const BuyerReservation = () => {
         try {
             await axios.put(`${config.baseUrl}/booking/status/${id}`, { status });
             fetchBookings();
-            toast.success(t.updateSuccess.replace('{status}', statusTranslations[lang][status]));
+            toast.success((t.updateSuccess || reservationTranslations.fr.updateSuccess).replace('{status}', statusTranslations[lang]?.[status] || status));
         } catch (err) {
             toast.error(t.updateError);
         }
@@ -142,7 +151,7 @@ const BuyerReservation = () => {
 
     useEffect(() => {
         fetchBookings();
-        const handleStorageChange = () => setLang(localStorage.getItem('lang') || 'fr');
+        const handleStorageChange = () => setLang(normalizeLang(localStorage.getItem('lang')));
         window.addEventListener('storage', handleStorageChange);
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);

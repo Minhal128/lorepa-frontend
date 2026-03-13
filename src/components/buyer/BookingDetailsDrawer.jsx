@@ -8,6 +8,15 @@ import { reservationTranslations } from "../../pages/Seller/Dashboard/translatio
 
 const PHOTO_CATEGORIES = ["Front side", "Back side", "Left side", "Right side", "Interior", "Hitch / Coupling", "Tires", "License Plate"];
 
+const normalizeLang = (value) => {
+    const lang = (value || "").toLowerCase();
+    if (lang.startsWith("fr")) return "fr";
+    if (lang.startsWith("es")) return "es";
+    if (lang.startsWith("cn") || lang.startsWith("zh")) return "cn";
+    if (lang.startsWith("en")) return "en";
+    return "fr";
+};
+
 const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) => {
     if (!reservation) return null;
     const [updatingStatus, setUpdatingStatus] = useState(false);
@@ -16,15 +25,22 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
     const [activeTab, setActiveTab] = useState("details");
     const [photoSubTab, setPhotoSubTab] = useState("pre-rental");
     const [showPhotoBanner, setShowPhotoBanner] = useState(true);
+    const [lang, setLang] = useState(normalizeLang(localStorage.getItem("lang")));
 
-    const lang = localStorage.getItem("lang") || "en";
-    const t = reservationTranslations[lang] || reservationTranslations.en;
+    const t = reservationTranslations[lang] || reservationTranslations.fr;
 
     useEffect(() => {
         if (reservation?._id) {
+            setLang(normalizeLang(localStorage.getItem("lang")));
             fetchBookingDocs();
         }
     }, [reservation?._id]);
+
+    useEffect(() => {
+        const handleLangChange = () => setLang(normalizeLang(localStorage.getItem("lang")));
+        window.addEventListener("storage", handleLangChange);
+        return () => window.removeEventListener("storage", handleLangChange);
+    }, []);
 
     const fetchBookingDocs = async () => {
         try {
@@ -199,7 +215,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                         </a>
                                         <FaFile className="text-gray-400 flex-shrink-0" />
                                         <span className="text-sm text-gray-700 truncate">
-                                            {slot.label + " photo"}
+                                            {`${slot.label} ${t.photoLabelSuffix || "photo"}`}
                                         </span>
                                     </div>
                                     {canUpload && (
@@ -211,13 +227,13 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                             ) : slot.isUploading ? (
                                 <div className="flex items-center gap-3">
                                     <FaFile className="text-gray-400" />
-                                    <span className="text-sm text-gray-500">{slot.label + " photo"}</span>
+                                    <span className="text-sm text-gray-500">{`${slot.label} ${t.photoLabelSuffix || "photo"}`}</span>
                                     <FaSpinner className="animate-spin text-blue-600" />
                                 </div>
                             ) : canUpload ? (
                                 <label className="flex items-center gap-3 cursor-pointer w-full">
                                     <FaFile className="text-gray-300" />
-                                    <span className="text-sm text-gray-400">{slot.label + " photo"}</span>
+                                    <span className="text-sm text-gray-400">{`${slot.label} ${t.photoLabelSuffix || "photo"}`}</span>
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -342,7 +358,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 <FaUserCircle className="w-10 h-10 text-blue-600" />
                                                 <div>
                                                     <p className="font-semibold text-gray-800">{reservation?.user_id?.name}</p>
-                                                    <p className="text-xs text-gray-500">Member since {reservation?.user_id?.createdAt}</p>
+                                                    <p className="text-xs text-gray-500">{t.memberSinceLabel || "Member since"} {reservation?.user_id?.createdAt}</p>
                                                 </div>
                                                 <div className="flex items-center text-sm ml-auto font-medium text-yellow-500">
                                                     {4}/5 <FaStar className="w-3 h-3 ml-1" />
@@ -351,7 +367,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                             <div className="flex justify-between text-xs text-gray-600">
                                                 <div className="flex items-center space-x-1">
                                                     <FaStar className="w-3 h-3 text-yellow-500" />
-                                                    <span>Reliability Score: {4}/5</span>
+                                                    <span>{t.reliabilityScoreLabel || "Reliability Score"}: {4}/5</span>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <VerificationIcon isVerified={reservation?.user_id?.email} icon={FaEnvelope} />
@@ -361,22 +377,22 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                         </div>
 
                                         <div>
-                                            <h3 className="text-lg font-semibold text-gray-800 mb-3">Booking &amp; Payment Summary</h3>
+                                            <h3 className="text-lg font-semibold text-gray-800 mb-3">{t.bookingPaymentSummary || "Booking & Payment Summary"}</h3>
                                             <div className="bg-gray-50 p-4 rounded-lg space-y-2 text-sm text-gray-700">
                                                 <div className="flex justify-between border-b pb-1">
-                                                    <span className="font-medium">Booking Dates</span>
+                                                    <span className="font-medium">{t.bookingDatesLabel || "Booking Dates"}</span>
                                                     <span className="text-blue-600 font-medium">{reservation?.startDate} - {reservation?.endDate}</span>
                                                 </div>
                                                 <div className="flex justify-between">
-                                                    <span>Amount</span>
+                                                    <span>{t.amountLabel || "Amount"}</span>
                                                     <span>${reservation?.price}</span>
                                                 </div>
                                                 <div className="flex justify-between">
-                                                    <span>Security Deposit</span>
+                                                    <span>{t.securityDepositLabel || "Security Deposit"}</span>
                                                     <span>${reservation?.trailerId?.depositRate || 0}</span>
                                                 </div>
                                                 <div className="pt-2 flex justify-between font-bold text-lg text-gray-900">
-                                                    <span>Total Paid</span>
+                                                    <span>{t.totalPaidLabel || "Total Paid"}</span>
                                                     <span className="text-blue-600">${reservation?.total_paid || 0}</span>
                                                 </div>
                                             </div>
@@ -550,7 +566,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                         {currentPhotoDocs.filter(d => !d.description).map((doc, idx) => (
                                                             <div key={idx} className="relative aspect-square rounded border overflow-hidden group">
                                                                 <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer">
-                                                                    <img src={doc.fileUrl} className="w-full h-full object-cover" alt="Photo" />
+                                                                    <img src={doc.fileUrl} className="w-full h-full object-cover" alt={t.genericPhotoAlt || "Photo"} />
                                                                 </a>
                                                                 {currentCanUpload && (
                                                                     <button onClick={() => handleDeleteDoc(doc._id)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
