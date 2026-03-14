@@ -396,10 +396,10 @@ const SingleTrailer = () => {
                     <div className='text-lg font-semibold text-gray-700'>${trailer.cleaningRate}</div>
                   </div>
                 )}
-                {trailer.securityRate && (
+                {trailer.depositRate > 0 && (
                   <div>
                     <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1">{translations.securityDeposit}</label>
-                    <div className='text-lg font-semibold text-gray-700'>${trailer.securityRate}</div>
+                    <div className='text-lg font-semibold text-gray-700'>${trailer.depositRate}</div>
                   </div>
                 )}
               </div>

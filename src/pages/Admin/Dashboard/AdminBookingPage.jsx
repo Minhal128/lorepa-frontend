@@ -99,16 +99,21 @@ const AdminBookingPage = () => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <select
-                                            value={booking.status || 'Pending'}
+                                            value={booking.status || 'pending'}
                                             onChange={(e) => updateStatus(booking._id, e.target.value)}
-                                            className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg border-2 transition-all outline-none appearance-none cursor-pointer ${booking.status === 'Completed' ? 'bg-green-50 border-green-200 text-green-700' :
-                                                booking.status === 'Active' ? 'bg-blue-50 border-blue-200 text-blue-700' :
-                                                    'bg-yellow-50 border-yellow-200 text-yellow-700'
+                                            className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg border-2 transition-all outline-none appearance-none cursor-pointer ${booking.status === 'completed' ? 'bg-green-50 border-green-200 text-green-700' :
+                                                booking.status === 'paid' ? 'bg-blue-50 border-blue-200 text-blue-700' :
+                                                    booking.status === 'accepted' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' :
+                                                        booking.status === 'rejected' || booking.status === 'cancelled' ? 'bg-red-50 border-red-200 text-red-700' :
+                                                            'bg-yellow-50 border-yellow-200 text-yellow-700'
                                                 }`}
                                         >
-                                            <option value='Pending'>{t.pending}</option>
-                                            <option value='Active'>{t.active}</option>
-                                            <option value='Completed'>{t.completed}</option>
+                                            <option value='pending'>{t.pending}</option>
+                                            <option value='accepted'>{t.accepted || 'Accepted'}</option>
+                                            <option value='paid'>{t.paid}</option>
+                                            <option value='completed'>{t.completed}</option>
+                                            <option value='rejected'>{t.rejected || 'Rejected'}</option>
+                                            <option value='cancelled'>{t.cancelled || 'Cancelled'}</option>
                                         </select>
                                     </td>
                                     <td className='px-6 py-4'>
@@ -162,13 +167,16 @@ const AdminBookingPage = () => {
 
                             <div className="flex items-center gap-3 pt-4 border-t border-gray-50">
                                 <select
-                                    value={booking.status || 'Pending'}
+                                    value={booking.status || 'pending'}
                                     onChange={(e) => updateStatus(booking._id, e.target.value)}
                                     className="flex-1 bg-gray-50 border-2 border-gray-100 rounded-xl px-4 py-3 text-xs font-black uppercase tracking-widest outline-none focus:border-blue-600 transition appearance-none"
                                 >
-                                    <option value='Pending'>{t.setToPending}</option>
-                                    <option value='Active'>{t.setToActive}</option>
-                                    <option value='Completed'>{t.setToCompleted}</option>
+                                    <option value='pending'>{t.setToPending || t.pending}</option>
+                                    <option value='accepted'>{t.setToAccepted || t.accepted || 'Accepted'}</option>
+                                    <option value='paid'>{t.setToPaid || t.paid}</option>
+                                    <option value='completed'>{t.setToCompleted || t.completed}</option>
+                                    <option value='rejected'>{t.setToRejected || t.rejected || 'Rejected'}</option>
+                                    <option value='cancelled'>{t.setToCancelled || t.cancelled || 'Cancelled'}</option>
                                 </select>
                                 <button className="p-3.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition shadow-sm">
                                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>

@@ -570,7 +570,8 @@ const LandingPage = () => {
                             <img
                                 src={loc.image}
                                 alt={loc.title}
-                                className="max-w-[15rem] min-w-[15rem] min-h-[10rem] max-h-[10rem] rounded-md"
+                                className="max-w-[15rem] min-w-[15rem] min-h-[10rem] max-h-[10rem] rounded-md object-cover"
+                                onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/240x160/2563EB/FFFFFF?text=${encodeURIComponent(loc.title)}`; }}
                             />
                             <div className="flex justify-between items-center">
                                 <p className="text-lg font-medium mt-2 text-black">{loc.title}</p>
@@ -609,7 +610,7 @@ const LandingPage = () => {
                 <Link to={"/trailers"} className="flex overflow-x-auto gap-5 mt-6 w-[100%] px-4">
                     {trailers.map((item, i) => (
                         <div key={i} className="relative cursor-pointer">
-                            <img src={item.image} alt={item.title} className="rounded-md max-w-[22rem] min-w-[22rem] min-h-[16rem] max-h-[16rem] bg-contain" />
+                            <img src={item.image} alt={item.title} className="rounded-md max-w-[22rem] min-w-[22rem] min-h-[16rem] max-h-[16rem] object-cover" onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/352x256/1E3A8A/FFFFFF?text=${encodeURIComponent(item.title || 'Trailer')}`; }} />
                             <p className="absolute bottom-5 left-5">{item.title}</p>
                         </div>
                     ))}
