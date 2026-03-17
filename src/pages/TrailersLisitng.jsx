@@ -442,7 +442,7 @@ const TrailersListing = () => {
                 <MapResizer showMap={showMap} />
 
                 {/* Red marker for search location */}
-                {cityFromQuery && mapCenter && (
+                {cityFromQuery && mapCenter ? (
                   <Marker
                     position={[mapCenter.lat, mapCenter.lng]}
                     icon={createSearchLocationIcon()}
@@ -454,7 +454,7 @@ const TrailersListing = () => {
                       </div>
                     </Popup>
                   </Marker>
-                )}
+                ) : null}
 
                 {filteredTrailers.map((trailer) => {
                   const lat = parseFloat(trailer.latitude);
@@ -493,13 +493,15 @@ const TrailersListing = () => {
           </div>
         </div>
 
-        <BookingModal
-          isOpen={isBookingModalOpen}
-          onClose={handleCloseBookingModal}
-          trailer={selectedTrailerForBooking}
-          translations={translations}
-          onSubmit={handleBookingSubmit}
-        />
+        {isBookingModalOpen && (
+          <BookingModal
+            isOpen={isBookingModalOpen}
+            onClose={handleCloseBookingModal}
+            trailer={selectedTrailerForBooking}
+            translations={translations}
+            onSubmit={handleBookingSubmit}
+          />
+        )}
 
       </main>
 

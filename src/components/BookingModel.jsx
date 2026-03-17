@@ -137,9 +137,6 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
         onClose();
     };
 
-
-    if (!isOpen) return null;
-
     return (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4">
             <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-8 transform transition-all duration-300 scale-100 opacity-100">
