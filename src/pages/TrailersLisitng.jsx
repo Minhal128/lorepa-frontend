@@ -7,7 +7,8 @@ import axios from 'axios';
 import config from '../config';
 import toast from 'react-hot-toast';
 import { trailersListingTranslations } from '../translations/trailerListing';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapCenterHandler, MapResizer } from '../components/MapComponents';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import BookingModal from '../components/BookingModel';
@@ -75,28 +76,7 @@ const createPriceIcon = (price) => {
   });
 };
 
-// Component to handle map center changes
-const MapCenterHandler = ({ center }) => {
-  const map = useMap();
-  useEffect(() => {
-    if (center) {
-      map.setView([center.lat, center.lng], map.getZoom());
-    }
-  }, [center, map]);
-  return null;
-};
 
-// Component to handle map reszing when toggled
-const MapResizer = ({ showMap }) => {
-  const map = useMap();
-  useEffect(() => {
-    const t = setTimeout(() => {
-      map.invalidateSize();
-    }, 100);
-    return () => clearTimeout(t);
-  }, [showMap, map]);
-  return null;
-};
 
 const TrailersListing = () => {
   const nav = useNavigate();
