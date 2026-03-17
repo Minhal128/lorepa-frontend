@@ -3,7 +3,7 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import { useSidebar } from '../../context/SidebarContext';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { GoHome } from 'react-icons/go';
 import { IoChevronForwardSharp } from "react-icons/io5";
 import { BiSearchAlt } from 'react-icons/bi';
@@ -14,6 +14,7 @@ import config from '../../config';
 
 const Header = () => {
     const location = useLocation().pathname.split("/")[3]
+    const navigate = useNavigate();
     const { isNavOpen, toggleNav } = useSidebar();
 
     const lang = localStorage.getItem("lang") || "fr";

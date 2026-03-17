@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IoLogOut } from 'react-icons/io5';
 import { useSidebar } from '../../../context/SidebarContext';
 import { RxCross2 } from 'react-icons/rx';
-import Logo from '../../../assets/logo.svg'
+import Logo from '../../../assets/logo.png'
 import { sidebarTranslations } from '../../../i18n/translations';
 
 const Sidebar = () => {

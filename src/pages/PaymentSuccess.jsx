@@ -15,32 +15,35 @@ const PaymentSuccess = () => {
       const sessionId = params.get("session_id");
 
       if (bookingId) {
-        // New flow: Update existing booking status to "paid"
+        // New flow: Attempt deposit hold FIRST, then update booking status to "paid"
         try {
-          await axios.put(`${config.baseUrl}/booking/status/${bookingId}`, {
-            status: "paid"
-          });
-
           if (sessionId) {
             try {
               await axios.post(`${config.baseUrl}/stripe/create-deposit-hold`, { bookingId, sessionId });
-              toast.success("Paiement réussi et caution sécurisée !");
             } catch (err) {
               console.error("Deposit hold failed:", err?.response?.data || err.message);
-              toast.error("Paiement réussi, mais la caution de sécurité a échoué. Veuillez contacter le support.", { duration: 6000 });
-              // Mark booking deposit status explicitly or handle gracefully
+              if (err?.response?.data?.refunded) {
+                  toast.error("Votre carte a été refusée pour la caution. Votre paiement de location a été remboursé. Veuillez réessayer avec une autre carte.", { duration: 8000 });
+              } else {
+                  toast.error("Paiement réussi, mais la caution de sécurité a échoué. Veuillez contacter le support.", { duration: 6000 });
+              }
+              navigate("/user/dashboard/reservation");
+              return; // Stop the flow, do not mark as paid
             }
-          } else {
-            toast.success("Paiement réussi ! Votre réservation est confirmée.");
           }
 
+          await axios.put(`${config.baseUrl}/booking/status/${bookingId}`, {    
+            status: "paid"
+          });
+
+          toast.success("Paiement réussi ! Votre réservation est confirmée.");
           navigate("/user/dashboard/reservation");
         } catch (err) {
           toast.error("Failed to update booking status");
           navigate("/user/dashboard/reservation");
         }
       } else {
-        // Legacy flow: Create booking from URL params (backward compatibility)
+        // Legacy flow: Create booking from URL params (backward compatibility) 
         const payload = {
           trailerId: params.get("trailerId"),
           user_id: params.get("user"),
@@ -62,7 +65,7 @@ const PaymentSuccess = () => {
     };
 
     confirmBooking();
-  }, []);
+  }, [params, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white">

@@ -3,7 +3,7 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import { useSidebar } from '../../context/SidebarContext';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { GoHome } from 'react-icons/go';
 import { IoChevronForwardSharp } from "react-icons/io5";
 import { BiSearchAlt } from 'react-icons/bi';
@@ -22,6 +22,8 @@ const Header = () => {
     const pageTitle = t[location] || (location ? location.charAt(0).toUpperCase() + location.slice(1) : t.dashboard);
     const [hasUnread, setHasUnread] = useState(false);
     const userId = localStorage.getItem("userId");
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchNotifications = async () => {

@@ -358,16 +358,16 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 <FaUserCircle className="w-10 h-10 text-blue-600" />
                                                 <div>
                                                     <p className="font-semibold text-gray-800">{reservation?.user_id?.name}</p>
-                                                    <p className="text-xs text-gray-500">{t.memberSinceLabel || "Member since"} {reservation?.user_id?.createdAt}</p>
+                                                    <p className="text-xs text-gray-500">{t.memberSinceLabel || "Member since"} {reservation?.user_id?.createdAt ? new Date(reservation.user_id.createdAt).toLocaleDateString() : "N/A"}</p>
                                                 </div>
                                                 <div className="flex items-center text-sm ml-auto font-medium text-yellow-500">
-                                                    {4}/5 <FaStar className="w-3 h-3 ml-1" />
+                                                    {reservation?.user_id?.totalRatings > 0 ? `${reservation.user_id.averageRating}/5` : 'N/A'} <FaStar className="w-3 h-3 ml-1" />
                                                 </div>
                                             </div>
                                             <div className="flex justify-between text-xs text-gray-600">
                                                 <div className="flex items-center space-x-1">
                                                     <FaStar className="w-3 h-3 text-yellow-500" />
-                                                    <span>{t.reliabilityScoreLabel || "Reliability Score"}: {4}/5</span>
+                                                    <span>{t.reliabilityScoreLabel || "Reliability Score"}: {reservation?.user_id?.totalRatings > 0 ? `${reservation.user_id.averageRating}/5` : 'N/A'}</span>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
                                                     <VerificationIcon isVerified={reservation?.user_id?.email} icon={FaEnvelope} />

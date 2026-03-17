@@ -18,7 +18,13 @@ const normalizeLang = (value) => {
     return "fr";
 };
 
-const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) => {
+const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, StatusBadge, onRefresh }) => {
+    const [reservation, setReservation] = useState(initialReservation);
+
+    useEffect(() => {
+        setReservation(initialReservation);
+    }, [initialReservation]);
+
     if (!reservation) return null;
     const [uploadingSlot, setUploadingSlot] = useState(null);
     const [bookingDocs, setBookingDocs] = useState([]);
@@ -146,6 +152,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
         try {
             const result = await axios.put(`${config.baseUrl}/booking/sign-contract/${reservation?._id}`);
             if (result) {
+                setReservation(prev => ({ ...prev, contractSigned: true }));
                 toast.success("Contract signed successfully!");
                 if (onRefresh) onRefresh();
             }
