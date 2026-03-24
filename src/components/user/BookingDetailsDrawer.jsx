@@ -25,7 +25,6 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
         setReservation(initialReservation);
     }, [initialReservation]);
 
-    if (!reservation) return null;
     const [uploadingSlot, setUploadingSlot] = useState(null);
     const [bookingDocs, setBookingDocs] = useState([]);
     const [activeTab, setActiveTab] = useState("details");
@@ -320,6 +319,8 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
     const currentCanUpload = photoSubTab === "pre-rental" ? canUploadCheckIn : canUploadCheckOut;
     const currentDocType = photoSubTab === "pre-rental" ? "Check-in Photo" : "Check-out Photo";
     const hasNoPhotos = photoSubTab === "post-rental" ? checkOutDocs.length === 0 : checkInDocs.length === 0;
+
+    if (!reservation) return null;
 
     return (
         <div className="fixed inset-0 z-40 overflow-hidden">
