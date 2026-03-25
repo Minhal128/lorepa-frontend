@@ -323,6 +323,7 @@ const SingleTrailer = () => {
               src={trailer.images?.[currentImageIndex] || `https://placehold.co/800x400/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`}
               alt={trailer.title}
               className="absolute inset-0 w-full h-full object-cover"
+              onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/800x400/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`; }}
             />
           </div>
           {trailer.images && trailer.images.length > 1 && (

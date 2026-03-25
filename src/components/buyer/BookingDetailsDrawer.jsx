@@ -211,7 +211,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                 <>
                                     <div className="flex items-center gap-3 flex-1 min-w-0">
                                         <a href={slot.slotDoc.fileUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded border overflow-hidden flex-shrink-0">
-                                            <img src={slot.slotDoc.fileUrl} className="w-full h-full object-cover" alt={slot.label} />
+                                            <img src={slot.slotDoc.fileUrl} className="w-full h-full object-cover" alt={slot.label} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x400/F3F4F6/9CA3AF?text=No+Photo`; }} />
                                         </a>
                                         <FaFile className="text-gray-400 flex-shrink-0" />
                                         <span className="text-sm text-gray-700 truncate">
@@ -566,7 +566,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                         {currentPhotoDocs.filter(d => !d.description).map((doc, idx) => (
                                                             <div key={idx} className="relative aspect-square rounded border overflow-hidden group">
                                                                 <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer">
-                                                                    <img src={doc.fileUrl} className="w-full h-full object-cover" alt={t.genericPhotoAlt || "Photo"} />
+                                                                    <img src={doc.fileUrl} className="w-full h-full object-cover" alt={t.genericPhotoAlt || "Photo"} onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x400/F3F4F6/9CA3AF?text=No+Photo`; }} />
                                                                 </a>
                                                                 {currentCanUpload && (
                                                                     <button onClick={() => handleDeleteDoc(doc._id)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">

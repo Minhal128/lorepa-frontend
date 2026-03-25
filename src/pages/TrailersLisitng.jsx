@@ -378,6 +378,7 @@ const TrailersListing = () => {
                       src={trailer.images?.[0] || `https://placehold.co/400x300/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`}
                       alt={trailer.title}
                       className="absolute inset-0 w-full h-full object-cover"
+                      onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`; }}
                     />
                   </div>
                   <div className="p-3 sm:p-4">
