@@ -570,36 +570,36 @@ const LandingPage = () => {
             <motion.div variants={flipIn} whileInView="visible" className="flex justify-center items-center flex-col p-3">
                 <AnimatedText text={translationsData.popularLocations} variant={scaleIn} className="text-2xl text-black font-semibold mt-10" />
                 <div className="flex overflow-x-auto gap-10 mt-6 w-[100%] px-4">
-                    {locations.map((loc, i) => (
-                        <Link to={`/trailers?city=${loc.title}`} key={i}>
-                            <img
-                                src={loc.image}
-                                alt={loc.title}
-                                className="max-w-[15rem] min-w-[15rem] min-h-[10rem] max-h-[10rem] rounded-md object-cover"
-                                onError={(e) => { 
-                                    e.target.onerror = null; 
-                                    const fallbacks = {
-                                        "Montreal": "https://images.unsplash.com/photo-1517722014278-c256a91a6fba?q=80&w=400&auto=format&fit=crop",
-                                        "Québec City": "https://images.unsplash.com/photo-1527004654-20a28fccbee7?q=80&w=400&auto=format&fit=crop",
-                                        "Sherbrooke": "https://images.unsplash.com/photo-1596538466630-f21eeaf74272?q=80&w=400&auto=format&fit=crop",
-                                        "Levis": "https://images.unsplash.com/photo-1552596956-65b169527fc3?q=80&w=400&auto=format&fit=crop",
-                                        "Gatineau": "https://images.unsplash.com/photo-1587825027984-c6c73df8afac?q=80&w=400&auto=format&fit=crop",
-                                        "Saguenay": "https://images.unsplash.com/photo-1510255556272-35bf38803ab9?q=80&w=400&auto=format&fit=crop"
-                                    };
-                                    const titleMatch = Object.keys(fallbacks).find(key => loc.title?.includes(key));
-                                    if (titleMatch) {
-                                        e.target.src = fallbacks[titleMatch];
-                                    } else {
-                                        e.target.src = `https://placehold.co/240x160/2563EB/FFFFFF?text=${encodeURIComponent(loc.title)}`; 
-                                    }
-                                }}
-                            />
-                            <div className="flex justify-between items-center">
-                                <p className="text-lg font-medium mt-2 text-black">{loc.title}</p>
-                                <FaLongArrowAltRight className="text-blue-700" />
-                            </div>
-                        </Link>
-                    ))}
+                    {locations.map((loc, i) => {
+                        const fallbacks = {
+                            "Montreal": "https://images.unsplash.com/photo-1517722014278-c256a91a6fba?q=80&w=400&auto=format&fit=crop",
+                            "Québec City": "https://images.unsplash.com/photo-1527004654-20a28fccbee7?q=80&w=400&auto=format&fit=crop",
+                            "Sherbrooke": "https://images.unsplash.com/photo-1596538466630-f21eeaf74272?q=80&w=400&auto=format&fit=crop",
+                            "Levis": "https://images.unsplash.com/photo-1552596956-65b169527fc3?q=80&w=400&auto=format&fit=crop",
+                            "Gatineau": "https://images.unsplash.com/photo-1587825027984-c6c73df8afac?q=80&w=400&auto=format&fit=crop",
+                            "Saguenay": "https://images.unsplash.com/photo-1510255556272-35bf38803ab9?q=80&w=400&auto=format&fit=crop"
+                        };
+                        const titleMatch = Object.keys(fallbacks).find(key => loc.title?.includes(key));
+                        const defaultImg = titleMatch ? fallbacks[titleMatch] : "https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=400&auto=format&fit=crop";
+
+                        return (
+                            <Link to={`/trailers?city=${loc.title}`} key={i}>
+                                <img
+                                    src={loc.image || defaultImg}
+                                    alt={loc.title}
+                                    className="max-w-[15rem] min-w-[15rem] min-h-[10rem] max-h-[10rem] rounded-md object-cover bg-gray-100"
+                                    onError={(e) => { 
+                                        e.target.onerror = null; 
+                                        e.target.src = defaultImg;
+                                    }}
+                                />
+                                <div className="flex justify-between items-center">
+                                    <p className="text-lg font-medium mt-2 text-black">{loc.title}</p>
+                                    <FaLongArrowAltRight className="text-blue-700" />
+                                </div>
+                            </Link>
+                        );
+                    })}
                 </div>
 
             </motion.div>
@@ -629,54 +629,33 @@ const LandingPage = () => {
                     </div>
                 </div>
                 <Link to={"/trailers"} className="flex overflow-x-auto gap-5 mt-6 w-[100%] px-4">
-                    {trailers.map((item, i) => (
-                        <div key={i} className="relative cursor-pointer">
-                            <img 
-                                src={item.image} 
-                                alt={item.title} 
-                                className="rounded-md max-w-[22rem] min-w-[22rem] min-h-[16rem] max-h-[16rem] object-cover" 
-                                onError={(e) => { 
-                                    e.target.onerror = null; 
-                                    const fallbacks = {
-                                        "Fermée": "https://images.unsplash.com/photo-1627514861611-6453982882a7?q=80&w=400&auto=format&fit=crop", // Enclosed
-                                        "Plateforme": "https://images.unsplash.com/photo-1583424103138-0382f7679df0?q=80&w=400&auto=format&fit=crop", // Flatbed
-                                        "Bateau": "https://images.unsplash.com/photo-1504958189601-5cdcc368a52e?q=80&w=400&auto=format&fit=crop", // Boat
-                                        "Cheval": "https://images.unsplash.com/photo-1522031786523-b1dca50a98f1?q=80&w=400&auto=format&fit=crop", // Horse
-                                        "Voyage": "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=400&auto=format&fit=crop", // Travel camper
-                                        "Dompeur": "https://images.unsplash.com/photo-1624535359145-6c703b413c2c?q=80&w=400&auto=format&fit=crop" // Dump
-                                    };
-                                    const titleMatch = Object.keys(fallbacks).find(key => item.title?.includes(key));
-                                    if (titleMatch) {
-                                        e.target.src = fallbacks[titleMatch];
-                                    } else {
-                                        e.target.src = "https://images.unsplash.com/photo-1551608670-349f7cc9eb4e?q=80&w=400&auto=format&fit=crop"; // Generic trailer/road 
-                                    }
-                                }} 
-                           
-                                src={item.image} 
-                                alt={item.title} 
-                                className="rounded-md max-w-[22rem] min-w-[22rem] min-h-[16rem] max-h-[16rem] object-cover" 
-                                onError={(e) => { 
-                                    e.target.onerror = null; 
-                                    const fallbacks = {
-                                        "Fermée": "https://images.unsplash.com/photo-1627514861611-6453982882a7?q=80&w=400&auto=format&fit=crop", // Enclosed
-                                        "Plateforme": "https://images.unsplash.com/photo-1583424103138-0382f7679df0?q=80&w=400&auto=format&fit=crop", // Flatbed
-                                        "Bateau": "https://images.unsplash.com/photo-1504958189601-5cdcc368a52e?q=80&w=400&auto=format&fit=crop", // Boat
-                                        "Cheval": "https://images.unsplash.com/photo-1522031786523-b1dca50a98f1?q=80&w=400&auto=format&fit=crop", // Horse
-                                        "Voyage": "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=400&auto=format&fit=crop", // Travel camper
-                                        "Dompeur": "https://images.unsplash.com/photo-1624535359145-6c703b413c2c?q=80&w=400&auto=format&fit=crop" // Dump
-                                    };
-                                    const titleMatch = Object.keys(fallbacks).find(key => item.title?.includes(key));
-                                    if (titleMatch) {
-                                        e.target.src = fallbacks[titleMatch];
-                                    } else {
-                                        e.target.src = "https://images.unsplash.com/photo-1551608670-349f7cc9eb4e?q=80&w=400&auto=format&fit=crop"; // Generic trailer/road 
-                                    }
-                                }} 
-                            />
-                            <p className="absolute bottom-5 left-5">{item.title}</p>
-                        </div>
-                    ))}
+                    {trailers.map((item, i) => {
+                        const fallbacks = {
+                            "Fermée": "https://images.unsplash.com/photo-1627514861611-6453982882a7?q=80&w=400&auto=format&fit=crop", // Enclosed
+                            "Plateforme": "https://images.unsplash.com/photo-1583424103138-0382f7679df0?q=80&w=400&auto=format&fit=crop", // Flatbed
+                            "Bateau": "https://images.unsplash.com/photo-1504958189601-5cdcc368a52e?q=80&w=400&auto=format&fit=crop", // Boat
+                            "Cheval": "https://images.unsplash.com/photo-1522031786523-b1dca50a98f1?q=80&w=400&auto=format&fit=crop", // Horse
+                            "Voyage": "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=400&auto=format&fit=crop", // Travel camper
+                            "Dompeur": "https://images.unsplash.com/photo-1624535359145-6c703b413c2c?q=80&w=400&auto=format&fit=crop" // Dump
+                        };
+                        const titleMatch = Object.keys(fallbacks).find(key => item.title?.includes(key));
+                        const defaultImg = titleMatch ? fallbacks[titleMatch] : "https://images.unsplash.com/photo-1551608670-349f7cc9eb4e?q=80&w=400&auto=format&fit=crop";
+
+                        return (
+                            <div key={i} className="relative cursor-pointer">
+                                <img 
+                                    src={item.image || defaultImg} 
+                                    alt={item.title} 
+                                    className="rounded-md max-w-[22rem] min-w-[22rem] min-h-[16rem] max-h-[16rem] object-cover bg-gray-100" 
+                                    onError={(e) => { 
+                                        e.target.onerror = null; 
+                                        e.target.src = defaultImg;
+                                    }} 
+                                />
+                                <p className="absolute bottom-5 left-5 text-white font-semibold drop-shadow-md">{item.title}</p>
+                            </div>
+                        );
+                    })}
                 </Link>
             </motion.div>
 
