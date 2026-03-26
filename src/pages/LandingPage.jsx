@@ -220,8 +220,12 @@ const AnimatedText = ({ text, variant, className = "" }) => (
         {text}
     </motion.h1>
 );
+
+const trustedAvatarImages = ["/6.png", "/7.png", "/8.png", "/9.png", "/10.png", "/11.png"];
+const popularLocationImages = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
+const browseTrailerImages = ["/12.png", "/13.png", "/14.png", "/15.png"];
+
 const LandingPage = () => {
-    const [trustedBy, setTrustedBy] = useState([]);
     const [locations, setLocations] = useState([]);
     const [trailers, setTrailers] = useState([]);
     const [faqContent, setFaqContent] = useState({ renters: [], owners: [], global: [] });
@@ -261,13 +265,11 @@ const LandingPage = () => {
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                const [trustedRes, locationRes, trailerRes] = await Promise.allSettled([
-                    axios.get(`${config.baseUrl}/content/trusted`),
+                const [locationRes, trailerRes] = await Promise.allSettled([
                     axios.get(`${config.baseUrl}/content/locations`),
                     axios.get(`${config.baseUrl}/content/trailers`),
                 ]);
 
-                if (trustedRes.status === "fulfilled") setTrustedBy(trustedRes.value.data.data);
                 if (locationRes.status === "fulfilled") setLocations(locationRes.value.data.data);
                 if (trailerRes.status === "fulfilled") setTrailers(trailerRes.value.data.data);
             } catch (error) {
@@ -548,49 +550,39 @@ const LandingPage = () => {
                 </div>
             </div>
 
-            <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col bg-[#E9EFFD] py-[4rem] px-3">
-                <AnimatedText text={translationsData.trustedBy} variant={fadeInDown} className="text-[40px] text-black font-semibold" />
-                <AnimatedText text={translationsData.leadingPlatform} variant={fadeInUp} className="text-xs text-black mt-1" />
-                <AnimatedText text={translationsData.dynamicCommunity} variant={fadeInUp} className="text-xs text-black mt-1" />
-                <div className="flex flex-wrap justify-center gap-2 mt-6">
-                    {trustedBy.map((item, i) => (
-                        <img 
-                            key={i} 
-                            src={item.image} 
-                            alt="trusted" 
-                            className="w-[3rem] h-[3rem] object-cover rounded-full shadow-sm"
-                            onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/100x100/1E3A8A/FFFFFF?text=${i+1}`; }}
+            <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col bg-[#E9EFFD] py-14 px-3 sm:px-4">
+                <AnimatedText text={translationsData.trustedBy} variant={fadeInDown} className="text-[44px] sm:text-[56px] text-black font-medium leading-tight" />
+                <AnimatedText text={`${translationsData.leadingPlatform} ${translationsData.dynamicCommunity}`} variant={fadeInUp} className="text-xs sm:text-sm text-black mt-2 text-center max-w-[52rem]" />
+
+                <div className="flex items-center justify-center mt-4">
+                    {trustedAvatarImages.map((img, i) => (
+                        <img
+                            key={img}
+                            src={img}
+                            alt={`Trusted host ${i + 1}`}
+                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E9EFFD] shadow-sm -ml-2 first:ml-0"
                         />
                     ))}
                 </div>
 
-                <AnimatedText text={translationsData.thankYou} variant={blurIn} className="text-sm font-bold text-black mt-3" />
+                <AnimatedText text={translationsData.thankYou} variant={blurIn} className="text-lg font-semibold text-black mt-8 text-center" />
             </motion.div>
 
             <motion.div variants={flipIn} whileInView="visible" className="flex justify-center items-center flex-col p-3">
                 <AnimatedText text={translationsData.popularLocations} variant={scaleIn} className="text-2xl text-black font-semibold mt-10" />
                 <div className="flex overflow-x-auto gap-10 mt-6 w-[100%] px-4">
                     {locations.map((loc, i) => {
-                        const fallbacks = {
-                            "Montreal": "https://images.unsplash.com/photo-1517722014278-c256a91a6fba?q=80&w=400&auto=format&fit=crop",
-                            "Québec City": "https://images.unsplash.com/photo-1527004654-20a28fccbee7?q=80&w=400&auto=format&fit=crop",
-                            "Sherbrooke": "https://images.unsplash.com/photo-1596538466630-f21eeaf74272?q=80&w=400&auto=format&fit=crop",
-                            "Levis": "https://images.unsplash.com/photo-1552596956-65b169527fc3?q=80&w=400&auto=format&fit=crop",
-                            "Gatineau": "https://images.unsplash.com/photo-1587825027984-c6c73df8afac?q=80&w=400&auto=format&fit=crop",
-                            "Saguenay": "https://images.unsplash.com/photo-1510255556272-35bf38803ab9?q=80&w=400&auto=format&fit=crop"
-                        };
-                        const titleMatch = Object.keys(fallbacks).find(key => loc.title?.includes(key));
-                        const defaultImg = titleMatch ? fallbacks[titleMatch] : "https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=400&auto=format&fit=crop";
+                        const locationImage = popularLocationImages[i % popularLocationImages.length];
 
                         return (
                             <Link to={`/trailers?city=${loc.title}`} key={i}>
                                 <img
-                                    src={loc.image || defaultImg}
+                                    src={locationImage}
                                     alt={loc.title}
                                     className="max-w-[15rem] min-w-[15rem] min-h-[10rem] max-h-[10rem] rounded-md object-cover bg-gray-100"
                                     onError={(e) => { 
                                         e.target.onerror = null; 
-                                        e.target.src = defaultImg;
+                                        e.target.src = "/1.png";
                                     }}
                                 />
                                 <div className="flex justify-between items-center">
@@ -630,26 +622,17 @@ const LandingPage = () => {
                 </div>
                 <Link to={"/trailers"} className="flex overflow-x-auto gap-5 mt-6 w-[100%] px-4">
                     {trailers.map((item, i) => {
-                        const fallbacks = {
-                            "Fermée": "https://images.unsplash.com/photo-1627514861611-6453982882a7?q=80&w=400&auto=format&fit=crop", // Enclosed
-                            "Plateforme": "https://images.unsplash.com/photo-1583424103138-0382f7679df0?q=80&w=400&auto=format&fit=crop", // Flatbed
-                            "Bateau": "https://images.unsplash.com/photo-1504958189601-5cdcc368a52e?q=80&w=400&auto=format&fit=crop", // Boat
-                            "Cheval": "https://images.unsplash.com/photo-1522031786523-b1dca50a98f1?q=80&w=400&auto=format&fit=crop", // Horse
-                            "Voyage": "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=400&auto=format&fit=crop", // Travel camper
-                            "Dompeur": "https://images.unsplash.com/photo-1624535359145-6c703b413c2c?q=80&w=400&auto=format&fit=crop" // Dump
-                        };
-                        const titleMatch = Object.keys(fallbacks).find(key => item.title?.includes(key));
-                        const defaultImg = titleMatch ? fallbacks[titleMatch] : "https://images.unsplash.com/photo-1551608670-349f7cc9eb4e?q=80&w=400&auto=format&fit=crop";
+                        const trailerImage = browseTrailerImages[i % browseTrailerImages.length];
 
                         return (
                             <div key={i} className="relative cursor-pointer">
                                 <img 
-                                    src={item.image || defaultImg} 
+                                    src={trailerImage} 
                                     alt={item.title} 
                                     className="rounded-md max-w-[22rem] min-w-[22rem] min-h-[16rem] max-h-[16rem] object-cover bg-gray-100" 
                                     onError={(e) => { 
                                         e.target.onerror = null; 
-                                        e.target.src = defaultImg;
+                                        e.target.src = "/12.png";
                                     }} 
                                 />
                                 <p className="absolute bottom-5 left-5 text-white font-semibold drop-shadow-md">{item.title}</p>
