@@ -28,49 +28,73 @@ const STATUS_STYLES = {
   cancelled: 'text-red-700 bg-red-100',
 };
 
+const FALLBACK_TRAILER_IMAGE = '/12.png';
+
+const toDate = (value) => {
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
+const startOfToday = () => {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now;
+};
+
 // --- Reservation Item Component ---
-const ReservationItem = ({ reservation, onSelectReservation, createChat, t }) => (
-  <div className="py-6 border-b border-gray-100 last:border-b-0">
-    <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
-      <img
-        src={reservation.trailerId?.images[0]}
-        alt={reservation.trailerId?.title}
-        className="w-full sm:w-40 h-48 sm:h-28 object-cover rounded-xl flex-shrink-0 shadow-sm"
-      />
-      <div className='flex-1 w-full'>
-        <div className="flex justify-between items-start mb-2">
-          <p className="font-bold text-gray-900 text-lg leading-tight truncate">{reservation.trailerId?.title}</p>
-          <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider ${STATUS_STYLES[reservation.status] || 'text-gray-700 bg-gray-100'}`}>
-            {t.statusLabels?.[reservation.status] || reservation.status}
-          </span>
-        </div>
+const ReservationItem = ({ reservation, onSelectReservation, createChat, t }) => {
+  const trailerTitle = reservation?.trailerId?.title || t.unknownTrailer || 'Unknown Trailer';
+  const trailerImage = reservation?.trailerId?.images?.[0] || FALLBACK_TRAILER_IMAGE;
+  const locationLabel = [reservation?.trailerId?.country, reservation?.trailerId?.city].filter(Boolean).join(', ');
+  const dateLabel = [reservation?.startDate, reservation?.endDate].filter(Boolean).join(' - ');
 
-        <div className="flex items-center text-sm text-gray-600 mb-2">
-          <FaUser className="w-3.5 h-3.5 mr-2 text-red-500" />
-          <span className="font-medium">{reservation.owner_id?.name}</span>
-        </div>
+  return (
+    <div className="py-6 border-b border-gray-100 last:border-b-0">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
+        <img
+          src={trailerImage}
+          alt={trailerTitle}
+          className="w-full sm:w-40 h-48 sm:h-28 object-cover rounded-xl flex-shrink-0 shadow-sm"
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = FALLBACK_TRAILER_IMAGE;
+          }}
+        />
+        <div className='flex-1 w-full'>
+          <div className="flex justify-between items-start mb-2">
+            <p className="font-bold text-gray-900 text-lg leading-tight truncate">{trailerTitle}</p>
+            <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider ${STATUS_STYLES[reservation?.status] || 'text-gray-700 bg-gray-100'}`}>
+              {t.statusLabels?.[reservation?.status] || reservation?.status || '-'}
+            </span>
+          </div>
 
-        <p className="text-xs sm:text-sm text-gray-500 mb-1">{[reservation.trailerId?.country, reservation.trailerId?.city].filter(i => i !== null).join(", ")}</p>
-        <p className="text-xs sm:text-sm text-gray-700 font-semibold mb-4">{[reservation.startDate, reservation?.endDate].filter(i => i !== null).join(" - ")}</p>
+          <div className="flex items-center text-sm text-gray-600 mb-2">
+            <FaUser className="w-3.5 h-3.5 mr-2 text-red-500" />
+            <span className="font-medium">{reservation?.owner_id?.name || '-'}</span>
+          </div>
 
-        <div className='flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end'>
-          <button
-            onClick={() => onSelectReservation(reservation)}
-            className="w-full sm:w-auto text-blue-600 hover:text-blue-800 text-sm font-bold py-2 transition duration-150 cursor-pointer"
-          >
-            {t.viewDetails}
-          </button>
-          <button
-            onClick={() => createChat(reservation?.owner_id?._id)}
-            className="w-full sm:w-auto bg-blue-50 border border-blue-200 text-blue-600 text-sm font-bold px-6 py-2.5 rounded-xl hover:bg-blue-600 hover:text-white transition duration-200 shadow-sm"
-          >
-            {t.contactOwner}
-          </button>
+          <p className="text-xs sm:text-sm text-gray-500 mb-1">{locationLabel}</p>
+          <p className="text-xs sm:text-sm text-gray-700 font-semibold mb-4">{dateLabel}</p>
+
+          <div className='flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-end'>
+            <button
+              onClick={() => onSelectReservation(reservation)}
+              className="w-full sm:w-auto text-blue-600 hover:text-blue-800 text-sm font-bold py-2 transition duration-150 cursor-pointer"
+            >
+              {t.viewDetails}
+            </button>
+            <button
+              onClick={() => createChat(reservation?.owner_id?._id)}
+              className="w-full sm:w-auto bg-blue-50 border border-blue-200 text-blue-600 text-sm font-bold px-6 py-2.5 rounded-xl hover:bg-blue-600 hover:text-white transition duration-200 shadow-sm"
+            >
+              {t.contactOwner}
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // --- Main Component ---
 const UserReservation = () => {
@@ -84,17 +108,22 @@ const UserReservation = () => {
 
   const nav = useNavigate();
 
+  const tabs = Array.isArray(t.tabs) && t.tabs.length === TABS.length ? t.tabs : TABS;
+
   const filteredReservations = bookings.filter((booking) => {
-    const today = new Date();
+    const today = startOfToday();
+    const startDate = toDate(booking?.startDate);
+    const endDate = toDate(booking?.endDate);
+
     switch (activeTab) {
       case 'All':
         return true;
       case 'Upcoming':
-        return new Date(booking.startDate) >= today && booking.status !== 'cancelled';
+        return Boolean(startDate && startDate >= today && booking?.status !== 'cancelled');
       case 'Past':
-        return new Date(booking.endDate) < today || booking.status === 'completed';
+        return Boolean((endDate && endDate < today) || booking?.status === 'completed');
       case 'Cancel':
-        return booking.status === 'cancelled';
+        return booking?.status === 'cancelled';
       default:
         return true;
     }
@@ -103,24 +132,35 @@ const UserReservation = () => {
   const createChat = async (ownerId) => {
     try {
       const currentUserId = localStorage.getItem("userId");
-      if (!currentUserId || !ownerId) return;
+      if (!currentUserId || !ownerId) {
+        toast.error(t.contactOwnerError || "Unable to contact owner right now");
+        return;
+      }
 
-      const response = await axios.post(`${config.baseUrl}/chat/create`, {
+      await axios.post(`${config.baseUrl}/chat/create`, {
         participants: [currentUserId, ownerId]
       });
 
       nav(`/user/dashboard/messaging`);
-    } catch (error) {
-      console.error("Error creating chat:", error);
+    } catch (chatError) {
+      toast.error(chatError?.response?.data?.msg || t.contactOwnerError || "Failed to open conversation with owner");
     }
   };
 
   const fetchBookings = async () => {
     try {
-      const result = await axios.get(`${config.baseUrl}/booking/buyer/${localStorage.getItem("userId")}`);
-      setBookings(result.data.data);
-    } catch (err) {
-      toast.error(t.fetchError || "Failed to fetch bookings");
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        setBookings([]);
+        return;
+      }
+
+      const result = await axios.get(`${config.baseUrl}/booking/buyer/${userId}`);
+      const nextBookings = Array.isArray(result?.data?.data) ? result.data.data : [];
+      setBookings(nextBookings);
+    } catch (fetchError) {
+      setBookings([]);
+      toast.error(fetchError?.response?.data?.msg || t.fetchError || "Failed to fetch bookings");
     }
   };
 
@@ -152,7 +192,7 @@ const UserReservation = () => {
 
         {/* Tabs */}
         <div className="flex border-b border-gray-200 px-5 overflow-x-auto">
-          {t.tabs.map((tab, idx) => (
+          {tabs.map((tab, idx) => (
             <button
               key={idx}
               onClick={() => setActiveTab(TABS[idx])}
@@ -172,7 +212,7 @@ const UserReservation = () => {
           {filteredReservations.length > 0 ? (
             filteredReservations.map((reservation) => (
               <ReservationItem
-                key={reservation.id}
+                key={reservation?._id || reservation?.id}
                 reservation={reservation}
                 onSelectReservation={setSelectedReservation}
                 createChat={createChat}
@@ -181,7 +221,7 @@ const UserReservation = () => {
             ))
           ) : (
             <div className="text-center py-8 text-gray-500">
-              {t.noReservations.replace("{tab}", activeTab === "All" ? "" : (t.tabs[TABS.indexOf(activeTab)] || activeTab))}
+              {(t.noReservations || "No reservations found.").replace("{tab}", activeTab === "All" ? "" : (tabs[TABS.indexOf(activeTab)] || activeTab))}
             </div>
           )}
         </div>
