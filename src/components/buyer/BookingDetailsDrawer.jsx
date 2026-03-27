@@ -18,7 +18,6 @@ const normalizeLang = (value) => {
 };
 
 const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) => {
-    if (!reservation) return null;
     const [updatingStatus, setUpdatingStatus] = useState(false);
     const [uploadingSlot, setUploadingSlot] = useState(null);
     const [bookingDocs, setBookingDocs] = useState([]);
@@ -136,7 +135,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
     const checkOutDocs = bookingDocs.filter(d => d.documentType === "Check-out Photo");
 
     // Owner can ONLY upload pre-rental photos after payment is confirmed
-    const canUploadCheckIn = reservation.status === "paid";
+    const canUploadCheckIn = reservation?.status === "paid";
     // Owner/Seller can ONLY upload pre-rental (check-in) photos — post-rental is for the renter
     const canUploadCheckOut = false;
 
@@ -258,6 +257,8 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
     const currentCanUpload = photoSubTab === "pre-rental" ? canUploadCheckIn : canUploadCheckOut;
     const currentDocType = photoSubTab === "pre-rental" ? "Check-in Photo" : "Check-out Photo";
     const hasNoPhotos = photoSubTab === "pre-rental" ? checkInDocs.length === 0 : checkOutDocs.length === 0;
+
+    if (!reservation) return null;
 
     return (
         <div className="fixed inset-0 z-40 overflow-hidden">
@@ -528,7 +529,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                         </div>
 
                                         {/* Role-based info banners */}
-                                        {photoSubTab === "pre-rental" && reservation.status === "pending" && (
+                                        {photoSubTab === "pre-rental" && reservation?.status === "pending" && (
                                             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-start gap-3">
                                                 <span className="text-lg flex-shrink-0">ℹ️</span>
                                                 <div>
@@ -537,7 +538,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
                                                 </div>
                                             </div>
                                         )}
-                                        {photoSubTab === "pre-rental" && reservation.status === "accepted" && (
+                                        {photoSubTab === "pre-rental" && reservation?.status === "accepted" && (
                                             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-3">
                                                 <span className="text-lg flex-shrink-0">⏳</span>
                                                 <div>

@@ -103,7 +103,7 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
     // User (renter) uploads ONLY post-rental (check-out) photos — pre-rental is for the owner
     const canUploadCheckIn = false;
     // User uploads check-out photos when status is paid
-    const canUploadCheckOut = reservation.status === "paid";
+    const canUploadCheckOut = reservation?.status === "paid";
 
     const [isChangeDrawerOpen, setIsChangeDrawerOpen] = useState(false);
     const [contractChecked, setContractChecked] = useState(false);
@@ -641,7 +641,7 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
                                                 </div>
                                             </div>
                                         )}
-                                        {photoSubTab === "post-rental" && reservation.status !== "paid" && (
+                                        {photoSubTab === "post-rental" && reservation?.status !== "paid" && (
                                             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-start gap-3">
                                                 <span className="text-lg flex-shrink-0">ℹ️</span>
                                                 <div>
