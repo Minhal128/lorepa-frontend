@@ -34,7 +34,8 @@ export const adminNav = [
     { id: 1, link: "home", key: "dashboard", icon: <GoHome /> },
     { id: 2, link: "listing", key: "listing", icon: <BsBuildings /> },
     { id: 3, link: "booking", key: "booking", icon: <IoCalendarOutline /> },
-    { id: 4, link: "user", key: "user", icon: <FiUser /> },
-    { id: 5, link: "settings", key: "settings", icon: <IoSettingsOutline /> },
-    { id: 6, link: "support", key: "support", icon: <IoHelpCircleOutline /> },
+    { id: 4, link: "transactions", key: "transactions", icon: <HiOutlineCreditCard /> },
+    { id: 5, link: "user", key: "user", icon: <FiUser /> },
+    { id: 6, link: "settings", key: "settings", icon: <IoSettingsOutline /> },
+    { id: 7, link: "support", key: "support", icon: <IoHelpCircleOutline /> },
 ];

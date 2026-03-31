@@ -84,7 +84,8 @@ const AdminBookingPage = () => {
                                         <p className="text-sm font-bold text-gray-900 truncate max-w-[200px]">{booking?.trailerId?.title || 'N/A'}</p>
                                     </td>
                                     <td className='px-6 py-4'>
-                                        <p className="text-sm font-black text-blue-600">{booking.firstname} {booking.lastname}</p>
+                                        <p className="text-sm font-black text-blue-600">{booking?.user_id?.firstName || booking.firstname} {booking?.user_id?.lastName || booking.lastname}</p>
+                                        {booking?.user_id?.email && <p className="text-xs text-gray-400">{booking.user_id.email}</p>}
                                     </td>
                                     <td className='px-6 py-4'>
                                         {booking?.startDate ? (
@@ -117,9 +118,14 @@ const AdminBookingPage = () => {
                                         </select>
                                     </td>
                                     <td className='px-6 py-4'>
-                                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${booking.price == booking.total_paid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                                            {booking.price == booking.total_paid ? t.paid : t.unpaid}
-                                        </span>
+                                        <div className="flex flex-col gap-1">
+                                            <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${(booking.total_paid > 0 || booking.status === 'paid') ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                                                {(booking.total_paid > 0 || booking.status === 'paid') ? t.paid : t.unpaid}
+                                            </span>
+                                            {booking.total_paid > 0 && (
+                                                <span className="text-[10px] text-gray-500 font-bold">${parseFloat(booking.total_paid).toFixed(2)}</span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className='px-6 py-4'>
                                         <button className="p-2 bg-gray-50 text-gray-400 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition">
@@ -141,9 +147,14 @@ const AdminBookingPage = () => {
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t.bookingId}</p>
                                     <h4 className="text-lg font-black text-gray-900 tracking-tight">#{booking._id.slice(-6).toUpperCase()}</h4>
                                 </div>
-                                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${booking.price == booking.total_paid ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                                    {booking.price == booking.total_paid ? t.paid : t.unpaid}
-                                </span>
+                                <div className="flex flex-col items-end gap-1">
+                                    <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${(booking.total_paid > 0 || booking.status === 'paid') ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                                        {(booking.total_paid > 0 || booking.status === 'paid') ? t.paid : t.unpaid}
+                                    </span>
+                                    {booking.total_paid > 0 && (
+                                        <span className="text-[10px] text-gray-500 font-bold">${parseFloat(booking.total_paid).toFixed(2)}</span>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 text-xs font-bold">
@@ -153,7 +164,7 @@ const AdminBookingPage = () => {
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t.renter}</p>
-                                    <p className="text-blue-600">{booking.firstname} {booking.lastname}</p>
+                                    <p className="text-blue-600">{booking?.user_id?.firstName || booking.firstname} {booking?.user_id?.lastName || booking.lastname}</p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t.price}</p>

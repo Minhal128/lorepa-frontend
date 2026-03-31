@@ -18,6 +18,7 @@ import AdminListingDetailPage from './pages/Admin/Dashboard/AdminListingDetailPa
 import AdminBookingPage from './pages/Admin/Dashboard/AdminBookingPage';
 import AdminUserDetailPage from './pages/Admin/Dashboard/AdminUserDetailPage';
 import AdminSettingsPage from './pages/Admin/Dashboard/AdminSettingsPage';
+import AdminTransactionPage from './pages/Admin/Dashboard/AdminTransactionage';
 import WhoPage from './pages/WhoPage';
 import FaqPage from './pages/FaqPage';
 import CalculatorPage from './pages/CalculatorPage';
@@ -130,6 +131,7 @@ function App() {
               <Route path="listing" element={<AdminListingPage />} />
               <Route path="listing/:id" element={<AdminListingDetailPage />} />
               <Route path="booking" element={<AdminBookingPage />} />
+              <Route path="transactions" element={<AdminTransactionPage />} />
               <Route path="user" element={<AdminUserPage />} />
               <Route path="support" element={<AdminSupportPage />} />
               <Route path="user/:id" element={<AdminUserDetailPage />} />
