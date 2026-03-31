@@ -69,7 +69,7 @@ const PaymentSuccess = () => {
         // Step 3: Verify payment was recorded (fallback check)
         const verifyPayment = async (attempts = 0) => {
           try {
-            const verifyRes = await axios.get(`${config.baseUrl}/stripe/verify-payment/${bookingId}`);
+            const verifyRes = await axios.get(`${config.baseUrl}/stripe/verify-payment/${bookingId}?session_id=${sessionId}`);
             if (verifyRes.data.paid) {
               setStatus("success");
               toast.success("Paiement réussi ! Votre réservation est confirmée.");
