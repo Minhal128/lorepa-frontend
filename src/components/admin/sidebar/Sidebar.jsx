@@ -25,7 +25,7 @@ const Sidebar = () => {
       <div className="lg:block hidden w-[280px] h-screen bg-blue-600 sticky top-0 border-r border-gray-100 overflow-y-auto scrollbar-hide">
         <div className="p-8">
           <div onClick={() => nav("/")} className="cursor-pointer transition-transform active:scale-95">
-            <img src={Logo} alt="Lorepa Logo" className="h-11 w-auto max-w-[170px] object-contain brightness-0 invert" />
+            <img src={Logo} alt="Lorepa Logo" className="h-14 w-auto max-w-[200px] object-contain brightness-0 invert" />
           </div>
         </div>
 
@@ -72,7 +72,7 @@ const Sidebar = () => {
       {/* Mobile Sidebar */}
       <div className={`lg:hidden fixed top-0 left-0 h-full w-[280px] bg-blue-600 z-[100] shadow-2xl transition-transform duration-500 ease-out border-r border-white/10 flex flex-col ${isNavOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-8 flex items-center justify-between border-b border-white/10">
-          <img src={Logo} alt="Lorepa Logo" className="h-9 w-auto max-w-[140px] object-contain brightness-0 invert cursor-pointer" onClick={() => nav("/")} />
+          <img src={Logo} alt="Lorepa Logo" className="h-12 w-auto max-w-[170px] object-contain brightness-0 invert cursor-pointer" onClick={() => nav("/")} />
           <button
             onClick={toggleNav}
             className="p-2 bg-white/10 rounded-xl text-white hover:bg-white/20 transition"
