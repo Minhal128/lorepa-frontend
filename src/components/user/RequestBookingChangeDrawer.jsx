@@ -11,7 +11,12 @@ const normalizeLang = (value) => {
   if (lang.startsWith("fr")) return "fr";
   if (lang.startsWith("es")) return "es";
   if (lang.startsWith("cn") || lang.startsWith("zh")) return "cn";
-  return "en";
+  if (lang.startsWith("en")) return "en";
+  return "fr";
+};
+
+const getCurrentLang = () => {
+  return normalizeLang(localStorage.getItem("lang") || localStorage.getItem("i18nextLng"));
 };
 
 const RequestBookingChangeDrawer = ({
@@ -23,16 +28,22 @@ const RequestBookingChangeDrawer = ({
   const [additionalNotes, setAdditionalNotes] = useState("");
   const [notificationPreference, setNotificationPreference] = useState("Email");
 
-  const [lang, setLang] = useState(normalizeLang(localStorage.getItem("lang")));
+  const [lang, setLang] = useState(getCurrentLang());
   useEffect(() => {
     const handleStorageChange = () => {
-      setLang(normalizeLang(localStorage.getItem("lang")));
+      setLang(getCurrentLang());
     };
     window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    window.addEventListener("app-language-changed", handleStorageChange);
+    window.addEventListener("focus", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("app-language-changed", handleStorageChange);
+      window.removeEventListener("focus", handleStorageChange);
+    };
   }, []);
 
-  const t = userReservationTranslations[lang] || userReservationTranslations.en;
+  const t = userReservationTranslations[lang] || userReservationTranslations.fr;
 
   if (!reservation) return null;
 

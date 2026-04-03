@@ -18,6 +18,9 @@ const normalizeLang = (value) => {
     return "fr";
 };
 
+const getCurrentLang = () =>
+    normalizeLang(localStorage.getItem("lang") || localStorage.getItem("i18nextLng"));
+
 const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, StatusBadge, onRefresh }) => {
     const [reservation, setReservation] = useState(initialReservation);
 
@@ -30,21 +33,27 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
     const [activeTab, setActiveTab] = useState("details");
     const [photoSubTab, setPhotoSubTab] = useState("post-rental");
     const [showPhotoBanner, setShowPhotoBanner] = useState(true);
-    const [lang, setLang] = useState(normalizeLang(localStorage.getItem("lang")));
+    const [lang, setLang] = useState(getCurrentLang());
 
     const t = userReservationTranslations[lang] || userReservationTranslations.fr;
 
     useEffect(() => {
         if (reservation?._id) {
-            setLang(normalizeLang(localStorage.getItem("lang")));
+            setLang(getCurrentLang());
             fetchBookingDocs();
         }
     }, [reservation?._id]);
 
     useEffect(() => {
-        const handleLangChange = () => setLang(normalizeLang(localStorage.getItem("lang")));
+        const handleLangChange = () => setLang(getCurrentLang());
         window.addEventListener("storage", handleLangChange);
-        return () => window.removeEventListener("storage", handleLangChange);
+        window.addEventListener("app-language-changed", handleLangChange);
+        window.addEventListener("focus", handleLangChange);
+        return () => {
+            window.removeEventListener("storage", handleLangChange);
+            window.removeEventListener("app-language-changed", handleLangChange);
+            window.removeEventListener("focus", handleLangChange);
+        };
     }, []);
 
     const fetchBookingDocs = async () => {

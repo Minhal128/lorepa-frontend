@@ -42,25 +42,31 @@ const Navbar2 = () => {
 
     const isLogin = localStorage.getItem("userId");
 
-    const [language, setLanguage] = useState(localStorage.getItem('lang') || 'en');
+    const [language, setLanguage] = useState(localStorage.getItem('lang') || localStorage.getItem('i18nextLng') || 'en');
     const [translations, setTranslations] = useState(navBar2Translations[language] || navBar2Translations.fr);
     const [showLanguages, setShowLanguages] = useState(false);
     const [showNav, setshowNav] = useState(false);
 
     useEffect(() => {
         const handleStorageChange = () => {
-            const storedLang = localStorage.getItem('lang') || 'en';
+            const storedLang = localStorage.getItem('lang') || localStorage.getItem('i18nextLng') || 'en';
             setLanguage(storedLang);
             setTranslations(navBar2Translations[storedLang] || navBar2Translations.fr);
         };
         window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('app-language-changed', handleStorageChange);
         handleStorageChange();
-        return () => window.removeEventListener('storage', handleStorageChange);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('app-language-changed', handleStorageChange);
+        };
     }, []);
 
     const handleLanguageChange = (langSymbol) => {
         setLanguage(langSymbol);
         localStorage.setItem("lang", langSymbol);
+        localStorage.setItem("i18nextLng", langSymbol);
+        window.dispatchEvent(new CustomEvent("app-language-changed", { detail: { lang: langSymbol } }));
         setShowLanguages(false);
         window.location.reload();
     };
