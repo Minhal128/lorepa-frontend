@@ -25,4 +25,4 @@ dist-ssr
 *.sw?
 .vercel
 .env*.local
-.env
+config.bat

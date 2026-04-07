@@ -41,6 +41,8 @@ const Navbar = () => {
 
   const handleLanguageChange = (langSymbol) => {
     localStorage.setItem("lang", langSymbol);
+    localStorage.setItem("i18nextLng", langSymbol);
+    window.dispatchEvent(new CustomEvent("app-language-changed", { detail: { lang: langSymbol } }));
     setShowLanguages(false);
     window.location.reload();
   };

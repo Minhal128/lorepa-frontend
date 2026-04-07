@@ -18,6 +18,14 @@ const normalizeLang = (value) => {
   return 'fr';
 };
 
+const getCurrentLang = () =>
+  normalizeLang(localStorage.getItem('lang') || localStorage.getItem('i18nextLng'));
+
+const getCurrentTranslations = () => {
+  const lang = getCurrentLang();
+  return userReservationTranslations[lang] || userReservationTranslations.fr;
+};
+
 // --- Status Styles ---
 const STATUS_STYLES = {
   pending: 'text-yellow-700 bg-yellow-100',
@@ -101,10 +109,7 @@ const UserReservation = () => {
   const [activeTab, setActiveTab] = useState('All');
   const [bookings, setBookings] = useState([]);
   const [selectedReservation, setSelectedReservation] = useState(null);
-  const [t, setT] = useState(() => {
-    const lang = normalizeLang(localStorage.getItem("lang"));
-    return userReservationTranslations[lang] || userReservationTranslations.fr;
-  });
+  const [t, setT] = useState(() => getCurrentTranslations());
 
   const nav = useNavigate();
 
@@ -169,14 +174,19 @@ const UserReservation = () => {
 
     // Handle language changes dynamically
     const handleLangChange = () => {
-      const lang = normalizeLang(localStorage.getItem("lang"));
-      setT(userReservationTranslations[lang] || userReservationTranslations.fr);
+      setT(getCurrentTranslations());
     };
 
     window.addEventListener("storage", handleLangChange);
+    window.addEventListener("app-language-changed", handleLangChange);
+    window.addEventListener("focus", handleLangChange);
     handleLangChange();
 
-    return () => window.removeEventListener("storage", handleLangChange);
+    return () => {
+      window.removeEventListener("storage", handleLangChange);
+      window.removeEventListener("app-language-changed", handleLangChange);
+      window.removeEventListener("focus", handleLangChange);
+    };
   }, []);
 
   return (
