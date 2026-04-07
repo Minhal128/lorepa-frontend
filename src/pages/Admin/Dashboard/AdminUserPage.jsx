@@ -16,11 +16,31 @@ const AdminUserPage = () => {
 
   const itemsPerPage = 10;
 
+  const normalizeRole = (role) => String(role || '').trim().toLowerCase();
+
+  const roleMatchesTab = (role, tab) => {
+    const normalizedRole = normalizeRole(role);
+    if (tab === 'owner') return ['owner', 'host', 'seller', 'buyer'].includes(normalizedRole);
+    if (tab === 'renter') return ['renter', 'guest', 'user'].includes(normalizedRole);
+    return false;
+  };
+
   const fetchUsers = async () => {
     try {
       const res = await axios.get(`${config.baseUrl}/account/all`);
       if (res.data?.data) {
-        setUsers(res.data.data);
+        const toTime = (value) => {
+          const parsed = new Date(value || 0).getTime();
+          return Number.isNaN(parsed) ? 0 : parsed;
+        };
+
+        const sortedUsers = [...res.data.data].sort((a, b) => {
+          const bTime = toTime(b?.updatedAt || b?.createdAt);
+          const aTime = toTime(a?.updatedAt || a?.createdAt);
+          return bTime - aTime;
+        });
+
+        setUsers(sortedUsers);
       }
     } catch {
       toast.error("Failed to fetch users");
@@ -31,7 +51,7 @@ const AdminUserPage = () => {
     fetchUsers();
   }, []);
 
-  const filteredUsers = users.filter((user) => user.role === activeTab);
+  const filteredUsers = users.filter((user) => roleMatchesTab(user?.role, activeTab));
 
   const indexOfLastUser = currentPage * itemsPerPage;
   const indexOfFirstUser = indexOfLastUser - itemsPerPage;
@@ -130,7 +150,9 @@ const AdminUserPage = () => {
                   <td className='px-6 py-4'>
                     <div className="flex flex-wrap gap-2">
                       {[
-                        { label: 'License', img: user.licenseFrontImage },
+                        { label: 'License Front', img: user.licenseFrontImage },
+                        { label: 'License Back', img: user.licenseBackImage },
+                        { label: 'Car Insurance', img: user.carInsurancePolicyImage },
                         { label: 'Registration', img: user.trailerRegistrationImage },
                         { label: 'Insurance', img: user.trailerInsurancePolicyImage }
                       ].map((doc, idx) => (
@@ -217,6 +239,8 @@ const AdminUserPage = () => {
                   <div className="flex gap-2">
                     {[
                       { img: user.licenseFrontImage },
+                      { img: user.licenseBackImage },
+                      { img: user.carInsurancePolicyImage },
                       { img: user.trailerRegistrationImage },
                       { img: user.trailerInsurancePolicyImage }
                     ].map((doc, idx) => (
