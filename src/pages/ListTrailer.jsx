@@ -78,7 +78,9 @@ const translations = {
         somethingWentWrong: 'Something went wrong',
         trailerCreatedSuccessfully: 'Trailer created successfully!',
         userIdNotFound: 'User ID not found',
-        incompleteFields: 'Please fill out all fields before proceeding.'
+        incompleteFields: 'Please fill out all fields before proceeding.',
+        kycRequiredToSell: 'KYC verification is required before listing a trailer.',
+        kycCheckFailed: 'Unable to verify your KYC status. Please try again.'
     },
     es: {
         listTrailer: 'Listar Remolque',
@@ -150,7 +152,9 @@ const translations = {
         somethingWentWrong: 'Algo salió mal',
         trailerCreatedSuccessfully: '¡Remolque creado con éxito!',
         userIdNotFound: 'ID de usuario no encontrado',
-        incompleteFields: 'Por favor, complete todos los campos antes de continuar.'
+        incompleteFields: 'Por favor, complete todos los campos antes de continuar.',
+        kycRequiredToSell: 'La verificación KYC es obligatoria antes de publicar un remolque.',
+        kycCheckFailed: 'No se pudo verificar su estado KYC. Inténtelo de nuevo.'
     },
     cn: {
         listTrailer: '列出拖车',
@@ -222,7 +226,9 @@ const translations = {
         somethingWentWrong: '出错了',
         trailerCreatedSuccessfully: '拖车创建成功！',
         userIdNotFound: '未找到用户 ID',
-        incompleteFields: '在继续之前请填写所有字段。'
+        incompleteFields: '在继续之前请填写所有字段。',
+        kycRequiredToSell: '发布拖车前必须完成 KYC 验证。',
+        kycCheckFailed: '无法验证您的 KYC 状态。请重试。'
     },
     fr: {
         listTrailer: 'Lister une remorque',
@@ -294,7 +300,9 @@ const translations = {
         somethingWentWrong: 'Quelque chose a mal tourné',
         trailerCreatedSuccessfully: 'Remorque créée avec succès!',
         userIdNotFound: 'ID utilisateur introuvable',
-        incompleteFields: 'Veuillez remplir tous les champs avant de continuer.'
+        incompleteFields: 'Veuillez remplir tous les champs avant de continuer.',
+        kycRequiredToSell: 'La vérification KYC est obligatoire avant de publier une remorque.',
+        kycCheckFailed: 'Impossible de vérifier votre statut KYC. Veuillez réessayer.'
     }
 };
 
@@ -430,6 +438,20 @@ const ListTrailer = () => {
             const userId = localStorage.getItem("userId");
             if (!userId) return toast.error(lang.userIdNotFound);
 
+            try {
+                const accountRes = await axios.get(`${config.baseUrl}/account/single/${userId}`);
+                const isKycVerified = Boolean(accountRes?.data?.data?.kycVerified);
+
+                if (!isKycVerified) {
+                    toast.error(lang.kycRequiredToSell);
+                    nav('/seller/dashboard/profile?tab=documents');
+                    return;
+                }
+            } catch {
+                toast.error(lang.kycCheckFailed);
+                return;
+            }
+
             const data = new FormData();
             data.append("userId", userId);
 
@@ -453,6 +475,10 @@ const ListTrailer = () => {
             }
         } catch (err) {
             console.error(err);
+            if (err?.response?.status === 403) {
+                toast.error(lang.kycRequiredToSell);
+                return;
+            }
             toast.error(lang.somethingWentWrong);
         }
     };

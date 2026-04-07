@@ -291,7 +291,11 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
           id: toastId,
         });
         onClose();
-      } else toast.error(data.msg || t("operationFailed"), { id: toastId });
+      } else if (res.status === 403) {
+        toast.error(t("kycRequiredToSell"), { id: toastId });
+      } else {
+        toast.error(data.msg || t("operationFailed"), { id: toastId });
+      }
     } catch (err) {
       console.log(err);
       toast.error(t("somethingWentWrong"), { id: toastId });

@@ -21,6 +21,8 @@ export const buyerListingTranslations = {
     deleted: "Trailer deleted",
     fetchError: "Failed to fetch trailers",
     deleteError: "Failed to delete trailer",
+    kycRequiredToSell: "KYC verification is required before listing a trailer.",
+    kycCheckFailed: "Unable to verify your KYC status. Please try again.",
   },
   fr: {
     myListings: "Mes annonces",
@@ -44,6 +46,8 @@ export const buyerListingTranslations = {
     deleted: "Remorque supprimée",
     fetchError: "Échec du chargement",
     deleteError: "Échec de la suppression",
+    kycRequiredToSell: "La vérification KYC est obligatoire avant de publier une remorque.",
+    kycCheckFailed: "Impossible de vérifier votre statut KYC. Veuillez réessayer.",
   },
   es: {
     myListings: "Mis anuncios",
@@ -67,6 +71,8 @@ export const buyerListingTranslations = {
     deleted: "Remolque eliminado",
     fetchError: "Error al obtener datos",
     deleteError: "Error al eliminar",
+    kycRequiredToSell: "La verificación KYC es obligatoria antes de publicar un remolque.",
+    kycCheckFailed: "No se pudo verificar su estado KYC. Inténtelo de nuevo.",
   },
   cn: {
     myListings: "我的列表",
@@ -90,5 +96,7 @@ export const buyerListingTranslations = {
     deleted: "拖车已删除",
     fetchError: "获取失败",
     deleteError: "删除失败",
+    kycRequiredToSell: "发布拖车前必须完成 KYC 验证。",
+    kycCheckFailed: "无法验证您的 KYC 状态。请重试。",
   },
 };

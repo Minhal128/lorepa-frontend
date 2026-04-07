@@ -37,6 +37,29 @@ const BuyerListing = () => {
     }
   };
 
+  const handleAddTrailer = async () => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      toast.error(t("fetchError"));
+      return;
+    }
+
+    try {
+      const accountRes = await axios.get(`${config.baseUrl}/account/single/${userId}`);
+      const isKycVerified = Boolean(accountRes?.data?.data?.kycVerified);
+
+      if (!isKycVerified) {
+        toast.error(t("kycRequiredToSell"));
+        return;
+      }
+
+      setSelectedTrailer(null);
+      setIsModalOpen(true);
+    } catch {
+      toast.error(t("kycCheckFailed"));
+    }
+  };
+
   const deleteTrailer = async (id) => {
     if (!window.confirm(t("confirmDelete"))) return;
 
@@ -65,7 +88,7 @@ const BuyerListing = () => {
           <p className="text-sm text-gray-500 font-medium">{t("manageFleet")}</p>
         </div>
         <button
-          onClick={() => { setSelectedTrailer(null); setIsModalOpen(true); }}
+          onClick={handleAddTrailer}
           className="flex items-center justify-center w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition active:scale-[0.98]"
         >
           <FaPlus className="mr-2" /> {t("addTrailer")}

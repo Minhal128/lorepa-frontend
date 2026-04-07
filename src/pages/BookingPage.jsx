@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import axios from 'axios';
 import config from '../config';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 // Only the translations we actually use
 const bookingTranslations = {
@@ -95,6 +96,7 @@ const BookingSuccessModal = ({ isOpen, onClose }) => {
 };
 
 const BookingPage = () => {
+    const nav = useNavigate();
     const [translations, setTranslations] = useState(() => {
         const storedLang = localStorage.getItem('lang');
         return bookingTranslations[storedLang] || bookingTranslations.fr;
@@ -144,6 +146,7 @@ const BookingPage = () => {
             const userId = localStorage.getItem('userId');
             if (!userId) {
                 toast.error(translations.userNotFound || "User not found. Please log in.");
+                nav('/login');
                 return;
             }
 
@@ -152,6 +155,7 @@ const BookingPage = () => {
 
             if (!isKycVerified) {
                 toast.error(translations.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");
+                nav('/user/dashboard/profile?tab=documents');
                 return;
             }
 
@@ -173,6 +177,7 @@ const BookingPage = () => {
             console.error("Booking error:", error);
             if (error?.response?.status === 403) {
                 toast.error(translations.kycVerificationRequired || error.response?.data?.msg || translations.submissionFailed);
+                nav('/user/dashboard/profile?tab=documents');
                 return;
             }
             toast.error(error.response?.data?.msg || translations.submissionFailed);

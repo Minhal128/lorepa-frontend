@@ -277,7 +277,7 @@ const SingleTrailer = () => {
 
       if (!isKycVerified) {
         toast.error(translations2.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");
-        nav('/user/dashboard/profile');
+        nav('/user/dashboard/profile?tab=documents');
         return false;
       }
 
@@ -318,7 +318,7 @@ const SingleTrailer = () => {
 
       if (error?.response?.status === 403) {
         toast.error(translations2.kycVerificationRequired || apiMessage || "Please complete KYC verification before requesting a booking.", { id: loadingToast });
-        nav('/user/dashboard/profile');
+        nav('/user/dashboard/profile?tab=documents');
         return;
       }
 
