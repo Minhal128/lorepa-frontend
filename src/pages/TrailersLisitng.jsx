@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import Footer from '../components/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -82,8 +82,6 @@ const TrailersListing = () => {
   const nav = useNavigate();
   const query = useQuery();
   const cityFromQuery = query.get('city')?.toLowerCase() || '';
-  const isLogin = localStorage.getItem("userId");
-  const role = localStorage.getItem("role");
   const [priceFilter, setPriceFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -113,12 +111,40 @@ const TrailersListing = () => {
 
   const handleCardClick = (id) => nav(`/trailers/${id}`);
 
-  const handleBookNowClick = (e, trailer) => {
-    e.stopPropagation();
-    if (!isLogin) {
+  const validateKycBeforeBooking = async () => {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      toast.error(translations.userNotFound || "User not found. Please log in.");
       nav('/login');
+      return false;
+    }
+
+    try {
+      const res = await axios.get(`${config.baseUrl}/account/single/${userId}`);
+      const isKycVerified = Boolean(res?.data?.data?.kycVerified);
+
+      if (!isKycVerified) {
+        toast.error(translations.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");
+        nav('/user/dashboard/profile');
+        return false;
+      }
+
+      return true;
+    } catch {
+      toast.error(translations.kycCheckFailed || "Unable to verify your KYC status. Please try again.");
+      return false;
+    }
+  };
+
+  const handleBookNowClick = async (e, trailer) => {
+    e.stopPropagation();
+
+    const canBook = await validateKycBeforeBooking();
+    if (!canBook) {
       return;
     }
+
     setSelectedTrailerForBooking(trailer);
     setIsBookingModalOpen(true);
   };
@@ -129,17 +155,17 @@ const TrailersListing = () => {
   };
 
   const handleBookingSubmit = async ({ trailerId, startDate, endDate, price, message }) => {
-    const userId = localStorage.getItem("userId");
-
-    if (!userId) {
-      toast.error("User not found");
+    const canBook = await validateKycBeforeBooking();
+    if (!canBook) {
       return;
     }
+
+    const userId = localStorage.getItem("userId");
 
     let loadingToast = toast.loading(translations.submittingBooking || "Sending booking request...");
 
     try {
-      const { data } = await axios.post(`${config.baseUrl}/booking/create`, {
+      await axios.post(`${config.baseUrl}/booking/create`, {
         user_id: userId,
         trailerId,
         startDate,
@@ -154,7 +180,15 @@ const TrailersListing = () => {
       nav('/user/dashboard/reservation');
 
     } catch (error) {
-      toast.error("Failed to send booking request", { id: loadingToast });
+      const apiMessage = error?.response?.data?.msg;
+
+      if (error?.response?.status === 403) {
+        toast.error(translations.kycVerificationRequired || apiMessage || "Please complete KYC verification before requesting a booking.", { id: loadingToast });
+        nav('/user/dashboard/profile');
+        return;
+      }
+
+      toast.error(apiMessage || translations.submissionFailed || "Failed to send booking request", { id: loadingToast });
     }
   };
 

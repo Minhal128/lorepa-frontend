@@ -85,6 +85,7 @@ const MAX_IMAGES = 8;
 
 const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
   const wrapperRef = useRef(null);
+  const latestSuggestionQueryRef = useRef("");
   const [listingEnabled, setListingEnabled] = useState(true);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Utility");
@@ -310,26 +311,36 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
   }, []);
 
   const fetchSuggestions = async (inputText) => {
-    if (!inputText) {
+    const normalizedInput = (inputText || "").trim();
+    const normalizedQuery = normalizedInput.toLowerCase();
+
+    if (!normalizedInput || normalizedInput.length < 2) {
       setSuggestions([]);
+      setShowSuggestions(false);
       return;
     }
 
+    latestSuggestionQueryRef.current = normalizedQuery;
     setIsSearching(true);
     try {
       // Get base URL without /api/v1 suffix
-      const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
+      const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1\/?$/, '');
       const res = await axios.get(
         `${baseUrlWithoutApiV1}/api/autocomplete`,
         {
-          params: { input: inputText },
+          params: { input: normalizedInput },
         }
       );
+
+      // Ignore stale async responses
+      if (latestSuggestionQueryRef.current !== normalizedQuery) {
+        return;
+      }
 
       if (res.data.status === "OK") {
         // Just show all results to be safe, filter the list if needed but don't hide everything
         setSuggestions(res.data.predictions);
-        setShowSuggestions(true);
+        setShowSuggestions(res.data.predictions.length > 0);
       } else {
         setSuggestions([]);
         setShowSuggestions(false);
@@ -345,8 +356,21 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
   const handleSelect = async (item) => {
     try {
+      // Primary path: use autocomplete coordinates directly (Nominatim-backed)
+      const lat = parseFloat(item?.lat);
+      const lng = parseFloat(item?.lon);
+
+      if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+        await reverseGeocode(lat, lng);
+        setLocationInput(item.description || `${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
+
+      // Fallback path: if backend returns a Google place_id-style payload
       // Get base URL without /api/v1 suffix
-      const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
+      const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1\/?$/, '');
       const res = await axios.get(
         `${baseUrlWithoutApiV1}/api/place-details`,
         {
@@ -399,7 +423,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
   const reverseGeocode = async (lat, lng) => {
     try {
       // Get base URL without /api/v1 suffix
-      const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
+      const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1\/?$/, '');
       const res = await axios.get(
         `${baseUrlWithoutApiV1}/api/reverse-geocode`,
         { params: { lat, lng } }

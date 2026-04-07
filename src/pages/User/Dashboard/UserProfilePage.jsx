@@ -288,6 +288,13 @@ const UserProfilePage = () => {
         }
     };
 
+    const getKycStatusMessage = (status) => {
+        if (status === "Verified") {
+            return t.kycVerifiedMessage || t.kycDocumentsUpToDate;
+        }
+        return t.kycNotVerifiedMessage || t.kycDocumentsUpToDate;
+    };
+
     return (
         <div className='space-y-6'>
             <h1 className='text-2xl font-bold text-gray-900'>{t.profileSettings}</h1>
@@ -304,7 +311,7 @@ const UserProfilePage = () => {
                     <div className='hidden lg:block p-4 rounded-xl bg-blue-50 border border-blue-100 space-y-2'>
                         <p className='text-sm font-bold text-gray-900'>{t.kycStatus}</p>
                         <span className={`text-xl font-extrabold ${getKycStatusStyle(kycStatus)}`}>{kycStatus === "Verified" ? t.verified : t.notVerified}</span>
-                        <p className='text-xs text-blue-700'>{t.kycDocumentsUpToDate}</p>
+                        <p className='text-xs text-blue-700'>{getKycStatusMessage(kycStatus)}</p>
                         <button onClick={() => setActiveTab("documents")} className='w-full mt-2 py-2 text-sm font-medium text-blue-600 border border-blue-600 rounded-lg hover:bg-white transition'>{t.viewDocuments}</button>
                     </div>
                 </div>
@@ -319,7 +326,7 @@ const UserProfilePage = () => {
                     <p className='text-sm font-bold text-gray-900'>{t.kycStatus}</p>
                     <span className={`text-lg font-bold ${getKycStatusStyle(kycStatus)}`}>{kycStatus === "Verified" ? t.verified : t.notVerified}</span>
                 </div>
-                <p className='text-xs text-blue-700'>{t.kycDocumentsUpToDate}</p>
+                <p className='text-xs text-blue-700'>{getKycStatusMessage(kycStatus)}</p>
                 <button onClick={() => setActiveTab("documents")} className='w-full py-3 text-sm font-medium text-blue-600 border border-blue-600 rounded-xl hover:bg-white transition bg-white/50'>{t.viewDocuments}</button>
             </div>
         </div>

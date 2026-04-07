@@ -39,6 +39,8 @@ export const profileTranslations = {
     failedToUploadDocuments: "Failed to upload documents",
     failedToFetchProfile: "Failed to fetch user profile",
     kycDocumentsUpToDate: "Your identity documents are up to date and approved.",
+    kycVerifiedMessage: "Your identity documents are approved.",
+    kycNotVerifiedMessage: "Your KYC is not verified yet. Please upload all required documents.",
     clickToUploadFile: "Click to upload",
   },
   es: {
@@ -81,6 +83,8 @@ export const profileTranslations = {
     failedToUploadDocuments: "Error al subir los documentos",
     failedToFetchProfile: "Error al obtener el perfil de usuario",
     kycDocumentsUpToDate: "Sus documentos de identidad están actualizados y aprobados.",
+    kycVerifiedMessage: "Sus documentos de identidad están aprobados.",
+    kycNotVerifiedMessage: "Su KYC aún no está verificado. Por favor, suba todos los documentos requeridos.",
     clickToUploadFile: "Haga clic para subir",
   },
   fr: {
@@ -123,6 +127,8 @@ export const profileTranslations = {
     failedToUploadDocuments: "Échec du téléchargement des documents",
     failedToFetchProfile: "Échec de récupération du profil utilisateur",
     kycDocumentsUpToDate: "Vos documents d'identité sont à jour et approuvés.",
+    kycVerifiedMessage: "Vos documents d'identité sont approuvés.",
+    kycNotVerifiedMessage: "Votre KYC n'est pas encore vérifié. Veuillez télécharger tous les documents requis.",
     clickToUploadFile: "Cliquez pour télécharger",
   },
   cn: {
@@ -165,6 +171,8 @@ export const profileTranslations = {
     failedToUploadDocuments: "上传文件失败",
     failedToFetchProfile: "获取用户资料失败",
     kycDocumentsUpToDate: "您的身份证件已更新并已获批。",
+    kycVerifiedMessage: "您的身份证件已获批准。",
+    kycNotVerifiedMessage: "您的 KYC 尚未通过验证。请上传所有必需文件。",
     clickToUploadFile: "点击上传",
   }
 };

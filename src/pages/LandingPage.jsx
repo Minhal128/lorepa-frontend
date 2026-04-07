@@ -31,7 +31,7 @@ const translations = {
         from: "From",
         until: "Until",
         newWay: "The new way to rent a trailer 24/7!",
-        discover: "Discover the premier platform for trailer sharing between individuals in Qubec.",
+        discover: "Discover the premier platform for trailer sharing between individuals in Quebec.",
         needTrailer: "Whether You Need a Trailer",
         shareOne: "or Have One to Share",
         rentTrailerTitle: "Rent a Trailer",
@@ -235,6 +235,7 @@ const LandingPage = () => {
     });
     const wrapperRef = useRef(null);
     const debounceRef = useRef(null);
+    const latestSuggestionQueryRef = useRef("");
     const [location, setLocation] = useState('');
     const [fromDate, setFromDate] = useState('');
     const [fromTime, setFromTime] = useState("08:00");
@@ -280,27 +281,36 @@ const LandingPage = () => {
         fetchContent();
     }, []);
     const fetchSuggestions = async (inputText) => {
-        if (!inputText || inputText.trim().length < 2) {
+        const normalizedInput = (inputText || "").trim();
+        const normalizedQuery = normalizedInput.toLowerCase();
+
+        if (!normalizedInput || normalizedInput.length < 2) {
             setSuggestions([]);
             setShowSuggestions(false);
             setIsLoadingSuggestions(false);
             return;
         }
 
+        latestSuggestionQueryRef.current = normalizedQuery;
         setIsLoadingSuggestions(true);
         try {
             // Get base URL without /api/v1 suffix
-            const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
+            const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1\/?$/, '');
             const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, {
-                params: { input: inputText.trim() },
+                params: { input: normalizedInput },
             });
+
+            // Ignore stale async responses
+            if (latestSuggestionQueryRef.current !== normalizedQuery) {
+                return;
+            }
 
             if (res.data.status === "OK" && res.data.predictions.length > 0) {
                 setSuggestions(res.data.predictions);
                 setShowSuggestions(true);
             } else {
                 setSuggestions([]);
-                setShowSuggestions(inputText.trim().length >= 2); // show "no results" feedback
+                setShowSuggestions(normalizedInput.length >= 2); // show "no results" feedback
             }
         } catch (error) {
             console.error("Error fetching suggestions:", error);
@@ -312,8 +322,12 @@ const LandingPage = () => {
     };
 
     const handleLocationChange = (e) => {
-        const value = e.target.value;
+        const value = e.target.value || "";
         setLocation(value);
+
+        const normalizedQuery = value.trim().toLowerCase();
+        latestSuggestionQueryRef.current = normalizedQuery;
+
         if (debounceRef.current) clearTimeout(debounceRef.current);
         if (!value || value.trim().length < 2) {
             setSuggestions([]);
@@ -328,6 +342,7 @@ const LandingPage = () => {
 
     const handleSelect = async (item) => {
         setLocation(item.description);
+        latestSuggestionQueryRef.current = (item.description || "").trim().toLowerCase();
         setSuggestions([]);
         setShowSuggestions(false);
     };

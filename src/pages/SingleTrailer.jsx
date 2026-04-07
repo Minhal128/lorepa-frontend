@@ -262,18 +262,44 @@ const SingleTrailer = () => {
     );
   };
 
-  const handleBookingSubmit = async ({ trailerId, startDate, endDate, price, message }) => {
+  const validateKycBeforeBooking = async () => {
     const userId = localStorage.getItem("userId");
 
     if (!userId) {
-      toast.error("User not found");
+      toast.error(translations2.userNotFound || "User not found. Please log in.");
+      nav('/login');
+      return false;
+    }
+
+    try {
+      const res = await axios.get(`${config.baseUrl}/account/single/${userId}`);
+      const isKycVerified = Boolean(res?.data?.data?.kycVerified);
+
+      if (!isKycVerified) {
+        toast.error(translations2.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");
+        nav('/user/dashboard/profile');
+        return false;
+      }
+
+      return true;
+    } catch {
+      toast.error(translations2.kycCheckFailed || "Unable to verify your KYC status. Please try again.");
+      return false;
+    }
+  };
+
+  const handleBookingSubmit = async ({ trailerId, startDate, endDate, price, message }) => {
+    const canBook = await validateKycBeforeBooking();
+    if (!canBook) {
       return;
     }
+
+    const userId = localStorage.getItem("userId");
 
     let loadingToast = toast.loading(translations2.submittingBooking || "Sending booking request...");
 
     try {
-      const { data } = await axios.post(`${config.baseUrl}/booking/create`, {
+      await axios.post(`${config.baseUrl}/booking/create`, {
         user_id: userId,
         trailerId,
         startDate,
@@ -288,7 +314,15 @@ const SingleTrailer = () => {
       nav('/user/dashboard/reservation');
 
     } catch (error) {
-      toast.error("Failed to send booking request", { id: loadingToast });
+      const apiMessage = error?.response?.data?.msg;
+
+      if (error?.response?.status === 403) {
+        toast.error(translations2.kycVerificationRequired || apiMessage || "Please complete KYC verification before requesting a booking.", { id: loadingToast });
+        nav('/user/dashboard/profile');
+        return;
+      }
+
+      toast.error(apiMessage || translations2.submissionFailed || "Failed to send booking request", { id: loadingToast });
     }
   };
 
@@ -516,7 +550,12 @@ const SingleTrailer = () => {
             (isLogin && role !== "owner") &&
             <button
               className='mobile-btn-primary w-full sm:w-auto'
-              onClick={() => setIsBookingModalOpen(true)}
+              onClick={async () => {
+                const canBook = await validateKycBeforeBooking();
+                if (canBook) {
+                  setIsBookingModalOpen(true);
+                }
+              }}
             >
               {translations2.bookNow}
             </button>

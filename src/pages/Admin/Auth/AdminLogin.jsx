@@ -19,7 +19,7 @@ const AdminLogin = () => {
     const handleLogin = (e) => {
         e.preventDefault();
         if (email === "admin@lorepa.com" && password === "Admin@1234") {
-            toast.success("Login Sucessfull")
+            toast.success("Login successful")
             setTimeout(() => {
                 nav("/admin/dashboard/home")
             }, 2000);
@@ -51,7 +51,7 @@ const AdminLogin = () => {
                             required
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder='First name' // Placeholder as seen in the image
+                            placeholder='Email address'
                             className='appearance-none block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                         />
                     </div>

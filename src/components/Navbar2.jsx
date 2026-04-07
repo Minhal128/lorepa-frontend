@@ -24,6 +24,7 @@ const Navbar2 = () => {
     const query = useQuery();
     const nav = useNavigate();
     const wrapperRef = useRef(null);
+    const latestSuggestionQueryRef = useRef('');
 
     const cityFromQuery = query.get('city')?.toLowerCase() || '';
     const fromDateQuery = query.get('fromDate') || '';
@@ -66,17 +67,33 @@ const Navbar2 = () => {
     };
 
     const fetchSuggestions = async (inputText) => {
-        if (!inputText) { setSuggestions([]); setShowSuggestions(false); return; }
+        const normalizedInput = (inputText || '').trim();
+        const normalizedQuery = normalizedInput.toLowerCase();
+
+        if (!normalizedInput || normalizedInput.length < 2) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            return;
+        }
+
+        latestSuggestionQueryRef.current = normalizedQuery;
+
         try {
             // Get base URL without /api/v1 suffix
-            const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1$/, '');
-            const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, { params: { input: inputText } });
+            const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1\/?$/, '');
+            const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, { params: { input: normalizedInput } });
+
+            // Ignore stale async responses
+            if (latestSuggestionQueryRef.current !== normalizedQuery) {
+                return;
+            }
+
             if (res.data.status === "OK") {
                 const filtered = res.data.predictions.filter(pred =>
                     pred.types.includes("locality") || pred.types.includes("country") || pred.types.includes("administrative_area_level_1")
                 );
                 setSuggestions(filtered);
-                setShowSuggestions(true);
+                setShowSuggestions(filtered.length > 0);
             } else { setSuggestions([]); setShowSuggestions(false); }
         } catch (error) { 
             console.error("Error fetching suggestions:", error); 

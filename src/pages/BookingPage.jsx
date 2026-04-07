@@ -13,6 +13,9 @@ const bookingTranslations = {
         bookingStartDate: "Booking Start Date",
         bookingEndDate: "Booking End Date",
         estimatedPrice: "Estimated Price:",
+        userNotFound: "User not found. Please log in.",
+        kycVerificationRequired: "Please complete KYC verification before requesting a booking.",
+        kycCheckFailed: "Unable to verify your KYC status. Please try again.",
         complete: "Complete",
         bookingSubmittedSuccess: "Booking submitted successfully",
         submissionFailed: "Submission failed",
@@ -23,6 +26,9 @@ const bookingTranslations = {
         bookingStartDate: "Fecha de inicio de la reserva",
         bookingEndDate: "Fecha de finalización de la reserva",
         estimatedPrice: "Precio estimado:",
+        userNotFound: "Usuario no encontrado. Por favor, inicie sesión.",
+        kycVerificationRequired: "Complete la verificación KYC antes de solicitar una reserva.",
+        kycCheckFailed: "No se pudo verificar su estado KYC. Inténtelo de nuevo.",
         complete: "Completar",
         bookingSubmittedSuccess: "Reserva enviada con éxito",
         submissionFailed: "Error al enviar",
@@ -33,6 +39,9 @@ const bookingTranslations = {
         bookingStartDate: "预订开始日期",
         bookingEndDate: "预订结束日期",
         estimatedPrice: "预计价格：",
+        userNotFound: "未找到用户。请登录。",
+        kycVerificationRequired: "请先完成 KYC 验证后再请求预订。",
+        kycCheckFailed: "无法验证您的 KYC 状态。请重试。",
         complete: "完成",
         bookingSubmittedSuccess: "预订提交成功",
         submissionFailed: "提交失败",
@@ -43,6 +52,9 @@ const bookingTranslations = {
         bookingStartDate: "Date de début de réservation",
         bookingEndDate: "Date de fin de réservation",
         estimatedPrice: "Prix estimé :",
+        userNotFound: "Utilisateur non trouvé. Veuillez vous connecter.",
+        kycVerificationRequired: "Veuillez compléter la vérification KYC avant de demander une réservation.",
+        kycCheckFailed: "Impossible de vérifier votre statut KYC. Veuillez réessayer.",
         complete: "Terminer",
         bookingSubmittedSuccess: "Réservation soumise avec succès",
         submissionFailed: "Échec de la soumission",
@@ -129,11 +141,22 @@ const BookingPage = () => {
     // Submit booking
     const handleSubmit = async () => {
         try {
-            const user_id = localStorage.getItem('user_id');
-            if (!user_id) return toast.error("User not found");
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                toast.error(translations.userNotFound || "User not found. Please log in.");
+                return;
+            }
+
+            const accountRes = await axios.get(`${config.baseUrl}/account/single/${userId}`);
+            const isKycVerified = Boolean(accountRes?.data?.data?.kycVerified);
+
+            if (!isKycVerified) {
+                toast.error(translations.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");
+                return;
+            }
 
             const payload = {
-                user_id,
+                user_id: userId,
                 trailerId: selectedTrailer,
                 startDate,
                 endDate,
@@ -148,6 +171,10 @@ const BookingPage = () => {
             }
         } catch (error) {
             console.error("Booking error:", error);
+            if (error?.response?.status === 403) {
+                toast.error(translations.kycVerificationRequired || error.response?.data?.msg || translations.submissionFailed);
+                return;
+            }
             toast.error(error.response?.data?.msg || translations.submissionFailed);
         }
     };
