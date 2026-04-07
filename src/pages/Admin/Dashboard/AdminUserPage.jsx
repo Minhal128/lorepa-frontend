@@ -10,6 +10,7 @@ const AdminUserPage = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [modalImage, setModalImage] = useState(null); // <-- NEW for modal image
+  const [updatingUserId, setUpdatingUserId] = useState(null);
 
   const lang = localStorage.getItem("lang") || "fr";
   const t = adminTranslations[lang] || adminTranslations.en;
@@ -65,6 +66,39 @@ const AdminUserPage = () => {
 
   const openImageModal = (url) => setModalImage(url);
   const closeModal = () => setModalImage(null);
+
+  const handleToggleUserStatus = async (user) => {
+    if (!user?._id) return;
+    setUpdatingUserId(user._id);
+    try {
+      if (user.accountBlocked) {
+        await axios.put(`${config.baseUrl}/account/reactivate/account/${user._id}`);
+        toast.success('Account reactivated successfully');
+      } else {
+        await axios.delete(`${config.baseUrl}/account/delete/account/${user._id}`);
+        toast.success('Account suspended successfully');
+      }
+      await fetchUsers();
+    } catch {
+      toast.error('Failed to update account status');
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
+
+  const handleVerifyKyc = async (user) => {
+    if (!user?._id || user.kycVerified) return;
+    setUpdatingUserId(user._id);
+    try {
+      await axios.put(`${config.baseUrl}/account/kyc/${user._id}`, { kycVerified: true });
+      toast.success('KYC verified successfully');
+      await fetchUsers();
+    } catch {
+      toast.error('Failed to verify KYC');
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
 
   return (
     <div className='min-h-screen space-y-8 pb-10'>
@@ -186,7 +220,19 @@ const AdminUserPage = () => {
                       <Link to={`/admin/dashboard/user/${user._id}`} className='p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition'>
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                       </Link>
-                      <button className={`p-2 rounded-xl transition ${user.accountBlocked ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-red-50 text-red-600 hover:bg-red-100'}`}>
+                      <button
+                        onClick={() => handleVerifyKyc(user)}
+                        disabled={user.kycVerified || updatingUserId === user._id}
+                        title={user.kycVerified ? 'KYC Verified' : 'Verify KYC'}
+                        className={`p-2 rounded-xl transition ${user.kycVerified ? 'bg-indigo-100 text-indigo-700 cursor-default' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'} ${updatingUserId === user._id ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      </button>
+                      <button
+                        onClick={() => handleToggleUserStatus(user)}
+                        disabled={updatingUserId === user._id}
+                        className={`p-2 rounded-xl transition ${user.accountBlocked ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-red-50 text-red-600 hover:bg-red-100'} ${updatingUserId === user._id ? 'opacity-60 cursor-not-allowed' : ''}`}
+                      >
                         {user.accountBlocked ? (
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                         ) : (
@@ -258,12 +304,25 @@ const AdminUserPage = () => {
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-2">
-                <Link to={`/admin/dashboard/user/${user._id}`} className='flex-1 py-3 bg-blue-50 text-blue-600 font-bold text-sm rounded-2xl text-center hover:bg-blue-100 transition'>
-                  {t.viewProfile}
-                </Link>
-                <button className={`flex-1 py-3 rounded-2xl font-bold text-sm transition ${user.accountBlocked ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-red-50 text-red-600 hover:bg-red-100'}`}>
-                  {user.accountBlocked ? t.reactivate : t.suspend}
+              <div className="space-y-2 pt-2">
+                <div className="flex gap-2">
+                  <Link to={`/admin/dashboard/user/${user._id}`} className='flex-1 py-3 bg-blue-50 text-blue-600 font-bold text-sm rounded-2xl text-center hover:bg-blue-100 transition'>
+                    {t.viewProfile}
+                  </Link>
+                  <button
+                    onClick={() => handleToggleUserStatus(user)}
+                    disabled={updatingUserId === user._id}
+                    className={`flex-1 py-3 rounded-2xl font-bold text-sm transition ${user.accountBlocked ? 'bg-green-50 text-green-600 hover:bg-green-100' : 'bg-red-50 text-red-600 hover:bg-red-100'} ${updatingUserId === user._id ? 'opacity-60 cursor-not-allowed' : ''}`}
+                  >
+                    {user.accountBlocked ? t.reactivate : t.suspend}
+                  </button>
+                </div>
+                <button
+                  onClick={() => handleVerifyKyc(user)}
+                  disabled={user.kycVerified || updatingUserId === user._id}
+                  className={`w-full py-3 rounded-2xl font-bold text-sm transition ${user.kycVerified ? 'bg-indigo-100 text-indigo-700' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'} ${updatingUserId === user._id ? 'opacity-60 cursor-not-allowed' : ''}`}
+                >
+                  {`KYC: ${user.kycVerified ? t.verified : `${t.pending} · ${t.approve}`}`}
                 </button>
               </div>
             </div>
