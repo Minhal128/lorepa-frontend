@@ -49,6 +49,9 @@ export const trailersListingTranslations = {
     trailerUnavailable: "Selected dates include unavailable days.",
     securityDeposit: "Security Deposit (held on card)",
     next: "Next",
+  
+    sendMessage: "Send a message",
+    messagePlaceholder: "Type here...",
   },
   es: {
     price: "Precio",
@@ -100,6 +103,8 @@ export const trailersListingTranslations = {
     trailerUnavailable: "Las fechas seleccionadas incluyen días no disponibles.",
     securityDeposit: "Depósito de seguridad (retenido en tarjeta)",
     next: "Siguiente",
+    sendMessage: "Enviar un mensaje",
+    messagePlaceholder: "Escribe aquí...",
   },
   cn: {
     price: "价格",
@@ -151,6 +156,8 @@ export const trailersListingTranslations = {
     trailerUnavailable: "所选日期包含不可用的日期。",
     securityDeposit: "押金（在卡上预留）",
     next: "下一步",
+    sendMessage: "发送消息",
+    messagePlaceholder: "在此输入...",
   },
   fr: {
     price: "Prix",
@@ -202,5 +209,7 @@ export const trailersListingTranslations = {
     trailerUnavailable: "Les dates sélectionnées incluent des jours indisponibles.",
     securityDeposit: "Caution (retenue sur la carte)",
     next: "Suivant",
+    sendMessage: "Envoyer un message",
+    messagePlaceholder: "Tapez ici...",
   }
 };
