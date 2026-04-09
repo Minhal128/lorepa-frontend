@@ -370,12 +370,117 @@ const AdminSettingsPage = () => {
         }
     };
 
+    const handleUpdateTrustedBy = async (e) => {
+        e.preventDefault();
+        if (!editingItem?._id) {
+            toast.error(t.invalidDataUpdate);
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const formData = new FormData();
+            if (newTrustedByImage) {
+                formData.append('image', newTrustedByImage);
+            }
+
+            await axios.put(`${API_BASE_URL}/content/trusted/${editingItem._id}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
+            toast.success(t.itemUpdatedSuccess);
+            setIsTrustedByModalOpen(false);
+            setEditingItem(null);
+            setNewTrustedByImage(null);
+            fetchData('trusted', setTrustedByImages);
+        } catch (err) {
+            console.error('Error updating trusted by item:', err);
+            toast.error(t.failedToUpdate);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleUpdateLocation = async (e) => {
+        e.preventDefault();
+        if (!editingItem?._id || !newLocationTitle) {
+            toast.error(t.invalidDataUpdate);
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const formData = new FormData();
+            formData.append('title', newLocationTitle);
+            if (newLocationImage) {
+                formData.append('image', newLocationImage);
+            }
+
+            await axios.put(`${API_BASE_URL}/content/locations/${editingItem._id}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
+            toast.success(t.itemUpdatedSuccess);
+            setIsLocationModalOpen(false);
+            setEditingItem(null);
+            setNewLocationTitle('');
+            setNewLocationImage(null);
+            fetchData('locations', setPopularLocations);
+        } catch (err) {
+            console.error('Error updating location:', err);
+            toast.error(t.failedToUpdate);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleUpdateTrailerCategory = async (e) => {
+        e.preventDefault();
+        if (!editingItem?._id || !newTrailerCategoryTitle) {
+            toast.error(t.invalidDataUpdate);
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const formData = new FormData();
+            formData.append('title', newTrailerCategoryTitle);
+            if (newTrailerCategoryImage) {
+                formData.append('image', newTrailerCategoryImage);
+            }
+
+            await axios.put(`${API_BASE_URL}/content/trailers/${editingItem._id}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
+            toast.success(t.itemUpdatedSuccess);
+            setIsTrailerModalOpen(false);
+            setEditingItem(null);
+            setNewTrailerCategoryTitle('');
+            setNewTrailerCategoryImage(null);
+            fetchData('trailers', setTrailerCategories);
+        } catch (err) {
+            console.error('Error updating trailer category:', err);
+            toast.error(t.failedToUpdate);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Handlers for updating existing items
     const handleEditClick = (item, modalSetter) => {
         setEditingItem(item);
         modalSetter(true);
         // Pre-populate specific edit states based on item type
-        if (activeSetting === 'Security Deposit') {
+        if (activeSetting === 'Trusted by section') {
+            setNewTrustedByImage(null);
+        } else if (activeSetting === 'Popular location section') {
+            setNewLocationTitle(item.title || '');
+            setNewLocationImage(null);
+        } else if (activeSetting === 'Trailers by category section') {
+            setNewTrailerCategoryTitle(item.title || '');
+            setNewTrailerCategoryImage(null);
+        } else if (activeSetting === 'Security Deposit') {
             setNewSecurityDepositTitle(item.title);
             setNewSecurityDepositAmount(item.amount);
         } else if (activeSetting === 'Category') {
@@ -517,6 +622,12 @@ const AdminSettingsPage = () => {
                                         <img src={item.image} alt="Logo" className='w-16 h-16 rounded-md object-cover' />
                                     </div>
                                     <div className='flex space-x-3'>
+                                        <button
+                                            onClick={() => handleEditClick(item, setIsTrustedByModalOpen)}
+                                            className='text-blue-600 hover:text-blue-800 text-sm font-medium'
+                                        >
+                                            {t.edit}
+                                        </button>
                                         <button onClick={() => handleDelete('trusted', item._id, () => fetchData('trusted', setTrustedByImages))} className='text-red-600 hover:text-red-800 text-sm font-medium'>{t.delete}</button>
                                     </div>
                                 </div>
@@ -528,7 +639,7 @@ const AdminSettingsPage = () => {
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
                                     <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.trustedBySection : t.add + ' ' + t.trustedBySection}</h3>
-                                    <form onSubmit={editingItem ? null : handleCreateTrustedBy}> {/* No edit for image only */}
+                                    <form onSubmit={editingItem ? handleUpdateTrustedBy : handleCreateTrustedBy}>
                                         <div className="mb-4">
                                             <label htmlFor="trustedByImage" className="block text-gray-700 text-sm font-bold mb-2">{t.image}:</label>
                                             <input
@@ -557,7 +668,6 @@ const AdminSettingsPage = () => {
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                                                disabled={editingItem} // Disable submit if editing, as image update is complex
                                             >
                                                 {editingItem ? t.update : t.add}
                                             </button>
@@ -587,7 +697,12 @@ const AdminSettingsPage = () => {
                                         <img className='w-full h-[267px] rounded-md object-cover' src={item.image} alt={item.title} onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/223x267/CCCCCC/666666?text=" + t.imageUnavailable.replace(' ', '+'); }} />
                                         <p className='mt-3 text-gray-800 font-medium'>{item.title}</p>
                                         <div className='flex space-x-3'>
-                                            {/* Edit functionality not directly provided for image uploads */}
+                                            <button
+                                                onClick={() => handleEditClick(item, setIsLocationModalOpen)}
+                                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'
+                                            >
+                                                {t.edit}
+                                            </button>
                                             <button onClick={() => handleDelete('locations', item._id, () => fetchData('locations', setPopularLocations))} className='text-red-600 hover:text-red-800 text-sm font-medium'>{t.delete}</button>
                                         </div>
                                     </div>
@@ -600,7 +715,7 @@ const AdminSettingsPage = () => {
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
                                     <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.popularLocationSection : t.add + ' ' + t.popularLocationSection}</h3>
-                                    <form onSubmit={editingItem ? null : handleCreateLocation}> {/* Edit for image based items usually handled differently, simplifying */}
+                                    <form onSubmit={editingItem ? handleUpdateLocation : handleCreateLocation}>
                                         <div className="mb-4">
                                             <label htmlFor="locationTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.title}:</label>
                                             <input
@@ -640,7 +755,6 @@ const AdminSettingsPage = () => {
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                                                disabled={editingItem} // Disable submit if editing for simplicity
                                             >
                                                 {editingItem ? t.update : t.add}
                                             </button>
@@ -666,7 +780,12 @@ const AdminSettingsPage = () => {
                                         <img className='w-full h-[267px] rounded-md object-cover' src={item.image} alt={item.title} onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/223x267/CCCCCC/666666?text=" + t.imageUnavailable.replace(' ', '+'); }} />
                                         <p className='mt-3 text-gray-800 font-medium'>{item.title}</p>
                                         <div className='flex space-x-3'>
-                                            {/* Edit functionality not directly provided for image uploads */}
+                                            <button
+                                                onClick={() => handleEditClick(item, setIsTrailerModalOpen)}
+                                                className='text-blue-600 hover:text-blue-800 text-sm font-medium'
+                                            >
+                                                {t.edit}
+                                            </button>
                                             <button onClick={() => handleDelete('trailers', item._id, () => fetchData('trailers', setTrailerCategories))} className='text-red-600 hover:text-red-800 text-sm font-medium'>{t.delete}</button>
                                         </div>
                                     </div>
@@ -679,7 +798,7 @@ const AdminSettingsPage = () => {
                             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                 <div className="bg-white p-6 rounded-lg shadow-xl w-96">
                                     <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.trailersByCategorySection : t.add + ' ' + t.trailersByCategorySection}</h3>
-                                    <form onSubmit={editingItem ? null : handleCreateTrailerCategory}>
+                                    <form onSubmit={editingItem ? handleUpdateTrailerCategory : handleCreateTrailerCategory}>
                                         <div className="mb-4">
                                             <label htmlFor="trailerCategoryTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.title}:</label>
                                             <input
@@ -719,7 +838,6 @@ const AdminSettingsPage = () => {
                                             <button
                                                 type="submit"
                                                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                                                disabled={editingItem}
                                             >
                                                 {editingItem ? t.update : t.add}
                                             </button>

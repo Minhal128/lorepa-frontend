@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Footer from '../components/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -13,6 +13,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import BookingModal from '../components/BookingModel';
 import { FiMap, FiList } from 'react-icons/fi';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 // Fix for default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -76,6 +77,40 @@ const createPriceIcon = (price) => {
   });
 };
 
+const normalizeTrailerImages = (images) => {
+  if (Array.isArray(images)) {
+    return images
+      .map((img) => {
+        if (typeof img === 'string') return img;
+        if (img && typeof img === 'object') {
+          return img.url || img.secure_url || img.src || '';
+        }
+        return '';
+      })
+      .filter(Boolean);
+  }
+
+  if (typeof images === 'string') {
+    const trimmed = images.trim();
+    if (!trimmed) return [];
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return normalizeTrailerImages(parsed);
+    } catch {
+      // Fall through to CSV/single string handling
+    }
+
+    if (trimmed.includes(',')) {
+      return trimmed.split(',').map((img) => img.trim()).filter(Boolean);
+    }
+
+    return [trimmed];
+  }
+
+  return [];
+};
+
 
 
 const TrailersListing = () => {
@@ -93,6 +128,8 @@ const TrailersListing = () => {
   const [selectedTrailerForBooking, setSelectedTrailerForBooking] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 45.5017, lng: -73.5673 });
   const [showMap, setShowMap] = useState(false); // Mobile map/list toggle
+  const [cardImageIndexes, setCardImageIndexes] = useState({});
+  const cardTouchStartXRef = useRef({});
 
   const [translations, setTranslations] = useState(() => {
     const storedLang = localStorage.getItem('lang');
@@ -110,6 +147,58 @@ const TrailersListing = () => {
   }, []);
 
   const handleCardClick = (id) => nav(`/trailers/${id}`);
+
+  const getCurrentCardImageIndex = (trailerId, imageCount) => {
+    if (imageCount <= 0) return 0;
+    const currentIndex = cardImageIndexes[trailerId] ?? 0;
+    return currentIndex >= imageCount ? 0 : currentIndex;
+  };
+
+  const showNextCardImage = (e, trailerId, imageCount) => {
+    e.stopPropagation();
+    if (imageCount <= 1) return;
+
+    setCardImageIndexes((prev) => {
+      const currentIndex = prev[trailerId] ?? 0;
+      const nextIndex = currentIndex >= imageCount - 1 ? 0 : currentIndex + 1;
+      return { ...prev, [trailerId]: nextIndex };
+    });
+  };
+
+  const showPrevCardImage = (e, trailerId, imageCount) => {
+    e.stopPropagation();
+    if (imageCount <= 1) return;
+
+    setCardImageIndexes((prev) => {
+      const currentIndex = prev[trailerId] ?? 0;
+      const prevIndex = currentIndex <= 0 ? imageCount - 1 : currentIndex - 1;
+      return { ...prev, [trailerId]: prevIndex };
+    });
+  };
+
+  const handleCardTouchStart = (trailerId, e) => {
+    cardTouchStartXRef.current[trailerId] = e.changedTouches[0].clientX;
+  };
+
+  const handleCardTouchEnd = (trailerId, imageCount, e) => {
+    if (imageCount <= 1) return;
+
+    const startX = cardTouchStartXRef.current[trailerId];
+    if (typeof startX !== 'number') return;
+
+    const endX = e.changedTouches[0].clientX;
+    const deltaX = endX - startX;
+
+    if (Math.abs(deltaX) < 40) return;
+
+    if (deltaX < 0) {
+      showNextCardImage(e, trailerId, imageCount);
+    } else {
+      showPrevCardImage(e, trailerId, imageCount);
+    }
+
+    delete cardTouchStartXRef.current[trailerId];
+  };
 
   const validateKycBeforeBooking = async () => {
     const userId = localStorage.getItem("userId");
@@ -256,13 +345,22 @@ const TrailersListing = () => {
         }
       }
 
-      console.log('Final trailers count:', allTrailers.length);
-      setTrailers(allTrailers);
+      const normalizedTrailers = allTrailers.map((trailer) => ({
+        ...trailer,
+        images: normalizeTrailerImages(trailer.images),
+      }));
+
+      console.log('Final trailers count:', normalizedTrailers.length);
+      setTrailers(normalizedTrailers);
     } catch (err) {
       console.error('Error fetching trailers:', err);
       toast.error(translations.failedToFetch);
     }
   };
+
+  useEffect(() => {
+    setCardImageIndexes({});
+  }, [trailers]);
 
   // Using OpenStreetMap Nominatim API for geocoding (FREE, no API key needed)
   useEffect(() => {
@@ -397,39 +495,92 @@ const TrailersListing = () => {
 
             {/* Trailer Cards Grid */}
             <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-              {filteredTrailers.map((trailer, i) => (
-                <motion.div
-                  key={trailer._id}
-                  custom={i}
-                  initial="hidden"
-                  animate="visible"
-                  variants={cardVariants}
-                  className="bg-white rounded-xl shadow-mobileCard overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                  onClick={() => handleCardClick(trailer._id)}
-                >
-                  <div className="relative aspect-[4/3] w-full">
-                    <img
-                      src={trailer.images?.[0] || `https://placehold.co/400x300/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`}
-                      alt={trailer.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`; }}
-                    />
-                  </div>
-                  <div className="p-3 sm:p-4">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 line-clamp-1">{trailer.title}</h3>
-                    <p className="text-gray-500 text-xs sm:text-sm mb-2">{trailer.city}, {trailer.state}</p>
-                    <div className='flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2'>
-                      <p className="text-black font-medium text-base sm:text-lg">${trailer.dailyRate}{translations.perDay}</p>
-                      <button
-                        className='bg-blue-600 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full xs:w-auto text-center'
-                        onClick={(e) => handleBookNowClick(e, trailer)}
-                      >
-                        {translations.bookNow}
-                      </button>
+              {filteredTrailers.map((trailer, i) => {
+                const trailerImages = normalizeTrailerImages(trailer.images);
+                const imageCount = trailerImages.length;
+                const currentCardImageIndex = getCurrentCardImageIndex(trailer._id, imageCount);
+                const currentCardImage = trailerImages[currentCardImageIndex] || `https://placehold.co/400x300/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`;
+
+                return (
+                  <motion.div
+                    key={trailer._id}
+                    custom={i}
+                    initial="hidden"
+                    animate="visible"
+                    variants={cardVariants}
+                    className="bg-white rounded-xl shadow-mobileCard overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                    onClick={() => handleCardClick(trailer._id)}
+                  >
+                    <div
+                      className="relative aspect-[4/3] w-full"
+                      onTouchStart={(e) => handleCardTouchStart(trailer._id, e)}
+                      onTouchEnd={(e) => handleCardTouchEnd(trailer._id, imageCount, e)}
+                    >
+                      <img
+                        src={currentCardImage}
+                        alt={`${trailer.title} - image ${currentCardImageIndex + 1}`}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`; }}
+                      />
+
+                      {imageCount > 1 && (
+                        <>
+                          <button
+                            type="button"
+                            className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/50 text-white p-1.5 rounded-full hover:bg-black/65 transition"
+                            onClick={(e) => showPrevCardImage(e, trailer._id, imageCount)}
+                            aria-label="Previous trailer image"
+                          >
+                            <FaChevronLeft className="w-3 h-3" />
+                          </button>
+
+                          <button
+                            type="button"
+                            className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/50 text-white p-1.5 rounded-full hover:bg-black/65 transition"
+                            onClick={(e) => showNextCardImage(e, trailer._id, imageCount)}
+                            aria-label="Next trailer image"
+                          >
+                            <FaChevronRight className="w-3 h-3" />
+                          </button>
+
+                          <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-semibold px-2 py-1 rounded-full">
+                            {currentCardImageIndex + 1}/{imageCount}
+                          </div>
+
+                          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1">
+                            {trailerImages.map((_, dotIndex) => (
+                              <button
+                                key={`${trailer._id}-dot-${dotIndex}`}
+                                type="button"
+                                aria-label={`Show image ${dotIndex + 1}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setCardImageIndexes((prev) => ({ ...prev, [trailer._id]: dotIndex }));
+                                }}
+                                className={`h-1.5 w-1.5 rounded-full transition ${dotIndex === currentCardImageIndex ? 'bg-white' : 'bg-white/50'}`}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+
+                    <div className="p-3 sm:p-4">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 line-clamp-1">{trailer.title}</h3>
+                      <p className="text-gray-500 text-xs sm:text-sm mb-2">{trailer.city}, {trailer.state}</p>
+                      <div className='flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2'>
+                        <p className="text-black font-medium text-base sm:text-lg">${trailer.dailyRate}{translations.perDay}</p>
+                        <button
+                          className='bg-blue-600 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full xs:w-auto text-center'
+                          onClick={(e) => handleBookNowClick(e, trailer)}
+                        >
+                          {translations.bookNow}
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* No Results */}

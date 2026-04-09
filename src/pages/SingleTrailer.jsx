@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -76,6 +76,40 @@ const fadeVariant = {
     y: 0,
     transition: { delay: i * 0.1, duration: 0.5 },
   }),
+};
+
+const normalizeTrailerImages = (images) => {
+  if (Array.isArray(images)) {
+    return images
+      .map((img) => {
+        if (typeof img === 'string') return img;
+        if (img && typeof img === 'object') {
+          return img.url || img.secure_url || img.src || '';
+        }
+        return '';
+      })
+      .filter(Boolean);
+  }
+
+  if (typeof images === 'string') {
+    const trimmed = images.trim();
+    if (!trimmed) return [];
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return normalizeTrailerImages(parsed);
+    } catch {
+      // Fall through to CSV/single URL handling
+    }
+
+    if (trimmed.includes(',')) {
+      return trimmed.split(',').map((img) => img.trim()).filter(Boolean);
+    }
+
+    return [trimmed];
+  }
+
+  return [];
 };
 
 
@@ -161,6 +195,7 @@ const SingleTrailer = () => {
   const nav = useNavigate();
   const [randomReview, setRandomReview] = useState({});
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const touchStartXRef = useRef(null);
   const [translations, setTranslations] = useState(() => {
     const storedLang = localStorage.getItem('lang');
     return singleTrailerTranslations[storedLang] || singleTrailerTranslations.fr;
@@ -169,6 +204,8 @@ const SingleTrailer = () => {
     const storedLang = localStorage.getItem('lang');
     return trailersListingTranslations[storedLang] || trailersListingTranslations.fr;
   });
+
+  const trailerImages = useMemo(() => normalizeTrailerImages(trailer?.images), [trailer?.images]);
 
   const getFaqData = (lang) => {
     return {
@@ -251,16 +288,49 @@ const SingleTrailer = () => {
   }, [id, translations]);
 
   const handleNextImage = () => {
+    if (trailerImages.length <= 1) return;
+
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === trailer.images.length - 1 ? 0 : prevIndex + 1
+      prevIndex === trailerImages.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const handlePrevImage = () => {
+    if (trailerImages.length <= 1) return;
+
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? trailer.images.length - 1 : prevIndex - 1
+      prevIndex === 0 ? trailerImages.length - 1 : prevIndex - 1
     );
   };
+
+  const handleImageTouchStart = (e) => {
+    touchStartXRef.current = e.changedTouches[0].clientX;
+  };
+
+  const handleImageTouchEnd = (e) => {
+    if (trailerImages.length <= 1 || touchStartXRef.current === null) return;
+
+    const endX = e.changedTouches[0].clientX;
+    const deltaX = endX - touchStartXRef.current;
+
+    if (Math.abs(deltaX) >= 40) {
+      if (deltaX < 0) handleNextImage();
+      else handlePrevImage();
+    }
+
+    touchStartXRef.current = null;
+  };
+
+  useEffect(() => {
+    if (!trailerImages.length) {
+      setCurrentImageIndex(0);
+      return;
+    }
+
+    if (currentImageIndex >= trailerImages.length) {
+      setCurrentImageIndex(0);
+    }
+  }, [trailerImages.length, currentImageIndex]);
 
   const validateKycBeforeBooking = async () => {
     const userId = localStorage.getItem("userId");
@@ -352,15 +422,19 @@ const SingleTrailer = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="relative aspect-[16/9] sm:aspect-[2/1] w-full">
+          <div
+            className="relative aspect-[16/9] sm:aspect-[2/1] w-full"
+            onTouchStart={handleImageTouchStart}
+            onTouchEnd={handleImageTouchEnd}
+          >
             <img
-              src={trailer.images?.[currentImageIndex] || `https://placehold.co/800x400/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`}
+              src={trailerImages[currentImageIndex] || `https://placehold.co/800x400/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`}
               alt={trailer.title}
               className="absolute inset-0 w-full h-full object-cover"
               onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/800x400/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`; }}
             />
           </div>
-          {trailer.images && trailer.images.length > 1 && (
+          {trailerImages.length > 1 && (
             <>
               <button
                 className="absolute top-1/2 left-2 sm:left-4 -translate-y-1/2 bg-[#2563EB] text-white p-2 sm:p-3 rounded-full hover:bg-blue-700 active:scale-95 transition-all shadow-lg"
@@ -378,14 +452,40 @@ const SingleTrailer = () => {
               </button>
               {/* Image Indicators */}
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-                {trailer.images.map((_, idx) => (
-                  <div
+                {trailerImages.map((_, idx) => (
+                  <button
                     key={idx}
+                    type="button"
+                    aria-label={`Show image ${idx + 1}`}
+                    onClick={() => setCurrentImageIndex(idx)}
                     className={`w-2 h-2 rounded-full transition-colors ${idx === currentImageIndex ? 'bg-white' : 'bg-white/50'}`}
                   />
                 ))}
               </div>
             </>
+          )}
+
+          {trailerImages.length > 1 && (
+            <div className="px-3 sm:px-4 py-3 bg-white">
+              <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+                {trailerImages.map((img, idx) => (
+                  <button
+                    key={`thumb-${idx}`}
+                    type="button"
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`flex-shrink-0 rounded-lg overflow-hidden border-2 transition ${idx === currentImageIndex ? 'border-blue-600' : 'border-transparent'}`}
+                    aria-label={`Select trailer image ${idx + 1}`}
+                  >
+                    <img
+                      src={img}
+                      alt={`${trailer.title} thumbnail ${idx + 1}`}
+                      className="w-20 h-14 sm:w-24 sm:h-16 object-cover"
+                      onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/120x80/F3F4F6/9CA3AF?text=${encodeURIComponent(translations.noImage)}`; }}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
         </motion.div>
 

@@ -226,9 +226,11 @@ const popularLocationImages = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"]
 const browseTrailerImages = ["/12.png", "/13.png", "/14.png", "/15.png"];
 
 const LandingPage = () => {
+    const [trustedByItems, setTrustedByItems] = useState([]);
     const [locations, setLocations] = useState([]);
     const [trailers, setTrailers] = useState([]);
-    const [faqContent, setFaqContent] = useState({ renters: [], owners: [], global: [] });
+    const [fallbackFaqContent, setFallbackFaqContent] = useState({ renters: [], owners: [], global: [] });
+    const [adminFaqContent, setAdminFaqContent] = useState({ renters: [], owners: [] });
     const [translationsData, setTranslationsData] = useState(() => {
         const storedLang = localStorage.getItem('lang');
         return translations[storedLang] || translations.fr;
@@ -251,7 +253,7 @@ const LandingPage = () => {
             const storedLang = localStorage.getItem('lang');
             const data = translations[storedLang] || translations.fr;
             setTranslationsData(data);
-            setFaqContent(data.faqContent);
+            setFallbackFaqContent(data.faqContent);
         };
 
         window.addEventListener('storage', handleStorageChange);
@@ -266,13 +268,25 @@ const LandingPage = () => {
     useEffect(() => {
         const fetchContent = async () => {
             try {
-                const [locationRes, trailerRes] = await Promise.allSettled([
+                const [trustedRes, locationRes, trailerRes, faqRes] = await Promise.allSettled([
+                    axios.get(`${config.baseUrl}/content/trusted`),
                     axios.get(`${config.baseUrl}/content/locations`),
                     axios.get(`${config.baseUrl}/content/trailers`),
+                    axios.get(`${config.baseUrl}/content/faq`),
                 ]);
 
+                if (trustedRes.status === "fulfilled") setTrustedByItems(trustedRes.value.data.data || []);
                 if (locationRes.status === "fulfilled") setLocations(locationRes.value.data.data);
                 if (trailerRes.status === "fulfilled") setTrailers(trailerRes.value.data.data);
+                if (faqRes.status === "fulfilled") {
+                    const allFaqs = faqRes.value.data.data || [];
+                    const guestFaqs = allFaqs.filter((faq) => faq.type === 'guest');
+                    const hostFaqs = allFaqs.filter((faq) => faq.type === 'host');
+                    setAdminFaqContent({
+                        renters: guestFaqs,
+                        owners: hostFaqs,
+                    });
+                }
             } catch (error) {
                 console.error("Failed to fetch landing content:", error);
             }
@@ -280,6 +294,11 @@ const LandingPage = () => {
 
         fetchContent();
     }, []);
+
+    const mergedFaqContent = {
+        renters: adminFaqContent.renters.length > 0 ? adminFaqContent.renters : (fallbackFaqContent.renters || []),
+        owners: adminFaqContent.owners.length > 0 ? adminFaqContent.owners : (fallbackFaqContent.owners || []),
+    };
     const fetchSuggestions = async (inputText) => {
         const normalizedInput = (inputText || "").trim();
         const normalizedQuery = normalizedInput.toLowerCase();
@@ -570,12 +589,16 @@ const LandingPage = () => {
                 <AnimatedText text={`${translationsData.leadingPlatform} ${translationsData.dynamicCommunity}`} variant={fadeInUp} className="text-xs sm:text-sm text-black mt-2 text-center max-w-[52rem]" />
 
                 <div className="flex items-center justify-center mt-4">
-                    {trustedAvatarImages.map((img, i) => (
+                    {(trustedByItems.length > 0 ? trustedByItems.map((item) => item.image) : trustedAvatarImages).map((img, i) => (
                         <img
-                            key={img}
+                            key={`${img}-${i}`}
                             src={img}
                             alt={`Trusted host ${i + 1}`}
                             className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E9EFFD] shadow-sm -ml-2 first:ml-0"
+                            onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = trustedAvatarImages[i % trustedAvatarImages.length];
+                            }}
                         />
                     ))}
                 </div>
@@ -587,7 +610,7 @@ const LandingPage = () => {
                 <AnimatedText text={translationsData.popularLocations} variant={scaleIn} className="text-2xl text-black font-semibold mt-10" />
                 <div className="flex overflow-x-auto gap-10 mt-6 w-[100%] px-4">
                     {locations.map((loc, i) => {
-                        const locationImage = popularLocationImages[i % popularLocationImages.length];
+                        const locationImage = loc.image || popularLocationImages[i % popularLocationImages.length];
 
                         return (
                             <Link to={`/trailers?city=${loc.title}`} key={i}>
@@ -637,7 +660,7 @@ const LandingPage = () => {
                 </div>
                 <Link to={"/trailers"} className="flex overflow-x-auto gap-5 mt-6 w-[100%] px-4">
                     {trailers.map((item, i) => {
-                        const trailerImage = browseTrailerImages[i % browseTrailerImages.length];
+                        const trailerImage = item.image || browseTrailerImages[i % browseTrailerImages.length];
 
                         return (
                             <div key={i} className="relative cursor-pointer">
@@ -688,7 +711,7 @@ const LandingPage = () => {
                             variant={fadeInUp}
                             className="text-xl font-semibold mb-4"
                         />
-                        {faqContent.renters.map((faq, index) => (
+                        {mergedFaqContent.renters.map((faq, index) => (
                             <AccordionItem
                                 key={`renter-faq-${index}`}
                                 question={faq.question}
@@ -710,7 +733,7 @@ const LandingPage = () => {
                             variant={fadeInUp}
                             className="text-xl font-semibold mb-4"
                         />
-                        {faqContent.owners.map((faq, index) => (
+                        {mergedFaqContent.owners.map((faq, index) => (
                             <AccordionItem
                                 key={`owner-faq-${index}`}
                                 question={faq.question}
