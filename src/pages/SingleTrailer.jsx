@@ -13,6 +13,7 @@ import { singleTrailerTranslations } from './singleTrailerTranslations';
 import { trailersListingTranslations } from '../translations/trailerListing';
 import toast from 'react-hot-toast';
 import BookingModal from '../components/BookingModel';
+import { isKycApproved } from '../helpers/kyc';
 
 const reviews = [
   {
@@ -343,7 +344,7 @@ const SingleTrailer = () => {
 
     try {
       const res = await axios.get(`${config.baseUrl}/account/single/${userId}`);
-      const isKycVerified = Boolean(res?.data?.data?.kycVerified);
+      const isKycVerified = isKycApproved(res?.data?.data);
 
       if (!isKycVerified) {
         toast.error(translations2.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");

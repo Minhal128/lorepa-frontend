@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -248,6 +248,21 @@ const LandingPage = () => {
     const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
     const isLogin = localStorage.getItem("userId")
     const nav = useNavigate()
+
+    const trustedImageUrls = useMemo(() => {
+        const apiImages = (trustedByItems || [])
+            .map((item) => {
+                if (!item) return "";
+                if (typeof item.image === "string") return item.image.trim();
+                if (item.image && typeof item.image === "object") {
+                    return (item.image.url || item.image.secure_url || item.image.src || "").trim();
+                }
+                return "";
+            })
+            .filter(Boolean);
+
+        return apiImages.length > 0 ? apiImages : trustedAvatarImages;
+    }, [trustedByItems]);
     useEffect(() => {
         const handleStorageChange = () => {
             const storedLang = localStorage.getItem('lang');
@@ -589,7 +604,7 @@ const LandingPage = () => {
                 <AnimatedText text={`${translationsData.leadingPlatform} ${translationsData.dynamicCommunity}`} variant={fadeInUp} className="text-xs sm:text-sm text-black mt-2 text-center max-w-[52rem]" />
 
                 <div className="flex items-center justify-center mt-4">
-                    {(trustedByItems.length > 0 ? trustedByItems.map((item) => item.image) : trustedAvatarImages).map((img, i) => (
+                    {trustedImageUrls.map((img, i) => (
                         <img
                             key={`${img}-${i}`}
                             src={img}

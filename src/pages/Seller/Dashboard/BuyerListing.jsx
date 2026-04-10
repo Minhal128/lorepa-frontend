@@ -5,6 +5,7 @@ import config from "../../../config";
 import AddTrailerModal from "../Modal/AddTrailerModal";
 import toast from "react-hot-toast";
 import { buyerListingTranslations } from "./translation/buyerListingTranslations";
+import { isKycApproved } from "../../../helpers/kyc";
 
 const BuyerListing = () => {
   const [trailers, setTrailers] = useState([]);
@@ -46,7 +47,7 @@ const BuyerListing = () => {
 
     try {
       const accountRes = await axios.get(`${config.baseUrl}/account/single/${userId}`);
-      const isKycVerified = Boolean(accountRes?.data?.data?.kycVerified);
+      const isKycVerified = isKycApproved(accountRes?.data?.data);
 
       if (!isKycVerified) {
         toast.error(t("kycRequiredToSell"));
