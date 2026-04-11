@@ -5,6 +5,7 @@ import axios from 'axios';
 import config from '../config';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { isKycApproved } from '../helpers/kyc';
 
 // Only the translations we actually use
 const bookingTranslations = {
@@ -151,7 +152,7 @@ const BookingPage = () => {
             }
 
             const accountRes = await axios.get(`${config.baseUrl}/account/single/${userId}`);
-            const isKycVerified = Boolean(accountRes?.data?.data?.kycVerified);
+            const isKycVerified = isKycApproved(accountRes?.data?.data);
 
             if (!isKycVerified) {
                 toast.error(translations.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");

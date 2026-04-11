@@ -35,6 +35,10 @@ export const reservationTranslations = {
         acceptReturn: "Accept Return & Complete Booking",
         returnAccepted: "Return accepted! Booking completed.",
         returnAcceptFailed: "Failed to accept return",
+        preRentalAfterPayment: "Available after payment",
+        preRentalAfterPaymentDesc: "You can upload pre-rental photos once the renter completes payment.",
+        preRentalWaitingPayment: "Waiting for renter's payment",
+        preRentalWaitingPaymentDesc: "The renter has signed the contract. Once they complete payment, you will be able to upload pre-rental photos.",
         preRentalAfterAccept: "Available after accepting",
         preRentalAfterAcceptDesc: "You can upload pre-rental photos once the booking is accepted.",
         postRentalRenterOnly: "Uploaded by the renter",
@@ -55,9 +59,11 @@ export const reservationTranslations = {
         processing: "Processing...",
         memberSinceLabel: "Member since",
         reliabilityScoreLabel: "Reliability Score",
+        bookingPaymentSummary: "Booking & Payment Summary",
         bookingDatesLabel: "Booking Dates",
         amountLabel: "Amount",
         securityDepositLabel: "Security Deposit",
+        totalPaidLabel: "Total Paid",
         photoLabelSuffix: "photo",
         genericPhotoAlt: "Photo",
         photoCategories: {
@@ -78,7 +84,13 @@ export const reservationTranslations = {
         renterSignedProceedPayment: "The renter has signed the contract and will proceed to payment.",
         approvedWaitingForSignature: "You approved this booking. Waiting for the renter to sign the contract.",
         approve: "Approve",
-        reject: "Reject"
+        reject: "Reject",
+        messageRenter: "Message Renter",
+        bookingApprovedSuccess: "Booking approved successfully!",
+        bookingApproveFailed: "Failed to approve booking",
+        bookingRejectedSuccess: "Booking rejected",
+        bookingRejectFailed: "Failed to reject booking",
+        notVerified: "Not Verified"
     },
     es: {
         pageTitle: "Mis Reservas",
@@ -116,6 +128,10 @@ export const reservationTranslations = {
         acceptReturn: "Aceptar devolución y completar reserva",
         returnAccepted: "¡Devolución aceptada! Reserva completada.",
         returnAcceptFailed: "Error al aceptar la devolución",
+        preRentalAfterPayment: "Disponible después del pago",
+        preRentalAfterPaymentDesc: "Puede cargar fotos previas al alquiler una vez que el arrendatario complete el pago.",
+        preRentalWaitingPayment: "Esperando el pago del arrendatario",
+        preRentalWaitingPaymentDesc: "El arrendatario firmó el contrato. Una vez que complete el pago, podrá cargar las fotos previas al alquiler.",
         preRentalAfterAccept: "Disponible tras aceptar",
         preRentalAfterAcceptDesc: "Puedes subir fotos previas al alquiler una vez que la reserva sea aceptada.",
         postRentalRenterOnly: "Subido por el arrendatario",
@@ -136,9 +152,11 @@ export const reservationTranslations = {
         processing: "Procesando...",
         memberSinceLabel: "Miembro desde",
         reliabilityScoreLabel: "Puntuación de fiabilidad",
+        bookingPaymentSummary: "Resumen de reserva y pago",
         bookingDatesLabel: "Fechas de reserva",
         amountLabel: "Importe",
         securityDepositLabel: "Depósito de seguridad",
+        totalPaidLabel: "Total pagado",
         photoLabelSuffix: "foto",
         genericPhotoAlt: "Foto",
         photoCategories: {
@@ -159,7 +177,13 @@ export const reservationTranslations = {
         renterSignedProceedPayment: "El arrendatario ha firmado el contrato y procederá al pago.",
         approvedWaitingForSignature: "Aprobó esta reserva. Esperando que el arrendatario firme el contrato.",
         approve: "Aprobar",
-        reject: "Rechazar"
+        reject: "Rechazar",
+        messageRenter: "Enviar mensaje al arrendatario",
+        bookingApprovedSuccess: "¡Reserva aprobada con éxito!",
+        bookingApproveFailed: "Error al aprobar la reserva",
+        bookingRejectedSuccess: "Reserva rechazada",
+        bookingRejectFailed: "Error al rechazar la reserva",
+        notVerified: "No verificado"
     },
     fr: {
         pageTitle: "Mes Réservations",
@@ -197,6 +221,10 @@ export const reservationTranslations = {
         acceptReturn: "Accepter le retour et terminer la réservation",
         returnAccepted: "Retour accepté ! Réservation terminée.",
         returnAcceptFailed: "Échec de l'acceptation du retour",
+        preRentalAfterPayment: "Disponible après paiement",
+        preRentalAfterPaymentDesc: "Vous pouvez télécharger les photos avant location une fois le paiement du locataire effectué.",
+        preRentalWaitingPayment: "En attente du paiement du locataire",
+        preRentalWaitingPaymentDesc: "Le locataire a signé le contrat. Dès que le paiement est effectué, vous pourrez télécharger les photos avant location.",
         preRentalAfterAccept: "Disponible après acceptation",
         preRentalAfterAcceptDesc: "Vous pouvez télécharger des photos avant location une fois la réservation acceptée.",
         postRentalRenterOnly: "Téléchargé par le locataire",
@@ -217,9 +245,11 @@ export const reservationTranslations = {
         processing: "Traitement en cours...",
         memberSinceLabel: "Membre depuis",
         reliabilityScoreLabel: "Score de fiabilité",
+        bookingPaymentSummary: "Résumé réservation & paiement",
         bookingDatesLabel: "Dates de réservation",
         amountLabel: "Montant",
         securityDepositLabel: "Dépôt de garantie",
+        totalPaidLabel: "Total payé",
         photoLabelSuffix: "photo",
         genericPhotoAlt: "Photo",
         photoCategories: {
@@ -240,7 +270,13 @@ export const reservationTranslations = {
         renterSignedProceedPayment: "Le locataire a signé le contrat et passera au paiement.",
         approvedWaitingForSignature: "Vous avez approuvé cette réservation. En attente de la signature du locataire.",
         approve: "Approuver",
-        reject: "Rejeter"
+        reject: "Rejeter",
+        messageRenter: "Message au locataire",
+        bookingApprovedSuccess: "Réservation approuvée avec succès !",
+        bookingApproveFailed: "Échec de l'approbation de la réservation",
+        bookingRejectedSuccess: "Réservation refusée",
+        bookingRejectFailed: "Échec du refus de la réservation",
+        notVerified: "Non vérifié"
     },
     cn: {
         pageTitle: "我的预订",
@@ -278,6 +314,10 @@ export const reservationTranslations = {
         acceptReturn: "接受退还并完成预订",
         returnAccepted: "退还已接受！预订已完成。",
         returnAcceptFailed: "接受退还失败",
+        preRentalAfterPayment: "付款后可用",
+        preRentalAfterPaymentDesc: "租客完成付款后，您可以上传租前照片。",
+        preRentalWaitingPayment: "等待租客付款",
+        preRentalWaitingPaymentDesc: "租客已签署合同。完成付款后，您将可以上传租前照片。",
         preRentalAfterAccept: "接受后可用",
         preRentalAfterAcceptDesc: "预订被接受后，您可以上传租前照片。",
         postRentalRenterOnly: "由租户上传",
@@ -298,9 +338,11 @@ export const reservationTranslations = {
         processing: "处理中...",
         memberSinceLabel: "会员自",
         reliabilityScoreLabel: "可靠性评分",
+        bookingPaymentSummary: "预订与付款摘要",
         bookingDatesLabel: "预订日期",
         amountLabel: "金额",
         securityDepositLabel: "押金",
+        totalPaidLabel: "实付总额",
         photoLabelSuffix: "照片",
         genericPhotoAlt: "照片",
         photoCategories: {
@@ -321,7 +363,13 @@ export const reservationTranslations = {
         renterSignedProceedPayment: "租客已签署合同，将继续付款。",
         approvedWaitingForSignature: "您已批准此预订。等待租客签署合同。",
         approve: "批准",
-        reject: "拒绝"
+        reject: "拒绝",
+        messageRenter: "联系租客",
+        bookingApprovedSuccess: "预订已成功批准！",
+        bookingApproveFailed: "批准预订失败",
+        bookingRejectedSuccess: "预订已拒绝",
+        bookingRejectFailed: "拒绝预订失败",
+        notVerified: "未验证"
     }
 };
 export const statusTranslations = {

@@ -161,9 +161,7 @@ const AdminSettingsPage = () => {
         const formData = new FormData();
         formData.append('image', newTrustedByImage);
         try {
-            await axios.post(`${API_BASE_URL}/content/trusted`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            await axios.post(`${API_BASE_URL}/content/trusted`, formData);
             toast.success(t.addedSuccessfully);
             setIsTrustedByModalOpen(false);
             setNewTrustedByImage(null);
@@ -187,9 +185,7 @@ const AdminSettingsPage = () => {
         formData.append('title', newLocationTitle);
         formData.append('image', newLocationImage);
         try {
-            await axios.post(`${API_BASE_URL}/content/locations`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            await axios.post(`${API_BASE_URL}/content/locations`, formData);
             toast.success(t.addedSuccessfully);
             setIsLocationModalOpen(false);
             setNewLocationTitle('');
@@ -214,9 +210,7 @@ const AdminSettingsPage = () => {
         formData.append('title', newTrailerCategoryTitle);
         formData.append('image', newTrailerCategoryImage);
         try {
-            await axios.post(`${API_BASE_URL}/content/trailers`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            await axios.post(`${API_BASE_URL}/content/trailers`, formData);
             toast.success(t.addedSuccessfully);
             setIsTrailerModalOpen(false);
             setNewTrailerCategoryTitle('');
@@ -384,9 +378,7 @@ const AdminSettingsPage = () => {
                 formData.append('image', newTrustedByImage);
             }
 
-            await axios.put(`${API_BASE_URL}/content/trusted/${editingItem._id}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            await axios.put(`${API_BASE_URL}/content/trusted/${editingItem._id}`, formData);
 
             toast.success(t.itemUpdatedSuccess);
             setIsTrustedByModalOpen(false);
@@ -416,9 +408,7 @@ const AdminSettingsPage = () => {
                 formData.append('image', newLocationImage);
             }
 
-            await axios.put(`${API_BASE_URL}/content/locations/${editingItem._id}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            await axios.put(`${API_BASE_URL}/content/locations/${editingItem._id}`, formData);
 
             toast.success(t.itemUpdatedSuccess);
             setIsLocationModalOpen(false);
@@ -449,9 +439,7 @@ const AdminSettingsPage = () => {
                 formData.append('image', newTrailerCategoryImage);
             }
 
-            await axios.put(`${API_BASE_URL}/content/trailers/${editingItem._id}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            await axios.put(`${API_BASE_URL}/content/trailers/${editingItem._id}`, formData);
 
             toast.success(t.itemUpdatedSuccess);
             setIsTrailerModalOpen(false);

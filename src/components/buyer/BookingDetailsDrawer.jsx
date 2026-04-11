@@ -140,7 +140,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
     const canUploadCheckOut = false;
 
     const VerificationIcon = ({ isVerified, icon: Icon }) => (
-        <span title={isVerified ? isVerified : "Not Verified"} className={`p-1 rounded-full ${isVerified ? 'text-green-500 bg-green-100' : 'text-gray-400 bg-gray-100'}`}>
+        <span title={isVerified ? isVerified : (t.notVerified || "Not Verified")} className={`p-1 rounded-full ${isVerified ? 'text-green-500 bg-green-100' : 'text-gray-400 bg-gray-100'}`}>
             <Icon className="w-3 h-3" />
         </span>
     );
@@ -164,10 +164,10 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
         setUpdatingStatus(true);
         try {
             await axios.put(`${config.baseUrl}/booking/status/${reservation?._id}`, { status: "accepted" });
-            toast.success("Booking approved successfully!");
+            toast.success(t.bookingApprovedSuccess || "Booking approved successfully!");
             if (onRefresh) onRefresh();
         } catch (err) {
-            toast.error("Failed to approve booking");
+            toast.error(t.bookingApproveFailed || "Failed to approve booking");
         } finally {
             setUpdatingStatus(false);
         }
@@ -177,10 +177,10 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
         setUpdatingStatus(true);
         try {
             await axios.put(`${config.baseUrl}/booking/status/${reservation?._id}`, { status: "rejected" });
-            toast.success("Booking rejected");
+            toast.success(t.bookingRejectedSuccess || "Booking rejected");
             if (onRefresh) onRefresh();
         } catch (err) {
-            toast.error("Failed to reject booking");
+            toast.error(t.bookingRejectFailed || "Failed to reject booking");
         } finally {
             setUpdatingStatus(false);
         }
@@ -463,7 +463,7 @@ const BookingDetailsDrawer = ({ reservation, onClose, StatusBadge, onRefresh }) 
 
                                         <div className="pt-2">
                                             <button onClick={createChat} className="w-full p-3 border border-blue-600 rounded-lg text-blue-600 font-medium hover:bg-blue-50 transition">
-                                                Message Renter
+                                                {t.messageRenter || "Message Renter"}
                                             </button>
                                         </div>
                                     </div>

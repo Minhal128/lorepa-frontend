@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../config';
 import toast from 'react-hot-toast';
+import { isKycApproved } from '../helpers/kyc';
 
 const translations = {
     en: {
@@ -440,7 +441,7 @@ const ListTrailer = () => {
 
             try {
                 const accountRes = await axios.get(`${config.baseUrl}/account/single/${userId}`);
-                const isKycVerified = Boolean(accountRes?.data?.data?.kycVerified);
+                const isKycVerified = isKycApproved(accountRes?.data?.data);
 
                 if (!isKycVerified) {
                     toast.error(lang.kycRequiredToSell);
@@ -463,9 +464,7 @@ const ListTrailer = () => {
                 data.append("images", img);
             });
 
-            const res = await axios.post(`${config.baseUrl}/trailer/create`, data, {
-                headers: { "Content-Type": "multipart/form-data" },
-            });
+            const res = await axios.post(`${config.baseUrl}/trailer/create`, data);
 
             if (res.data?.status === 200) {
                 toast.success(lang.trailerCreatedSuccessfully);

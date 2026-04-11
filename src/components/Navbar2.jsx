@@ -25,8 +25,9 @@ const Navbar2 = () => {
     const nav = useNavigate();
     const wrapperRef = useRef(null);
     const latestSuggestionQueryRef = useRef('');
+    const suggestionDebounceRef = useRef(null);
 
-    const cityFromQuery = query.get('city')?.toLowerCase() || '';
+    const cityFromQuery = query.get('city') || '';
     const fromDateQuery = query.get('fromDate') || '';
     const fromTimeQuery = query.get('fromTime') || '';
     const untilDateQuery = query.get('untilDate') || '';
@@ -94,12 +95,17 @@ const Navbar2 = () => {
                 return;
             }
 
-            if (res.data.status === "OK") {
-                const filtered = res.data.predictions.filter(pred =>
-                    pred.types.includes("locality") || pred.types.includes("country") || pred.types.includes("administrative_area_level_1")
-                );
-                setSuggestions(filtered);
-                setShowSuggestions(filtered.length > 0);
+            if (res.data.status === "OK" && Array.isArray(res.data.predictions)) {
+                const seen = new Set();
+                const unique = res.data.predictions.filter((prediction) => {
+                    const key = (prediction?.description || '').trim().toLowerCase();
+                    if (!key || seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                });
+
+                setSuggestions(unique);
+                setShowSuggestions(unique.length > 0);
             } else { setSuggestions([]); setShowSuggestions(false); }
         } catch (error) { 
             console.error("Error fetching suggestions:", error); 
@@ -108,10 +114,39 @@ const Navbar2 = () => {
         }
     };
 
+    const handleLocationInputChange = (value) => {
+        setLocation(value);
+
+        const normalized = (value || '').trim();
+        latestSuggestionQueryRef.current = normalized.toLowerCase();
+
+        if (suggestionDebounceRef.current) {
+            clearTimeout(suggestionDebounceRef.current);
+        }
+
+        if (normalized.length < 2) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            return;
+        }
+
+        suggestionDebounceRef.current = setTimeout(() => {
+            fetchSuggestions(value);
+        }, 250);
+    };
+
     const handleSelect = (item) => { setLocation(item.description); setSuggestions([]); setShowSuggestions(false); };
 
     const handleSearch = () => {
-        nav(`/trailers?city=${location}&fromDate=${fromDate}&fromTime=${fromTime}&untilDate=${untilDate}&untilTime=${untilTime}`);
+        const params = new URLSearchParams();
+        if (location.trim()) params.set('city', location.trim());
+        if (fromDate) params.set('fromDate', fromDate);
+        if (fromTime) params.set('fromTime', fromTime);
+        if (untilDate) params.set('untilDate', untilDate);
+        if (untilTime) params.set('untilTime', untilTime);
+
+        const queryString = params.toString();
+        nav(queryString ? `/trailers?${queryString}` : '/trailers');
         setShowMobileSearch(false);
     };
 
@@ -125,6 +160,14 @@ const Navbar2 = () => {
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (suggestionDebounceRef.current) {
+                clearTimeout(suggestionDebounceRef.current);
+            }
+        };
     }, []);
 
     return (
@@ -147,14 +190,14 @@ const Navbar2 = () => {
                                     type="text"
                                     id="where"
                                     value={location}
-                                    onChange={(e) => { setLocation(e.target.value); fetchSuggestions(e.target.value); }}
+                                    onChange={(e) => handleLocationInputChange(e.target.value)}
                                     className="block w-full text-sm text-gray-900 border-none focus:ring-0 focus:outline-none p-0"
                                     placeholder={translations.montrealPlaceholder}
                                 />
                                 {showSuggestions && suggestions.length > 0 && (
                                     <ul className="absolute z-50 top-full left-0 right-0 bg-white shadow-md rounded-md mt-1 max-h-60 overflow-y-auto">
                                         {suggestions.map((item, index) => (
-                                            <li key={index} onClick={() => handleSelect(item)} className="p-2 hover:bg-gray-100 cursor-pointer text-sm">
+                                            <li key={item.place_id || index} onClick={() => handleSelect(item)} className="p-2 hover:bg-gray-100 cursor-pointer text-sm">
                                                 {item.description}
                                             </li>
                                         ))}
@@ -303,14 +346,14 @@ const Navbar2 = () => {
                                 <input
                                     type="text"
                                     value={location}
-                                    onChange={(e) => { setLocation(e.target.value); fetchSuggestions(e.target.value); }}
+                                    onChange={(e) => handleLocationInputChange(e.target.value)}
                                     className="mobile-input"
                                     placeholder={translations.montrealPlaceholder}
                                 />
                                 {showSuggestions && suggestions.length > 0 && (
                                     <ul className="absolute z-50 top-full left-0 right-0 bg-white shadow-lg rounded-lg mt-1 max-h-48 overflow-y-auto border border-gray-200">
                                         {suggestions.map((item, index) => (
-                                            <li key={index} onClick={() => handleSelect(item)}
+                                            <li key={item.place_id || index} onClick={() => handleSelect(item)}
                                                 className="p-3 hover:bg-gray-100 cursor-pointer text-sm border-b border-gray-100 last:border-0">
                                                 {item.description}
                                             </li>

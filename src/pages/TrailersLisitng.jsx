@@ -14,6 +14,7 @@ import 'leaflet/dist/leaflet.css';
 import BookingModal from '../components/BookingModel';
 import { FiMap, FiList } from 'react-icons/fi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { isKycApproved } from '../helpers/kyc';
 
 // Fix for default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -116,7 +117,7 @@ const normalizeTrailerImages = (images) => {
 const TrailersListing = () => {
   const nav = useNavigate();
   const query = useQuery();
-  const cityFromQuery = query.get('city')?.toLowerCase() || '';
+  const cityFromQuery = query.get('city') || '';
   const [priceFilter, setPriceFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -211,7 +212,7 @@ const TrailersListing = () => {
 
     try {
       const res = await axios.get(`${config.baseUrl}/account/single/${userId}`);
-      const isKycVerified = Boolean(res?.data?.data?.kycVerified);
+      const isKycVerified = isKycApproved(res?.data?.data);
 
       if (!isKycVerified) {
         toast.error(translations.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");
@@ -332,15 +333,23 @@ const TrailersListing = () => {
           const allRes = await axios.get(`${config.baseUrl}/trailer/all/approved`);
           const allData = allRes.data.data || [];
 
-          // Simplify: search for any parts of the city filter in city or country
-          const searchParts = cityFilter.split(/[,\s]+/).filter(p => p.length >= 2);
+          const normalizeText = (value = '') => String(value)
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+
+          const searchParts = normalizeText(cityFilter)
+            .split(/[,\s]+/)
+            .filter((part) => part.length >= 2);
 
           allTrailers = allData.filter((t) => {
-            return searchParts.every(part =>
-              t.city?.toLowerCase().includes(part) ||
-              t.state?.toLowerCase().includes(part) ||
-              t.country?.toLowerCase().includes(part)
-            );
+            const haystack = normalizeText(`${t.city || ''} ${t.state || ''} ${t.country || ''}`);
+            if (searchParts.length === 0) return true;
+
+            const matchedParts = searchParts.filter((part) => haystack.includes(part)).length;
+            const minRequiredMatches = searchParts.length === 1 ? 1 : Math.min(2, searchParts.length);
+
+            return matchedParts >= minRequiredMatches;
           });
         }
       }
@@ -568,14 +577,25 @@ const TrailersListing = () => {
                     <div className="p-3 sm:p-4">
                       <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 line-clamp-1">{trailer.title}</h3>
                       <p className="text-gray-500 text-xs sm:text-sm mb-2">{trailer.city}, {trailer.state}</p>
-                      <div className='flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2'>
+                      <div className='flex flex-col items-start gap-2'>
                         <p className="text-black font-medium text-base sm:text-lg">${trailer.dailyRate}{translations.perDay}</p>
-                        <button
-                          className='bg-blue-600 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full xs:w-auto text-center'
-                          onClick={(e) => handleBookNowClick(e, trailer)}
-                        >
-                          {translations.bookNow}
-                        </button>
+                        <div className="grid grid-cols-2 gap-2 w-full">
+                          <button
+                            className='bg-white border border-blue-200 text-blue-700 text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors text-center'
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCardClick(trailer._id);
+                            }}
+                          >
+                            {translations.viewDetails || 'View details'}
+                          </button>
+                          <button
+                            className='bg-blue-600 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-center'
+                            onClick={(e) => handleBookNowClick(e, trailer)}
+                          >
+                            {translations.bookNow}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </motion.div>

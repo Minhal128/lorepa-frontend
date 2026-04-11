@@ -5,6 +5,7 @@ import axios from 'axios';
 import config from '../../../config';
 import toast from 'react-hot-toast';
 import { profileTranslations } from '../../Seller/Dashboard/translation/profileTranslations';
+import { isKycApproved } from '../../../helpers/kyc';
 
 const InputField = ({ label, value, placeholder, type = 'text', onChange, readOnly = false }) => (
     <div className="mb-4">
@@ -277,7 +278,7 @@ const UserProfilePage = () => {
         try {
             const res = await axios.get(`${config.baseUrl}/account/single/${localStorage.getItem("userId")}`);
             setUserData(res.data.data || {});
-            setKycStatus(res.data.data?.kycVerified ? "Verified" : "Not Verified");
+            setKycStatus(isKycApproved(res.data.data) ? "Verified" : "Not Verified");
         } catch (error) {
             toast.error(t.failedToFetchProfile);
         }
