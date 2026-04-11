@@ -40,7 +40,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
 
             const res = await axios.put(`${config.baseUrl}/account/update/${localStorage.getItem("userId")}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" }
+                timeout: 30000,
             });
             toast.success(res.data.msg);
             if (onSaveSuccess) onSaveSuccess();
@@ -188,6 +188,13 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
         try {
             setLoading(true);
             const formData = new FormData();
+            formData.append("name", userData.name || "");
+            formData.append("phone", userData.phone || "");
+            formData.append("address", userData.address || "");
+            formData.append("state", userData.state || "");
+            formData.append("country", userData.country || "");
+            formData.append("street", userData.street || "");
+
             if (userData.licenseFrontImage instanceof File) formData.append("licenseFrontImage", userData.licenseFrontImage);
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
             if (userData.carInsurancePolicyImage instanceof File) formData.append("carInsurancePolicyImage", userData.carInsurancePolicyImage);
@@ -195,7 +202,7 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
             if (userData.trailerRegistrationImage instanceof File) formData.append("trailerRegistrationImage", userData.trailerRegistrationImage);
 
             const res = await axios.put(`${config.baseUrl}/account/update/${localStorage.getItem("userId")}`, formData, {
-                headers: { "Content-Type": "multipart/form-data" }
+                timeout: 30000,
             });
             toast.success(res.data.msg);
         } catch (error) {

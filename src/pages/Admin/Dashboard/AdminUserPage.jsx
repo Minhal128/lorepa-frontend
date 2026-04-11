@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../../config';
 import toast from 'react-hot-toast';
+import { io } from 'socket.io-client';
 import { adminTranslations } from '../translation/adminTranslations';
 
 const AdminUserPage = () => {
@@ -26,20 +27,53 @@ const AdminUserPage = () => {
     return false;
   };
 
-  const fetchUsers = async () => {
+  const getSocketBaseUrl = () => config.baseUrl.replace(/\/api\/v1\/?$/, '');
+
+  const fetchUsers = async ({ prioritizeUserId = null } = {}) => {
     try {
-      const res = await axios.get(`${config.baseUrl}/account/all`);
+      const res = await axios.get(`${config.baseUrl}/account/all`, {
+        params: { _t: Date.now() },
+      });
+
       if (res.data?.data) {
-        const toTime = (value) => {
-          const parsed = new Date(value || 0).getTime();
-          return Number.isNaN(parsed) ? 0 : parsed;
+        const objectIdToTime = (value) => {
+          const id = String(value || '');
+          if (!/^[0-9a-fA-F]{24}$/.test(id)) return 0;
+          return parseInt(id.slice(0, 8), 16) * 1000;
+        };
+
+        const toTime = (user) => {
+          const parsed = new Date(user?.updatedAt || user?.createdAt || 0).getTime();
+          if (!Number.isNaN(parsed) && parsed > 0) return parsed;
+          return objectIdToTime(user?._id);
         };
 
         const sortedUsers = [...res.data.data].sort((a, b) => {
-          const bTime = toTime(b?.updatedAt || b?.createdAt);
-          const aTime = toTime(a?.updatedAt || a?.createdAt);
-          return bTime - aTime;
+          if (prioritizeUserId) {
+            if (a?._id === prioritizeUserId) return -1;
+            if (b?._id === prioritizeUserId) return 1;
+          }
+
+          const bTime = toTime(b);
+          const aTime = toTime(a);
+
+          if (bTime !== aTime) return bTime - aTime;
+
+          const bIdTime = objectIdToTime(b?._id);
+          const aIdTime = objectIdToTime(a?._id);
+          if (bIdTime !== aIdTime) return bIdTime - aIdTime;
+
+          return String(b?._id || '').localeCompare(String(a?._id || ''));
         });
+
+        if (prioritizeUserId) {
+          const prioritizedUser = sortedUsers.find((user) => user?._id === prioritizeUserId);
+          if (prioritizedUser) {
+            const targetTab = roleMatchesTab(prioritizedUser?.role, 'owner') ? 'owner' : 'renter';
+            setActiveTab(targetTab);
+            setCurrentPage(1);
+          }
+        }
 
         setUsers(sortedUsers);
       }
@@ -50,6 +84,32 @@ const AdminUserPage = () => {
 
   useEffect(() => {
     fetchUsers();
+
+    const pollingId = setInterval(() => {
+      fetchUsers();
+    }, 10000);
+
+    return () => {
+      clearInterval(pollingId);
+    };
+  }, []);
+
+  useEffect(() => {
+    const socket = io(getSocketBaseUrl(), {
+      transports: ['websocket', 'polling'],
+    });
+
+    socket.on('admin-kyc-submitted', (payload) => {
+      if (payload?.userId) {
+        fetchUsers({ prioritizeUserId: payload.userId });
+        return;
+      }
+      fetchUsers();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const filteredUsers = users.filter((user) => roleMatchesTab(user?.role, activeTab));

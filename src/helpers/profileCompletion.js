@@ -7,17 +7,22 @@ const hasValue = (value) => {
 export const isProfileComplete = (account, role) => {
   if (!account) return false;
 
-  const commonFields = ['name', 'email', 'phone', 'country', 'state', 'address', 'street'];
-  const hasCommon = commonFields.every((field) => hasValue(account[field]));
+  const normalizedRole = String(role || '').trim().toLowerCase();
+  const isOwnerRole = ['owner', 'host', 'seller', 'buyer'].includes(normalizedRole);
+
+  // Only enforce truly required profile fields.
+  // country/state/address/street are labeled optional in UI and should not block profile completion.
+  const requiredProfileFields = ['name', 'email', 'phone'];
+  const hasRequiredProfile = requiredProfileFields.every((field) => hasValue(account[field]));
 
   const hasLicenseDocs = hasValue(account.licenseFrontImage) && hasValue(account.licenseBackImage);
 
-  if (role === 'owner') {
+  if (isOwnerRole) {
     const hasOwnerDocs =
       hasValue(account.trailerInsurancePolicyImage) && hasValue(account.trailerRegistrationImage);
-    return hasCommon && hasLicenseDocs && hasOwnerDocs;
+    return hasRequiredProfile && hasLicenseDocs && hasOwnerDocs;
   }
 
   const hasRenterDocs = hasValue(account.carInsurancePolicyImage);
-  return hasCommon && hasLicenseDocs && hasRenterDocs;
+  return hasRequiredProfile && hasLicenseDocs && hasRenterDocs;
 };

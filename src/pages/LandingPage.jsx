@@ -22,6 +22,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { blurIn, fadeIn, fadeInDown, fadeInUp, flipIn, scaleIn, zoomBounce } from "../../animation";
 import AccordionItem from "./AccordionItem";
 
+const getStoredLanguage = () => {
+    const rawLang = localStorage.getItem('lang') || localStorage.getItem('i18nextLng') || 'fr';
+    const normalizedLang = rawLang.split('-')[0];
+    return normalizedLang;
+};
+
 const translations = {
     en: {
         trailerRental: "Trailer rental reinvented",
@@ -48,6 +54,7 @@ const translations = {
         carHauler: "Browse Trailers",
         faq: "Frequently asked questions",
         seeAllFaq: "See all FAQ",
+        searchButton: "Search",
         searching: "Searching...",
         noResults: "No results found",
         guests: "Guests",
@@ -94,6 +101,7 @@ const translations = {
         "carHauler": "Explorar Remolques",
         faq: "Preguntas frecuentes",
         seeAllFaq: "Ver todas las FAQ",
+        searchButton: "Buscar",
         searching: "Buscando...",
         noResults: "No se encontraron resultados",
         guests: "Invitados",
@@ -140,6 +148,7 @@ const translations = {
         carHauler: "浏览拖车",
         faq: "常见问题",
         seeAllFaq: "查看所有 FAQ",
+        searchButton: "搜索",
         searching: "搜索中...",
         noResults: "未找到结果",
         guests: "客人",
@@ -186,6 +195,7 @@ const translations = {
         carHauler: "Parcourir les remorques",
         faq: "Questions fréquemment posées",
         seeAllFaq: "Voir toutes les FAQ",
+        searchButton: "Rechercher",
         searching: "Recherche en cours...",
         noResults: "Aucun résultat trouvé",
         guests: "Invités",
@@ -231,8 +241,12 @@ const LandingPage = () => {
     const [trailers, setTrailers] = useState([]);
     const [fallbackFaqContent, setFallbackFaqContent] = useState({ renters: [], owners: [], global: [] });
     const [adminFaqContent, setAdminFaqContent] = useState({ renters: [], owners: [] });
+    const [currentLang, setCurrentLang] = useState(() => {
+        const lang = getStoredLanguage();
+        return translations[lang] ? lang : 'fr';
+    });
     const [translationsData, setTranslationsData] = useState(() => {
-        const storedLang = localStorage.getItem('lang');
+        const storedLang = getStoredLanguage();
         return translations[storedLang] || translations.fr;
     });
     const wrapperRef = useRef(null);
@@ -250,18 +264,21 @@ const LandingPage = () => {
     const nav = useNavigate()
     useEffect(() => {
         const handleStorageChange = () => {
-            const storedLang = localStorage.getItem('lang');
+            const storedLang = getStoredLanguage();
+            setCurrentLang(translations[storedLang] ? storedLang : 'fr');
             const data = translations[storedLang] || translations.fr;
             setTranslationsData(data);
             setFallbackFaqContent(data.faqContent);
         };
 
         window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('app-language-changed', handleStorageChange);
         // Also run on mount to ensure the latest language is picked up if it changes externally
         handleStorageChange();
 
         return () => {
             window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('app-language-changed', handleStorageChange);
         };
     }, []);
 
@@ -295,9 +312,16 @@ const LandingPage = () => {
         fetchContent();
     }, []);
 
+    const useAdminFaqContent = currentLang === "en";
     const mergedFaqContent = {
-        renters: adminFaqContent.renters.length > 0 ? adminFaqContent.renters : (fallbackFaqContent.renters || []),
-        owners: adminFaqContent.owners.length > 0 ? adminFaqContent.owners : (fallbackFaqContent.owners || []),
+        renters:
+            useAdminFaqContent && adminFaqContent.renters.length > 0
+                ? adminFaqContent.renters
+                : (fallbackFaqContent.renters || []),
+        owners:
+            useAdminFaqContent && adminFaqContent.owners.length > 0
+                ? adminFaqContent.owners
+                : (fallbackFaqContent.owners || []),
     };
     const fetchSuggestions = async (inputText) => {
         const normalizedInput = (inputText || "").trim();
@@ -525,7 +549,7 @@ const LandingPage = () => {
 
                         {/* Search Button */}
                         <div className="w-full mt-2">
-                            <button onClick={() => nav(buildSearchUrl())} className="w-full h-[3rem] bg-[#2563EB] rounded-md text-white">Search</button>
+                            <button onClick={() => nav(buildSearchUrl())} className="w-full h-[3rem] bg-[#2563EB] rounded-md text-white">{translationsData?.searchButton}</button>
                         </div>
                     </motion.div>
                 </motion.div>
