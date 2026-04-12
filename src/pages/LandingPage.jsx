@@ -234,6 +234,7 @@ const AnimatedText = ({ text, variant, className = "" }) => (
 const trustedAvatarImages = ["/6.png", "/7.png", "/8.png", "/9.png", "/10.png", "/11.png"];
 const popularLocationImages = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
 const browseTrailerImages = ["/12.png", "/13.png", "/14.png", "/15.png"];
+const MIN_LOCATION_QUERY_LENGTH = 1;
 
 const LandingPage = () => {
     const [trustedByItems, setTrustedByItems] = useState([]);
@@ -342,7 +343,7 @@ const LandingPage = () => {
         const normalizedInput = (inputText || "").trim();
         const normalizedQuery = normalizedInput.toLowerCase();
 
-        if (!normalizedInput || normalizedInput.length < 2) {
+        if (!normalizedInput || normalizedInput.length < MIN_LOCATION_QUERY_LENGTH) {
             setSuggestions([]);
             setShowSuggestions(false);
             setIsLoadingSuggestions(false);
@@ -355,7 +356,10 @@ const LandingPage = () => {
             // Get base URL without /api/v1 suffix
             const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1\/?$/, '');
             const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, {
-                params: { input: normalizedInput },
+                params: {
+                    input: normalizedInput,
+                    onlyWithTrailers: true,
+                },
             });
 
             // Ignore stale async responses
@@ -368,7 +372,7 @@ const LandingPage = () => {
                 setShowSuggestions(true);
             } else {
                 setSuggestions([]);
-                setShowSuggestions(normalizedInput.length >= 2); // show "no results" feedback
+                setShowSuggestions(normalizedInput.length >= MIN_LOCATION_QUERY_LENGTH); // show "no results" feedback
             }
         } catch (error) {
             console.error("Error fetching suggestions:", error);
@@ -387,7 +391,7 @@ const LandingPage = () => {
         latestSuggestionQueryRef.current = normalizedQuery;
 
         if (debounceRef.current) clearTimeout(debounceRef.current);
-        if (!value || value.trim().length < 2) {
+        if (!value || value.trim().length < MIN_LOCATION_QUERY_LENGTH) {
             setSuggestions([]);
             setShowSuggestions(false);
             setIsLoadingSuggestions(false);

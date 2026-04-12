@@ -19,6 +19,7 @@ const navBar2Translations = {
 };
 
 const useQuery = () => new URLSearchParams(useLocation().search);
+const MIN_LOCATION_QUERY_LENGTH = 1;
 
 const Navbar2 = () => {
     const query = useQuery();
@@ -77,7 +78,7 @@ const Navbar2 = () => {
         const normalizedInput = (inputText || '').trim();
         const normalizedQuery = normalizedInput.toLowerCase();
 
-        if (!normalizedInput || normalizedInput.length < 2) {
+        if (!normalizedInput || normalizedInput.length < MIN_LOCATION_QUERY_LENGTH) {
             setSuggestions([]);
             setShowSuggestions(false);
             return;
@@ -88,7 +89,12 @@ const Navbar2 = () => {
         try {
             // Get base URL without /api/v1 suffix
             const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1\/?$/, '');
-            const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, { params: { input: normalizedInput } });
+            const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, {
+                params: {
+                    input: normalizedInput,
+                    onlyWithTrailers: true,
+                },
+            });
 
             // Ignore stale async responses
             if (latestSuggestionQueryRef.current !== normalizedQuery) {
@@ -124,7 +130,7 @@ const Navbar2 = () => {
             clearTimeout(suggestionDebounceRef.current);
         }
 
-        if (normalized.length < 2) {
+        if (normalized.length < MIN_LOCATION_QUERY_LENGTH) {
             setSuggestions([]);
             setShowSuggestions(false);
             return;
