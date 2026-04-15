@@ -93,6 +93,7 @@ const Navbar2 = () => {
                 params: {
                     input: normalizedInput,
                     onlyWithTrailers: true,
+                    limit: 25,
                 },
             });
 

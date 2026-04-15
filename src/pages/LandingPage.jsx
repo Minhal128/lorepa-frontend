@@ -359,6 +359,7 @@ const LandingPage = () => {
                 params: {
                     input: normalizedInput,
                     onlyWithTrailers: true,
+                    limit: 25,
                 },
             });
 
