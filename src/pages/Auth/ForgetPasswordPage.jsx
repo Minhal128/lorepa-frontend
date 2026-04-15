@@ -37,7 +37,8 @@ const ForgetPasswordPage = () => {
   const sendOtp = async () => {
     if (!email) return toast.error("Email is required");
     try {
-      await axios.post(`${config.baseUrl}/account/send/otp/${email}`);
+      const normalizedEmail = encodeURIComponent(email.trim().toLowerCase());
+      await axios.post(`${config.baseUrl}/account/send/otp/${normalizedEmail}`);
       toast.success("OTP sent successfully");
       nav("/verify-otp", { state: { email } });
     } catch (err) {

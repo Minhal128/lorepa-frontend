@@ -52,7 +52,8 @@ const VerifyOtpPage = () => {
 
   const resendOtp = async () => {
     try {
-      await axios.post(`${config.baseUrl}/account/send/otp/${email}`);
+      const normalizedEmail = encodeURIComponent(String(email || "").trim().toLowerCase());
+      await axios.post(`${config.baseUrl}/account/send/otp/${normalizedEmail}`);
       toast.success("OTP resent successfully");
     } catch (err) {
       toast.error(err.response?.data?.msg || "Failed to resend OTP");
