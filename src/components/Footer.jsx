@@ -25,7 +25,7 @@ const footerTranslations = {
         downloadGooglePlay: "Download on the Google Play",
         english: "English",
         address: "3910 Rue de Bellechasse, Montréal, Québec, H1X 1J4",
-        allRightsReserved: "© 2025 Lorepa. All rights reserved.",
+        allRightsReserved: "© 2026 Lorepa. All rights reserved.",
         privacyPolicy: "Privacy Policy",
         termsOfService: "Terms of Service",
         cookiePolicy: "Cookie Policy",
@@ -52,7 +52,7 @@ const footerTranslations = {
         downloadGooglePlay: "Descargar en Google Play",
         english: "Español",
         address: "3910 Rue de Bellechasse, Montréal, Québec, H1X 1J4",
-        allRightsReserved: "© 2025 Lorepa. Todos los derechos reservados.",
+        allRightsReserved: "© 2026 Lorepa. Todos los derechos reservados.",
         privacyPolicy: "Política de privacidad",
         termsOfService: "Términos de servicio",
         cookiePolicy: "Política de cookies",
@@ -79,7 +79,7 @@ const footerTranslations = {
         downloadGooglePlay: "在Google Play下载",
         english: "中文",
         address: "3910 Rue de Bellechasse, Montréal, Québec, H1X 1J4",
-        allRightsReserved: "© 2025 Lorepa. 版权所有。",
+        allRightsReserved: "© 2026 Lorepa. 版权所有。",
         privacyPolicy: "隐私政策",
         termsOfService: "服务条款",
         cookiePolicy: "Cookie政策",
@@ -106,7 +106,7 @@ const footerTranslations = {
         downloadGooglePlay: "Télécharger sur Google Play",
         english: "Français",
         address: "3910 Rue de Bellechasse, Montréal, Québec, H1X 1J4",
-        allRightsReserved: "© 2025 Lorepa. Tous droits réservés.",
+        allRightsReserved: "© 2026 Lorepa. Tous droits réservés.",
         privacyPolicy: "Politique de confidentialité",
         termsOfService: "Conditions d'utilisation",
         cookiePolicy: "Politique de cookies",
@@ -233,6 +233,7 @@ const Footer = () => {
                             <div className="space-y-1 text-center lg:text-left">
                                 <p className="text-xs sm:text-sm">{translations.address}</p>
                                 <p className="text-xs sm:text-sm text-gray-600">{translations.allRightsReserved}</p>
+                                <p className="text-[10px] sm:text-xs text-gray-500">Project Manager: Bayo Easywordtech</p>
                             </div>
 
                             {/* Legal Links */}

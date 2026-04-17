@@ -21,7 +21,7 @@ const privacyPolicyTranslations = {
         quebecBusinessNumber: "Quebec Business Number (NEQ): 2279050480",
         publicationDirector: "Publication Director: Rodrigue Mayukwa",
         websiteCreator: "Website Creator: Rodrigue Mayukwa",
-        hostingProvider: "Hosting Provider: [Insert provider name and website here]",
+        hostingProvider: "Hosting Provider: [Hostinger]",
         termsOfUseTitle: "2. Terms of use",
         termsOfUseContent: "By using the Lorepa website, users agree to the general terms of use described here. These terms may be updated at any time, so users are encouraged to review them regularly. Access to the website is generally available at all times. Interruptions may occur for technical maintenance, which Lorepa will try to communicate in advance.",
         servicesDescriptionTitle: "3. Description of services",
