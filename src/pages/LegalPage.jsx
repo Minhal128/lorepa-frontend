@@ -20,8 +20,9 @@ const privacyPolicyTranslations = {
         registeredAddress: "Registered Address: 3910, Rue de Bellechasse, Montreal, Quebec, H1X 1J4",
         quebecBusinessNumber: "Quebec Business Number (NEQ): 2279050480",
         publicationDirector: "Publication Director: Rodrigue Mayukwa",
-        websiteCreator: "Website Creator: Rodrigue Mayukwa",
-        hostingProvider: "Hosting Provider: [Hostinger]",
+        websiteCreator: "Website Creator: Bayo Alabi (Easywordtech )",
+        hostingProvider: "Hosting Provider: Hostinger",
+        projectManager: "Project Manager: Bayo Easywordtech",
         termsOfUseTitle: "2. Terms of use",
         termsOfUseContent: "By using the Lorepa website, users agree to the general terms of use described here. These terms may be updated at any time, so users are encouraged to review them regularly. Access to the website is generally available at all times. Interruptions may occur for technical maintenance, which Lorepa will try to communicate in advance.",
         servicesDescriptionTitle: "3. Description of services",
@@ -60,7 +61,8 @@ const privacyPolicyTranslations = {
         quebecBusinessNumber: "Número de Negocio de Quebec (NEQ): 2279050480",
         publicationDirector: "Director de Publicación: Rodrigue Mayukwa",
         websiteCreator: "Creador del sitio web: Rodrigue Mayukwa",
-        hostingProvider: "Proveedor de Alojamiento: [Insertar nombre y sitio web del proveedor aquí]",
+        hostingProvider: "Proveedor de Alojamiento: Hostinger",
+        projectManager: "Director del Proyecto: Bayo Easywordtech",
         termsOfUseTitle: "2. Términos de uso",
         termsOfUseContent: "Al utilizar el sitio web de Lorepa, los usuarios aceptan los términos de uso generales descritos aquí. Estos términos pueden actualizarse en cualquier momento, por lo que se recomienda a los usuarios revisarlos regularmente. El acceso al sitio web está generalmente disponible en todo momento. Pueden ocurrir interrupciones por mantenimiento técnico, lo cual Lorepa intentará comunicar con antelación.",
         servicesDescriptionTitle: "3. Descripción de los servicios",
@@ -99,7 +101,8 @@ const privacyPolicyTranslations = {
         quebecBusinessNumber: "魁北克商业编号 (NEQ)：2279050480",
         publicationDirector: "出版负责人：Rodrigue Mayukwa",
         websiteCreator: "网站创建者：Rodrigue Mayukwa",
-        hostingProvider: "托管服务提供商：[在此插入提供商名称和网站]",
+        hostingProvider: "托管服务提供商：Hostinger",
+        projectManager: "项目经理：Bayo Easywordtech",
         termsOfUseTitle: "2. 使用条款",
         termsOfUseContent: "使用 Lorepa 网站即表示用户同意此处描述的通用使用条款。这些条款可能随时更新，因此鼓励用户定期查看。网站通常全天候可用。技术维护可能会导致中断，Lorepa 将尝试提前通知。",
         servicesDescriptionTitle: "3. 服务说明",
@@ -138,7 +141,8 @@ const privacyPolicyTranslations = {
         quebecBusinessNumber: "Numéro d'entreprise du Québec (NEQ) : 2279050480",
         publicationDirector: "Directeur de la publication : Rodrigue Mayukwa",
         websiteCreator: "Créateur du site internet : Rodrigue Mayukwa",
-        hostingProvider: "Hébergeur : [Insérer le nom et le site de l'hébergeur ici]",
+        hostingProvider: "Hébergeur : Hostinger",
+        projectManager: "Chef de Projet : Bayo Easywordtech",
         termsOfUseTitle: "2. Conditions générales d’utilisation",
         termsOfUseContent: "L’utilisation du site Lorepa implique l’acceptation pleine et entière des conditions générales d’utilisation ci-après décrites. Ces conditions d’utilisation sont susceptibles d’être modifiées ou complétées à tout moment, les utilisateurs sont donc invités à les consulter de manière régulière. Ce site est normalement accessible à tout moment. Une interruption pour raison de maintenance technique peut être toutefois décidée par Lorepa, qui s’efforcera alors de communiquer préalablement aux utilisateurs les dates et heures de l’intervention.",
         servicesDescriptionTitle: "3. Description des services fournis",
@@ -206,6 +210,7 @@ const LegalPage = () => {
                         <li>{translations.publicationDirector}</li>
                         <li>{translations.websiteCreator}</li>
                         <li>{translations.hostingProvider}</li>
+                        <li>{translations.projectManager}</li>
                     </ul>
                     <h3 className='font-semibold mt-2'>{translations.termsOfUseTitle}</h3>
                     <p>{translations.termsOfUseContent}</p>

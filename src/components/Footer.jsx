@@ -233,7 +233,7 @@ const Footer = () => {
                             <div className="space-y-1 text-center lg:text-left">
                                 <p className="text-xs sm:text-sm">{translations.address}</p>
                                 <p className="text-xs sm:text-sm text-gray-600">{translations.allRightsReserved}</p>
-                                <p className="text-[10px] sm:text-xs text-gray-500">Project Manager: Bayo Easywordtech</p>
+
                             </div>
 
                             {/* Legal Links */}
