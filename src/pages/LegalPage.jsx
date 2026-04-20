@@ -210,7 +210,6 @@ const LegalPage = () => {
                         <li>{translations.publicationDirector}</li>
                         <li>{translations.websiteCreator}</li>
                         <li>{translations.hostingProvider}</li>
-                        <li>{translations.projectManager}</li>
                     </ul>
                     <h3 className='font-semibold mt-2'>{translations.termsOfUseTitle}</h3>
                     <p>{translations.termsOfUseContent}</p>
