@@ -5,7 +5,7 @@ import Logo from "../../assets/logo.svg";
 import axios from 'axios';
 import config from '../../config';
 import toast from 'react-hot-toast';
-import { FaFacebookF, FaGoogle } from 'react-icons/fa';
+import { FaFacebookF, FaGoogle, FaSort } from 'react-icons/fa';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -189,6 +189,10 @@ const RegisterPage = () => {
     window.location.href = `${config.baseUrl}/account/google`;
   };
 
+  const toggleRole = () => {
+    setRole((prevRole) => (prevRole === 'renter' ? 'owner' : 'renter'));
+  };
+
   const handleFacebookSignup = ({ data }) => {
     if (!data.email) {
       toast.error(translations.facebookSignupFail);
@@ -257,11 +261,22 @@ const RegisterPage = () => {
           </motion.div>
           <motion.div variants={fadeInUp} className="mobile-form-group">
             <label className='mobile-form-label'>{translations.role}</label>
-            <select required value={role} onChange={(e) => setRole(e.target.value)}
-              className='mobile-select'>
-              <option value='renter'>{translations.renter}</option>
-              <option value='owner'>{translations.owner}</option>
-            </select>
+            <div className='relative'>
+              <select required value={role} onChange={(e) => setRole(e.target.value)}
+                className='mobile-select pr-12'>
+                <option value='renter'>{translations.renter}</option>
+                <option value='owner'>{translations.owner}</option>
+              </select>
+              <button
+                type='button'
+                onClick={toggleRole}
+                aria-label={`Switch role to ${role === 'renter' ? translations.owner : translations.renter}`}
+                title={`Switch to ${role === 'renter' ? translations.owner : translations.renter}`}
+                className='absolute right-3 top-1/2 -translate-y-1/2 h-7 w-7 rounded-md border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center'
+              >
+                <FaSort className='h-3.5 w-3.5' />
+              </button>
+            </div>
           </motion.div>
           <motion.div variants={fadeInUp}>
             <button type='submit' className='mobile-btn-primary w-full'>{translations.registerBtn}</button>
