@@ -97,9 +97,19 @@ const ActivityItem = ({ icon, title, description, time, isNew }) => (
 );
 
 // --- Recent Activity List ---
-const RecentActivity = ({ activities, t }) => (
+const RecentActivity = ({ activities, t, onMarkAllRead }) => (
   <div className="bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-gray-100">
-    <h2 className="text-xl font-bold text-gray-900 mb-6">{t.recentActivity}</h2>
+    <div className="flex items-center justify-between mb-6">
+      <h2 className="text-xl font-bold text-gray-900">{t.recentActivity}</h2>
+      {activities.some(a => a.isNew) && (
+        <button
+          onClick={onMarkAllRead}
+          className="text-xs font-bold text-blue-600 hover:text-blue-700 transition px-3 py-1.5 bg-blue-50 rounded-lg"
+        >
+          {t.markAllAsRead || "Mark all as read"}
+        </button>
+      )}
+    </div>
     <div className="divide-y divide-gray-50">
       {activities.length > 0 ? (
         activities.map((activity, index) => (
@@ -175,6 +185,7 @@ const UserNotification = () => {
 
       const res = await axios.get(`${config.baseUrl}/notification/user/${userId}`);
       const notifs = res.data.data.map(notif => ({
+        id: notif._id,
         icon: <FaBell />,
         title: notif.title,
         description: notif.description,
@@ -186,6 +197,23 @@ const UserNotification = () => {
       console.error('Error fetching notifications:', err);
     }
   };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+
+      await axios.put(`${config.baseUrl}/notification/read-all/${userId}`);
+      toast.success(t.allMarkedAsRead || 'All notifications marked as read');
+      fetchNotifications();
+      // Dispatch event for headers to update immediately
+      window.dispatchEvent(new Event('notificationsUpdated'));
+    } catch (err) {
+      console.error('Error marking all as read:', err);
+      toast.error(t.markAllAsReadError || 'Failed to mark all as read');
+    }
+  };
+
 
   useEffect(() => {
     fetchNotifications();
@@ -218,9 +246,8 @@ const UserNotification = () => {
           />
         </div>
 
-        {/* Activity */}
         <div className="lg:col-span-2">
-          <RecentActivity activities={activities} t={t} />
+          <RecentActivity activities={activities} t={t} onMarkAllRead={handleMarkAllAsRead} />
         </div>
       </div>
     </div>

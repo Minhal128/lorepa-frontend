@@ -58,10 +58,35 @@ import PaymentCancel from './pages/PaymentCancel';
 import ForgetPasswordPage from './pages/Auth/ForgetPasswordPage';
 import VerifyOtpPage from './pages/Auth/VerifyOtpPage';
 import ChangePasswordPage from './pages/Auth/ChangePasswordPage';
-const RegisterPage = lazy(() => import('./pages/Auth/RegisterPage'));
-const AdminLayout = lazy(() => import('./components/admin/Layout'));
-const UserLayout = lazy(() => import('./components/user/Layout'));
-const BuyerLayout = lazy(() => import('./components/buyer/Layout'));
+// Helper function to retry lazy loading when a chunk fails to load
+const lazyWithRetry = (componentImport) =>
+  lazy(async () => {
+    const pageHasAlreadyBeenReloaded = window.localStorage.getItem(
+      'page-has-been-reloaded'
+    );
+
+    try {
+      return await componentImport();
+    } catch (error) {
+      if (!pageHasAlreadyBeenReloaded) {
+        // Mark as reloaded to avoid infinite loop
+        window.localStorage.setItem('page-has-been-reloaded', 'true');
+        // Refresh the page
+        window.location.reload();
+        return;
+      }
+
+      // If we already reloaded and it still fails, show error
+      console.error("Chunk loading failed after retry:", error);
+      throw error;
+    }
+  });
+
+const RegisterPage = lazyWithRetry(() => import('./pages/Auth/RegisterPage'));
+const AdminLayout = lazyWithRetry(() => import('./components/admin/Layout'));
+const UserLayout = lazyWithRetry(() => import('./components/user/Layout'));
+const BuyerLayout = lazyWithRetry(() => import('./components/buyer/Layout'));
+
 
 
 function SuspenseWithDelay({ children, fallback, delay = 0, minDisplayTime = 2000 }) {
@@ -82,7 +107,13 @@ function SuspenseWithDelay({ children, fallback, delay = 0, minDisplayTime = 200
 }
 
 function App() {
+  useEffect(() => {
+    // Clear the reload flag after successful load
+    window.localStorage.removeItem('page-has-been-reloaded');
+  }, []);
+
   return (
+
     <>
       <Toaster />
       <CookieConsent />

@@ -37,9 +37,17 @@ const Header = () => {
             }
         };
         fetchNotifications();
+        
+        // Listen for manual updates (like Mark all as read)
+        window.addEventListener('notificationsUpdated', fetchNotifications);
+        
         const interval = setInterval(fetchNotifications, 30000);
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('notificationsUpdated', fetchNotifications);
+        };
     }, [userId]);
+
 
     return (
         <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 py-4">
