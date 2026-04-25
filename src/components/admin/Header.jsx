@@ -76,13 +76,15 @@ const Header = ({ location }) => {
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-4">
-                    <button className="p-2.5 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition relative group">
-                        <IoMailOutline className="text-2xl" />
-                        {unreadCount > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
-                                {unreadCount > 99 ? '99+' : unreadCount}
-                            </span>
-                        )}
+                    <button className="relative group flex items-center justify-center transition active:scale-95">
+                        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md group-hover:bg-blue-700 transition duration-300">
+                            <IoMailOutline className="text-xl" />
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white shadow-sm">
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                </span>
+                            )}
+                        </div>
                     </button>
 
                     <div className="p-1 border-2 border-gray-100 rounded-xl hover:border-blue-200 transition cursor-pointer">

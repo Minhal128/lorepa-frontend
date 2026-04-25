@@ -1,7 +1,7 @@
 import AvatarIcon from '../../assets/dashboard/avatar.jpg';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { useSidebar } from '../../context/SidebarContext';
-import { IoMdNotificationsOutline } from 'react-icons/io';
+import { IoMailOutline } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { GoHome } from 'react-icons/go';
@@ -20,7 +20,7 @@ const Header = () => {
     const t = sidebarTranslations[lang] || sidebarTranslations.fr;
 
     const pageTitle = t[location] || (location ? location.charAt(0).toUpperCase() + location.slice(1) : t.dashboard);
-    const [hasUnread, setHasUnread] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     const userId = localStorage.getItem("userId");
 
     const navigate = useNavigate();
@@ -30,8 +30,8 @@ const Header = () => {
             if (!userId) return;
             try {
                 const res = await axios.get(`${config.baseUrl}/notification/user/${userId}`);
-                const unread = res.data.data.some(n => !n.isRead);
-                setHasUnread(unread);
+                const unread = res.data.data.filter(n => !n.isRead).length;
+                setUnreadCount(unread);
             } catch (error) {
                 console.error("Error fetching notifications", error);
             }
@@ -79,9 +79,16 @@ const Header = () => {
                         </button>
                         <Link
                             to="/user/dashboard/notification"
-                            className="p-2.5 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition relative group"
+                            className="relative group flex items-center justify-center transition active:scale-95"
                         >
-                            <IoMdNotificationsOutline className="text-2xl" />
+                            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-md group-hover:bg-blue-700 transition duration-300">
+                                <IoMailOutline className="text-xl" />
+                                {unreadCount > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-white shadow-sm">
+                                        {unreadCount > 9 ? '9+' : unreadCount}
+                                    </span>
+                                )}
+                            </div>
                         </Link>
                         <Link
                             to="/user/dashboard/profile"
