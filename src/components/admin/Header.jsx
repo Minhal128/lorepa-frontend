@@ -2,7 +2,7 @@ import AvatarIcon from '../../assets/dashboard/avatar.jpg';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { useSidebar } from '../../context/SidebarContext';
 import { sidebarTranslations } from '../../i18n/translations';
-import { IoNotificationsOutline } from 'react-icons/io5';
+import { IoMailOutline } from 'react-icons/io5';
 import axios from 'axios';
 import config from '../../config';
 import { useState, useEffect } from 'react';
@@ -17,16 +17,39 @@ const Header = ({ location }) => {
     const t = sidebarTranslations[lang] || sidebarTranslations.fr;
 
     const pageTitle = t[location] || (location === "home" || !location ? t.dashboard : location.split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" "));
-    const [hasUnread, setHasUnread] = useState(false);
-    const userId = localStorage.getItem("userId");
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    // Admin Session Timeout Check (2 hours)
+    useEffect(() => {
+        const checkAdminSession = () => {
+            const adminExpiry = localStorage.getItem("adminSessionExpiry");
+            if (adminExpiry) {
+                const expiryTime = parseInt(adminExpiry, 10);
+                if (Date.now() > expiryTime) {
+                    // Session expired - logout admin
+                    localStorage.removeItem("adminLoggedIn");
+                    localStorage.removeItem("adminSessionExpiry");
+                    navigate("/admin/login");
+                }
+            }
+        };
+        
+        // Check on mount
+        checkAdminSession();
+        
+        // Check every minute
+        const sessionCheckInterval = setInterval(checkAdminSession, 60000);
+        
+        return () => clearInterval(sessionCheckInterval);
+    }, [navigate]);
 
     useEffect(() => {
         const fetchNotifications = async () => {
-            if (!userId) return;
             try {
-                const res = await axios.get(`${config.baseUrl}/notification/user/${userId}`);
-                const unread = res.data.data.some(n => !n.isRead);
-                setHasUnread(unread);
+                // Fetch all admin notifications
+                const res = await axios.get(`${config.baseUrl}/notification/admin`);
+                const count = res.data.data.filter(n => !n.isRead).length;
+                setUnreadCount(count);
             } catch (error) {
                 console.error("Error fetching notifications", error);
             }
@@ -34,7 +57,7 @@ const Header = ({ location }) => {
         fetchNotifications();
         const interval = setInterval(fetchNotifications, 30000);
         return () => clearInterval(interval);
-    }, [userId]);
+    }, []);
 
     return (
         <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 py-4">
@@ -54,7 +77,12 @@ const Header = ({ location }) => {
 
                 <div className="flex items-center gap-2 sm:gap-4">
                     <button className="p-2.5 text-gray-500 hover:bg-gray-50 hover:text-blue-600 rounded-xl transition relative group">
-                        <IoNotificationsOutline className="text-2xl" />
+                        <IoMailOutline className="text-2xl" />
+                        {unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+                                {unreadCount > 99 ? '99+' : unreadCount}
+                            </span>
+                        )}
                     </button>
 
                     <div className="p-1 border-2 border-gray-100 rounded-xl hover:border-blue-200 transition cursor-pointer">

@@ -7,9 +7,7 @@ import toast from 'react-hot-toast';
 
 const AdminLogin = () => {
     const [passwordVisible, setPasswordVisible] = useState(false)
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [keepSignedIn, setKeepSignedIn] = useState(false);
+    const [adminKey, setAdminKey] = useState('');
     const nav = useNavigate()
 
     const togglePasswordVisibility = () => {
@@ -18,14 +16,21 @@ const AdminLogin = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        if (email === "admin@lorepa.com" && password === "Admin@1234") {
-            toast.success("Login successful")
+        // Master Admin Key - this can be changed to secure value
+        if (adminKey === "LOREPA_ADMIN_MASTER_KEY_2026") {
+            toast.success("Admin Login successful")
+            
+            // Set admin session with 2 hour expiry timestamp
+            const expiryTime = Date.now() + (2 * 60 * 60 * 1000); // 2 hours in milliseconds
+            localStorage.setItem("adminLoggedIn", "true");
+            localStorage.setItem("adminSessionExpiry", expiryTime.toString());
+            
             setTimeout(() => {
                 nav("/admin/dashboard/home")
-            }, 2000);
+            }, 1500);
         }
         else {
-            toast.error("Invalid credentials")
+            toast.error("Invalid Admin Key")
         }
     };
     return (
@@ -38,39 +43,20 @@ const AdminLogin = () => {
 
                 {/* Login Form */}
                 <form onSubmit={handleLogin} className='space-y-6'>
-                    {/* Email Address Input */}
+                    {/* Admin Master Key Input */}
                     <div>
-                        <label htmlFor='email' className='block text-sm  text-gray-700 mb-1'>
-                            Email address
-                        </label>
-                        <input
-                            type='email'
-                            id='email'
-                            name='email'
-                            autoComplete='email'
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder='Email address'
-                            className='appearance-none block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                        />
-                    </div>
-
-                    {/* Password Input */}
-                    <div>
-                        <label htmlFor='password' className='block text-sm  text-gray-700 mb-1'>
-                            Password
+                        <label htmlFor='adminKey' className='block text-sm  text-gray-700 mb-1'>
+                            Admin Master Key
                         </label>
                         <div className='mt-1 relative rounded-md shadow-sm'>
                             <input
                                 type={passwordVisible ? 'text' : 'password'}
-                                id='password'
-                                name='password'
-                                autoComplete='current-password'
+                                id='adminKey'
+                                name='adminKey'
                                 required
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder='Password'
+                                value={adminKey}
+                                onChange={(e) => setAdminKey(e.target.value)}
+                                placeholder='Enter Admin Key'
                                 className='appearance-none block w-full pr-10 px-4 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                             />
                             <div
@@ -86,21 +72,8 @@ const AdminLogin = () => {
                         </div>
                     </div>
 
-                    {/* Keep me signed in & Forgot password */}
-                    <div className='flex items-center justify-between'>
-                        <div className='flex items-center'>
-                            <input
-                                id='remember-me'
-                                name='remember-me'
-                                type='checkbox'
-                                checked={keepSignedIn}
-                                onChange={(e) => setKeepSignedIn(e.target.checked)}
-                                className='h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
-                            />
-                            <label htmlFor='remember-me' className='ml-2 block text-sm text-gray-900'>
-                                Keep me signed in
-                            </label>
-                        </div>
+                    <div className='text-xs text-gray-500 text-center mt-2'>
+                        Session will automatically expire after 2 hours
                     </div>
 
                     {/* Login Button */}
