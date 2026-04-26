@@ -120,7 +120,7 @@ const RecentActivity = ({ activities, t, onMarkAllRead, onMarkSingleRead }) => (
         ))
       ) : (
         <div className="py-12 text-center text-gray-500 italic">
-          Aucune activité récente
+          {t.noRecentActivity}
         </div>
       )}
     </div>
@@ -128,6 +128,23 @@ const RecentActivity = ({ activities, t, onMarkAllRead, onMarkSingleRead }) => (
 );
 
 // --- Main Component ---
+const normalizeLang = (value) => {
+  const lang = (value || '').toLowerCase();
+  if (lang.startsWith('fr')) return 'fr';
+  if (lang.startsWith('es')) return 'es';
+  if (lang.startsWith('cn') || lang.startsWith('zh')) return 'cn';
+  if (lang.startsWith('en')) return 'en';
+  return 'fr';
+};
+
+const getCurrentLang = () =>
+  normalizeLang(localStorage.getItem('lang') || localStorage.getItem('i18nextLng'));
+
+const getCurrentTranslations = () => {
+  const lang = getCurrentLang();
+  return userNotificationTranslations[lang] || userNotificationTranslations.fr;
+};
+
 const UserNotification = () => {
   const [preferences, setPreferences] = useState({
     email: true,
@@ -136,10 +153,7 @@ const UserNotification = () => {
   });
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [t, setT] = useState(() => {
-    const lang = localStorage.getItem("lang") || "fr";
-    return userNotificationTranslations[lang] || userNotificationTranslations.fr;
-  });
+  const [t, setT] = useState(getCurrentTranslations);
 
   const handleToggle = (key) => {
     setPreferences(prev => ({ ...prev, [key]: !prev[key] }));
@@ -181,20 +195,54 @@ const UserNotification = () => {
     }
   };
 
+  // Translation mapping function
+  const translateNotification = (title, description, t) => {
+    // Map titles
+    const titleMap = {
+      "KYC Approved": t.kycApproved,
+      "New Booking Request": t.newBookingRequest,
+      "Booking Change Request": t.bookingChangeRequest,
+    };
+
+    // Map descriptions with dynamic variable extraction
+    let translatedTitle = titleMap[title] || title;
+    let translatedDesc = description;
+
+    if (description.includes("Your KYC verification has been approved.")) {
+      translatedDesc = t.kycApprovedDesc;
+    } 
+    else if (description.includes("You have a new booking request for your trailer")) {
+      const trailerMatch = description.match(/"([^"]+)"/);
+      const trailerName = trailerMatch ? trailerMatch[1] : "";
+      translatedDesc = t.newBookingRequestDesc.replace("{trailerName}", trailerName);
+    }
+    else if (description.includes("The renter has requested new booking dates for your trailer")) {
+      const trailerMatch = description.match(/"([^"]+)"/);
+      const trailerName = trailerMatch ? trailerMatch[1] : "";
+      translatedDesc = t.bookingChangeRequestDesc.replace("{trailerName}", trailerName);
+    }
+
+    return { translatedTitle, translatedDesc };
+  };
+
   const fetchNotifications = async () => {
     try {
       const userId = localStorage.getItem('userId');
       if (!userId) return;
 
+      const currentT = getCurrentTranslations();
       const res = await axios.get(`${config.baseUrl}/notification/user/${userId}`);
-      const notifs = res.data.data.map(notif => ({
-        id: notif._id,
-        icon: <FaBell />,
-        title: notif.title,
-        description: notif.description,
-        time: new Date(notif.createdAt).toLocaleString(),
-        isNew: !notif.isRead,
-      }));
+      const notifs = res.data.data.map(notif => {
+        const { translatedTitle, translatedDesc } = translateNotification(notif.title, notif.description, currentT);
+        return {
+          id: notif._id,
+          icon: <FaBell />,
+          title: translatedTitle,
+          description: translatedDesc,
+          time: new Date(notif.createdAt).toLocaleString(),
+          isNew: !notif.isRead,
+        };
+      });
       setActivities(notifs);
     } catch (err) {
       console.error('Error fetching notifications:', err);
@@ -234,18 +282,17 @@ const UserNotification = () => {
 
 
   useEffect(() => {
-    fetchNotifications();
-    fetchNotificationPreferences();
-
     const handleLangChange = () => {
-      const lang = localStorage.getItem("lang") || "fr";
-      setT(userNotificationTranslations[lang] || userNotificationTranslations.fr);
+      const currentTranslations = getCurrentTranslations();
+      setT(currentTranslations);
+      fetchNotifications();
     };
 
-    window.addEventListener("storage", handleLangChange);
+    fetchNotificationPreferences();
     handleLangChange();
 
-    return () => window.removeEventListener("storage", handleLangChange);
+    window.addEventListener('storage', handleLangChange);
+    return () => window.removeEventListener('storage', handleLangChange);
   }, []);
 
   return (
