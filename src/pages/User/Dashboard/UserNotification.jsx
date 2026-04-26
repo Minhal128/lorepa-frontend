@@ -74,8 +74,11 @@ const NotificationPreferences = ({ preferences, onToggle, onSave, loading, t }) 
 );
 
 // --- Activity Item ---
-const ActivityItem = ({ icon, title, description, time, isNew }) => (
-  <div className="flex flex-col sm:flex-row sm:items-center justify-between py-5 border-b border-gray-50 last:border-b-0 gap-4">
+const ActivityItem = ({ icon, title, description, time, isNew, onMarkRead, id }) => (
+  <div 
+    onClick={() => isNew && onMarkRead && onMarkRead(id)}
+    className={`flex flex-col sm:flex-row sm:items-center justify-between py-5 border-b border-gray-50 last:border-b-0 gap-4 ${isNew ? 'cursor-pointer hover:bg-blue-50 transition rounded-lg px-2 -mx-2' : ''}`}
+  >
     <div className='flex items-start flex-1 min-w-0'>
       <div className="mr-4 mt-1 shrink-0">
         <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600">
@@ -97,7 +100,7 @@ const ActivityItem = ({ icon, title, description, time, isNew }) => (
 );
 
 // --- Recent Activity List ---
-const RecentActivity = ({ activities, t, onMarkAllRead }) => (
+const RecentActivity = ({ activities, t, onMarkAllRead, onMarkSingleRead }) => (
   <div className="bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-gray-100">
     <div className="flex items-center justify-between mb-6">
       <h2 className="text-xl font-bold text-gray-900">{t.recentActivity}</h2>
@@ -106,14 +109,14 @@ const RecentActivity = ({ activities, t, onMarkAllRead }) => (
           onClick={onMarkAllRead}
           className="text-xs font-bold text-blue-600 hover:text-blue-700 transition px-3 py-1.5 bg-blue-50 rounded-lg"
         >
-          {t.markAllAsRead || "Mark all as read"}
+          {t.markAllAsRead}
         </button>
       )}
     </div>
     <div className="divide-y divide-gray-50">
       {activities.length > 0 ? (
-        activities.map((activity, index) => (
-          <ActivityItem key={index} {...activity} />
+        activities.map((activity) => (
+          <ActivityItem key={activity.id} {...activity} onMarkRead={onMarkSingleRead} />
         ))
       ) : (
         <div className="py-12 text-center text-gray-500 italic">
@@ -204,13 +207,28 @@ const UserNotification = () => {
       if (!userId) return;
 
       await axios.put(`${config.baseUrl}/notification/read-all/${userId}`);
-      toast.success(t.allMarkedAsRead || 'All notifications marked as read');
+      toast.success(t.allMarkedAsRead);
       fetchNotifications();
       // Dispatch event for headers to update immediately
       window.dispatchEvent(new Event('notificationsUpdated'));
     } catch (err) {
       console.error('Error marking all as read:', err);
-      toast.error(t.markAllAsReadError || 'Failed to mark all as read');
+      toast.error(t.markAllAsReadError);
+    }
+  };
+
+  const handleMarkSingleAsRead = async (notificationId) => {
+    try {
+      if (!notificationId) return;
+
+      await axios.put(`${config.baseUrl}/notification/read/${notificationId}`);
+      toast.success(t.notificationMarkedAsRead);
+      fetchNotifications();
+      // Dispatch event for headers to update immediately
+      window.dispatchEvent(new Event('notificationsUpdated'));
+    } catch (err) {
+      console.error('Error marking notification as read:', err);
+      toast.error(t.markAsReadError);
     }
   };
 
@@ -247,7 +265,12 @@ const UserNotification = () => {
         </div>
 
         <div className="lg:col-span-2">
-          <RecentActivity activities={activities} t={t} onMarkAllRead={handleMarkAllAsRead} />
+          <RecentActivity 
+            activities={activities} 
+            t={t} 
+            onMarkAllRead={handleMarkAllAsRead}
+            onMarkSingleRead={handleMarkSingleAsRead}
+          />
         </div>
       </div>
     </div>
