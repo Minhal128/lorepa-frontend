@@ -31,6 +31,7 @@ const AdminUserDetailPage = () => {
   const { id } = useParams();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedDocument, setSelectedDocument] = useState(null);
 
   const fetchSingleUser = useCallback(async () => {
     try {
@@ -94,8 +95,66 @@ const AdminUserDetailPage = () => {
 
   const avatar = getSafeText(user.profilePicture) || placeholderAvatar;
 
+  const openDocument = (doc) => {
+    const docUrl = getSafeText(user[doc.key]);
+    if (!docUrl) return;
+
+    setSelectedDocument({
+      title: doc.label,
+      url: docUrl,
+      type: isImageUrl(docUrl) ? "image" : "file",
+    });
+  };
+
+  const closeDocument = () => setSelectedDocument(null);
+
   return (
     <div className='min-h-screen space-y-8 pb-10 px-2 sm:px-0'>
+      {selectedDocument && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/70 backdrop-blur-sm p-4"
+          onClick={closeDocument}
+        >
+          <div
+            className="relative w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Document Preview</p>
+                <h3 className="text-lg font-black text-gray-900">{selectedDocument.title}</h3>
+              </div>
+              <button
+                type="button"
+                onClick={closeDocument}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-gray-100 text-gray-500 transition hover:bg-gray-50 hover:text-gray-900"
+                aria-label="Close document preview"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="max-h-[80vh] overflow-auto bg-gray-50 p-4 sm:p-6">
+              {selectedDocument.type === "image" ? (
+                <img
+                  src={selectedDocument.url}
+                  alt={selectedDocument.title}
+                  className="mx-auto h-auto max-h-[72vh] w-auto max-w-full rounded-2xl border border-gray-100 bg-white shadow-lg"
+                />
+              ) : (
+                <iframe
+                  src={selectedDocument.url}
+                  title={selectedDocument.title}
+                  className="h-[72vh] w-full rounded-2xl border border-gray-100 bg-white shadow-lg"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <header>
         <h1 className='text-2xl sm:text-3xl font-black text-gray-900 tracking-tight'>User Details</h1>
         <p className="text-sm text-gray-500 font-medium tracking-tight">Viewing detailed profile information for {getDisplayValue(fullName)}.</p>
@@ -184,10 +243,9 @@ const AdminUserDetailPage = () => {
                     <div key={doc.key} className="rounded-2xl border border-gray-100 bg-gray-50 p-4 space-y-3">
                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{doc.label}</p>
                       {hasDocument ? (
-                        <a
-                          href={docUrl}
-                          target="_blank"
-                          rel="noreferrer"
+                        <button
+                          type="button"
+                          onClick={() => openDocument(doc)}
                           className="flex items-center gap-3 rounded-xl border border-blue-100 bg-white p-2 hover:border-blue-300 transition"
                         >
                           {isImageUrl(docUrl) ? (
@@ -198,7 +256,7 @@ const AdminUserDetailPage = () => {
                             </div>
                           )}
                           <span className="text-sm font-bold text-blue-700">View Document</span>
-                        </a>
+                        </button>
                       ) : (
                         <p className="text-sm font-semibold text-gray-500">Not uploaded</p>
                       )}
