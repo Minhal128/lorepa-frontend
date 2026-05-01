@@ -180,7 +180,7 @@ const translations = {
         newWay: "La nouvelle façon de louer une remorque 24h/24 et 7j/7 !",
         discover: "Découvrez la plateforme leader de partage de remorques entre particuliers au Québec.",
         needTrailer: "Que vous ayez besoin d'une remorque",
-        shareOne: "ou que vous en ayez une à partager",
+        shareOne: "ou que vous en ayez une à mettre en location",
         rentTrailerTitle: "Louer une remorque",
         rentTrailerDescription: "Trouvez la remorque parfaite pour vos besoins, où que vous soyez au Québec. Parcourez, réservez et partez !",
         rentTrailerButton: "Louer une remorque",

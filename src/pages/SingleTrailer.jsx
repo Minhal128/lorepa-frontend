@@ -648,7 +648,7 @@ const SingleTrailer = () => {
           transition={{ delay: 0.3, duration: 0.4 }}
         >
           {
-            (isLogin && role !== "owner") &&
+            (role !== "owner" && role !== "admin") &&
             <button
               className='mobile-btn-primary w-full sm:w-auto'
               onClick={async () => {
@@ -660,16 +660,6 @@ const SingleTrailer = () => {
             >
               {translations2.bookNow}
             </button>
-          }
-          {
-            !isLogin && (
-              <button
-                onClick={() => nav('/login')}
-                className="mobile-btn-primary w-full sm:w-auto"
-              >
-                {translations.signupsignin}
-              </button>
-            )
           }
         </motion.div>
 
