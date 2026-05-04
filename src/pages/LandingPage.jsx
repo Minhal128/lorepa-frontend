@@ -575,14 +575,14 @@ const LandingPage = () => {
                 </motion.div>
             </div>
 
-            <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col my-8 sm:my-10 mobile-px">
-                <AnimatedText text={translationsData.newWay} variant={flipIn} className="text-2xl sm:text-3xl lg:text-[40px] font-medium text-black text-center" />
+            <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col my-12 sm:my-20 mobile-px">
+                <AnimatedText text={translationsData.newWay} variant={flipIn} className="text-3xl sm:text-4xl lg:text-[48px] font-semibold text-black text-center leading-[1.2] tracking-tight" />
                 <AnimatedText
                     text={translationsData.discover}
                     variant={fadeInUp}
-                    className="text-xs sm:text-sm text-black mt-2 text-center max-w-lg"
+                    className="text-sm sm:text-base text-gray-600 mt-4 text-center max-w-2xl leading-relaxed"
                 />
-                <motion.img variants={scaleIn} src={Img} alt="" className="mt-6 max-w-full h-auto" />
+                <motion.img variants={scaleIn} src={Img} alt="" className="mt-10 max-w-full h-auto rounded-2xl shadow-sm" />
             </motion.div>
 
             <div className="bg-[#2563EB] mobile-px py-8 sm:py-10">
@@ -596,49 +596,59 @@ const LandingPage = () => {
                     variant={fadeInDown}
                     className="text-xl sm:text-2xl lg:text-[40px] text-white font-semibold mb-6 sm:mb-10 text-center"
                 />
-                <div className="flex justify-center items-center flex-wrap gap-4 sm:gap-6 pb-8 sm:pb-10">
+                <div className="flex justify-center items-stretch flex-wrap gap-6 sm:gap-8 pb-12 sm:pb-20">
                     {/* Rent a Trailer Card */}
-                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg w-full max-w-sm sm:max-w-md lg:max-w-lg overflow-hidden px-4 sm:px-5">
-                        <div className="py-7 sm:py-10">
-                            <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.rentTrailerTitle}</h2>
-                            <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.rentTrailerDescription}</p>
+                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md lg:max-w-xl overflow-hidden flex flex-col">
+                        <div className="p-8 sm:p-12 flex-1">
+                            <h2 className="text-3xl sm:text-[52px] font-light leading-[1.1] mb-4 sm:mb-8 text-gray-900 tracking-tight">
+                                {translationsData.rentTrailerTitle}
+                            </h2>
+                            <p className="text-gray-600 mb-8 sm:text-lg text-base leading-relaxed">
+                                {translationsData.rentTrailerDescription}
+                            </p>
                             <Link to="/trailers">
-                                <button className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent">{translationsData.rentTrailerButton}</button>
+                                <button className="border-2 border-black text-black px-8 py-3 rounded-xl font-medium hover:bg-black hover:text-white transition-all duration-300">
+                                    {translationsData.rentTrailerButton}
+                                </button>
                             </Link>
                         </div>
-                        <img src={Host1} alt="Rent a Trailer" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
+                        <img src={Host1} alt="Rent a Trailer" className="w-full h-[24rem] object-cover hover:scale-105 transition-transform duration-500" />
                     </motion.div>
 
                     {/* Become a Host Card */}
-                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg w-full max-w-sm sm:max-w-md lg:max-w-lg overflow-hidden px-4 sm:px-5">
-                        <div className="py-7 sm:py-10">
-                            <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.becomeHostTitle}</h2>
-                            <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.becomeHostDescription}</p>
+                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md lg:max-w-xl overflow-hidden flex flex-col">
+                        <div className="p-8 sm:p-12 flex-1">
+                            <h2 className="text-3xl sm:text-[52px] font-light leading-[1.1] mb-4 sm:mb-8 text-gray-900 tracking-tight">
+                                {translationsData.becomeHostTitle}
+                            </h2>
+                            <p className="text-gray-600 mb-8 sm:text-lg text-base leading-relaxed">
+                                {translationsData.becomeHostDescription}
+                            </p>
                             {!isLogin && (
                                 <button
                                     onClick={() => nav('/login')}
-                                    className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent"
+                                    className="border-2 border-black text-black px-8 py-3 rounded-xl font-medium hover:bg-black hover:text-white transition-all duration-300"
                                 >
                                     {translationsData.becomeHostButton}
                                 </button>
                             )}
                         </div>
-                        <img src={Host2} alt="Become a Host" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
+                        <img src={Host2} alt="Become a Host" className="w-full h-[24rem] object-cover hover:scale-105 transition-transform duration-500" />
                     </motion.div>
                 </div>
             </div>
 
-            <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col bg-[#E9EFFD] py-14 px-3 sm:px-4">
-                <AnimatedText text={translationsData.trustedBy} variant={fadeInDown} className="text-[44px] sm:text-[56px] text-black font-medium leading-tight" />
-                <AnimatedText text={`${translationsData.leadingPlatform} ${translationsData.dynamicCommunity}`} variant={fadeInUp} className="text-xs sm:text-sm text-black mt-2 text-center max-w-[52rem]" />
+            <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col bg-[#E9EFFD] py-20 px-4 sm:px-6">
+                <AnimatedText text={translationsData.trustedBy} variant={fadeInDown} className="text-[44px] sm:text-[64px] text-gray-900 font-bold leading-tight tracking-tighter" />
+                <AnimatedText text={`${translationsData.leadingPlatform} ${translationsData.dynamicCommunity}`} variant={fadeInUp} className="text-sm sm:text-lg text-gray-600 mt-4 text-center max-w-4xl leading-relaxed" />
 
-                <div className="flex items-center justify-center mt-4">
+                <div className="flex items-center justify-center mt-8">
                     {trustedImageUrls.map((img, i) => (
                         <img
                             key={`${img}-${i}`}
                             src={img}
                             alt={`Trusted host ${i + 1}`}
-                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E9EFFD] shadow-sm -ml-2 first:ml-0"
+                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-4 border-white shadow-md -ml-3 first:ml-0 hover:z-10 transition-transform hover:scale-110"
                             onError={(e) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.src = trustedAvatarImages[i % trustedAvatarImages.length];
@@ -647,7 +657,7 @@ const LandingPage = () => {
                     ))}
                 </div>
 
-                <AnimatedText text={translationsData.thankYou} variant={blurIn} className="text-lg font-semibold text-black mt-8 text-center" />
+                <AnimatedText text={translationsData.thankYou} variant={blurIn} className="text-xl font-semibold text-blue-600 mt-10 text-center" />
             </motion.div>
 
             <motion.div variants={flipIn} whileInView="visible" className="flex justify-center items-center flex-col p-3">
@@ -724,44 +734,49 @@ const LandingPage = () => {
                 </Link>
             </motion.div>
 
-            <div className="mobile-px py-6 sm:py-8 text-black">
+            <div className="mobile-px py-16 sm:py-24 text-gray-900">
                 <motion.div
                     variants={fadeInUp}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.3 }}
-                    className="flex justify-between items-center mt-10 w-full flex-wrap text-black"
+                    className="flex justify-between items-end mb-12 w-full flex-wrap gap-4"
                 >
-                    <AnimatedText
-                        text={translationsData.faq}
-                        variant={fadeInUp}
-                        className="text-lg sm:text-2xl font-semibold mt-2"
-                    />
-                    <button className="px-3 py-2 mt-2 rounded-md bg-[#2563EB] text-white text-xs">
+                    <div className="flex-1 min-w-[300px]">
+                        <AnimatedText
+                            text={translationsData.faq}
+                            variant={fadeInUp}
+                            className="text-3xl sm:text-5xl font-bold text-left tracking-tight"
+                        />
+                        <p className="text-gray-500 mt-2 text-lg font-medium">Everything you need to know about Lorepa.</p>
+                    </div>
+                    <button className="px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 transition-all text-white font-semibold shadow-xl shadow-blue-100 mb-2">
                         <Link to={"/faq"}>{translationsData.seeAllFaq}</Link>
                     </button>
                 </motion.div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
                     {/* Renters (Guests) FAQ Section */}
                     <motion.div
                         variants={flipIn}
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="bg-[#F1F1F1] p-4 sm:p-5 rounded-xl"
+                        className="bg-white p-8 sm:p-10 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/50"
                     >
                         <AnimatedText
                             text={translationsData.guests}
                             variant={fadeInUp}
-                            className="text-xl font-semibold mb-4"
+                            className="text-2xl font-bold mb-8 text-left text-blue-600 tracking-tight"
                         />
-                        {mergedFaqContent.renters.map((faq, index) => (
-                            <AccordionItem
-                                key={`renter-faq-${index}`}
-                                question={faq.question}
-                                answer={faq.answer}
-                            />
-                        ))}
+                        <div className="space-y-4">
+                            {mergedFaqContent.renters.map((faq, index) => (
+                                <AccordionItem
+                                    key={`renter-faq-${index}`}
+                                    question={faq.question}
+                                    answer={faq.answer}
+                                />
+                            ))}
+                        </div>
                     </motion.div>
 
                     {/* Owners (Hosts) FAQ Section */}
@@ -770,20 +785,22 @@ const LandingPage = () => {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="bg-[#F1F1F1] p-4 sm:p-5 rounded-xl"
+                        className="bg-white p-8 sm:p-10 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/50"
                     >
                         <AnimatedText
                             text={translationsData.hosts}
                             variant={fadeInUp}
-                            className="text-xl font-semibold mb-4"
+                            className="text-2xl font-bold mb-8 text-left text-blue-600 tracking-tight"
                         />
-                        {mergedFaqContent.owners.map((faq, index) => (
-                            <AccordionItem
-                                key={`owner-faq-${index}`}
-                                question={faq.question}
-                                answer={faq.answer}
-                            />
-                        ))}
+                        <div className="space-y-4">
+                            {mergedFaqContent.owners.map((faq, index) => (
+                                <AccordionItem
+                                    key={`owner-faq-${index}`}
+                                    question={faq.question}
+                                    answer={faq.answer}
+                                />
+                            ))}
+                        </div>
                     </motion.div>
                 </div>
             </div>
