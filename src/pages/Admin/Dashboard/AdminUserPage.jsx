@@ -217,6 +217,7 @@ const AdminUserPage = () => {
                 <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.sn}</th>
                 <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.profile}</th>
                 <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.contact}</th>
+                <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.location || 'Location'}</th>
                 <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.documents}</th>
                 <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.status}</th>
                 <th className='px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest'>{t.actions}</th>
@@ -240,6 +241,11 @@ const AdminUserPage = () => {
                   <td className='px-6 py-4'>
                     <p className="text-sm font-bold text-gray-900">{user.email}</p>
                     <p className="text-xs text-gray-500 font-medium">{user.phone}</p>
+                  </td>
+                  <td className='px-6 py-4'>
+                    <p className="text-sm font-bold text-gray-900">{user.country || '-'}</p>
+                    <p className="text-xs text-gray-500 font-medium">{user.state || '-'}, {user.address || '-'}</p>
+                    <p className="text-xs text-gray-400">{user.street || '-'}</p>
                   </td>
                   <td className='px-6 py-4'>
                     <div className="flex flex-wrap gap-2">
@@ -337,6 +343,13 @@ const AdminUserPage = () => {
                   <div>
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 text-nowrap">{t.phone}</p>
                     <p className="font-bold text-gray-900">{user.phone}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 text-xs">
+                  <div>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 text-nowrap">{t.location || 'Location'}</p>
+                    <p className="font-bold text-gray-900">{user.country}, {user.state}, {user.address}, {user.street}</p>
                   </div>
                 </div>
 

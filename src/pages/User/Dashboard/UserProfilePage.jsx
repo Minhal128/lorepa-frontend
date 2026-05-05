@@ -27,6 +27,9 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
     const profileInputRef = useRef(null);
 
     const handleSave = async () => {
+        if (!userData.name || !userData.phone || !userData.country || !userData.state || !userData.address || !userData.street) {
+            return toast.error("All fields are mandatory");
+        }
         try {
             setLoading(true);
             const formData = new FormData();
@@ -80,13 +83,13 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             <h3 className='text-xl font-bold text-gray-900 mb-6'>{t.personalInfo}</h3>
 
             <form>
-                <InputField label={t.fullName} value={userData?.name || ""} onChange={e => setUserData({ ...userData, name: e.target.value })} />
+                <InputField label={<>{t.fullName} <span className="text-red-500">*</span></>} value={userData?.name || ""} onChange={e => setUserData({ ...userData, name: e.target.value })} />
                 <InputField label={t.email} value={userData?.email || ""} readOnly />
-                <InputField label={t.phone} value={userData?.phone || ""} onChange={e => setUserData({ ...userData, phone: e.target.value })} />
-                <InputField label={t.country} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} />
-                <InputField label={t.state} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} />
-                <InputField label={t.address} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} />
-                <InputField label={t.street} value={userData?.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
+                <InputField label={<>{t.phone} <span className="text-red-500">*</span></>} value={userData?.phone || ""} onChange={e => setUserData({ ...userData, phone: e.target.value })} />
+                <InputField label={<>{t.country} <span className="text-red-500">*</span></>} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} />
+                <InputField label={<>{t.state} <span className="text-red-500">*</span></>} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} />
+                <InputField label={<>{t.address} <span className="text-red-500">*</span></>} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} />
+                <InputField label={<>{t.street} <span className="text-red-500">*</span></>} value={userData?.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
 
                 <div className="flex justify-end mt-6">
                     <button type="button" disabled={loading} onClick={handleSave} className="w-full sm:w-auto px-6 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150 shadow-md">
