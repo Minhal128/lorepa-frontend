@@ -27,7 +27,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
     const profileInputRef = useRef(null);
 
     const handleSave = async () => {
-        if (!userData.name || !userData.phone || !userData.country || !userData.state || !userData.address || !userData.street) {
+        if (!userData.name || !userData.phone || !userData.country || !userData.state || !userData.address || !userData.postalCode) {
             return toast.error("All fields are mandatory");
         }
         try {
@@ -38,7 +38,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             formData.append("address", userData.address || "");
             formData.append("state", userData.state || "");
             formData.append("country", userData.country || "");
-            formData.append("street", userData.street || "");
+            formData.append("postalCode", userData.postalCode || "");
             if (userData.profilePicture instanceof File) formData.append("profilePicture", userData.profilePicture);
             if (userData.licenseFrontImage instanceof File) formData.append("licenseFrontImage", userData.licenseFrontImage);
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
@@ -89,7 +89,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
                 <InputField label={<>{t.country} <span className="text-red-500">*</span></>} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} />
                 <InputField label={<>{t.state} <span className="text-red-500">*</span></>} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} />
                 <InputField label={<>{t.address} <span className="text-red-500">*</span></>} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} />
-                <InputField label={<>{t.street} <span className="text-red-500">*</span></>} value={userData?.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
+                <InputField label={<>{t.postalCode} <span className="text-red-500">*</span></>} value={userData?.postalCode || ""} onChange={e => setUserData({ ...userData, postalCode: e.target.value })} />
 
                 <div className="flex justify-end mt-6">
                     <button type="button" disabled={loading} onClick={handleSave} className="w-full sm:w-auto px-6 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150 shadow-md">
@@ -197,7 +197,7 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
             formData.append("address", userData.address || "");
             formData.append("state", userData.state || "");
             formData.append("country", userData.country || "");
-            formData.append("street", userData.street || "");
+            formData.append("postalCode", userData.postalCode || "");
 
             if (userData.licenseFrontImage instanceof File) formData.append("licenseFrontImage", userData.licenseFrontImage);
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
