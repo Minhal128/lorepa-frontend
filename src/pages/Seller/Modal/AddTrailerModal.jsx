@@ -119,7 +119,6 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
-  const maxDescChars = 300;
   const daysInThisMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
@@ -611,19 +610,14 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t("description")} ({t("maxChars")})
+                    {t("description")}
                   </label>
                   <textarea
                     rows="4"
                     className="block w-full border border-gray-300 rounded-md py-2 px-3 outline-none resize-none"
                     value={description}
-                    onChange={(e) =>
-                      setDescription(e.target.value.slice(0, maxDescChars))
-                    }
+                    onChange={(e) => setDescription(e.target.value)}
                   />
-                  <p className="text-xs text-gray-500 text-right">
-                    {description.length}/{maxDescChars}
-                  </p>
                 </div>
                 <div className="relative" ref={wrapperRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
