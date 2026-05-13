@@ -45,6 +45,9 @@ export const documentPageTranslations = {
             uploadSuccess: "Document uploaded successfully!",
             uploadFailed: "Upload failed",
         },
+        // FAQ 27
+        faq27Title: "Amendment FAQ 27",
+        faq27DepositField: "Car insurance policy FAQ 27 page",
     },
     es: {
         myDocuments: "Mis Documentos",
@@ -90,6 +93,9 @@ export const documentPageTranslations = {
             uploadSuccess: "¡Documento subido exitosamente!",
             uploadFailed: "Error al subir",
         },
+        // FAQ 27
+        faq27Title: "Enmienda FAQ 27",
+        faq27DepositField: "Página de póliza de seguro de automóvil FAQ 27",
     },
     fr: {
         myDocuments: "Mes Documents",
@@ -132,6 +138,9 @@ export const documentPageTranslations = {
             fileSizeExceeds: "La taille du fichier dépasse la limite de 10 Mo.",
             fillAllFields: "Veuillez remplir tous les champs requis",
             uploading: "Téléversement du document...",
+        // FAQ 27
+        faq27Title: "Avenant FAQ 27",
+        faq27DepositField: "Police d'assurance auto page FAQ 27",
             uploadSuccess: "Document téléversé avec succès !",
             uploadFailed: "Échec du téléversement",
         },
@@ -174,6 +183,9 @@ export const documentPageTranslations = {
             dragDrop: "拖放文件到这里，或浏览",
             maxFileSize: "最大文件大小: 10MB",
             uploadButton: "上传文件",
+        // FAQ 27
+        faq27Title: "修正案常见问题27",
+        faq27DepositField: "汽车保险单页常见问题27",
             fileSizeExceeds: "文件大小超过10MB限制。",
             fillAllFields: "请填写所有必填字段",
             uploading: "正在上传文件...",

@@ -202,6 +202,7 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
             if (userData.licenseFrontImage instanceof File) formData.append("licenseFrontImage", userData.licenseFrontImage);
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
             if (userData.carInsurancePolicyImage instanceof File) formData.append("carInsurancePolicyImage", userData.carInsurancePolicyImage);
+            if (userData.faq27Image instanceof File) formData.append("faq27Image", userData.faq27Image);
             if (userData.trailerInsurancePolicyImage instanceof File) formData.append("trailerInsurancePolicyImage", userData.trailerInsurancePolicyImage);
             if (userData.trailerRegistrationImage instanceof File) formData.append("trailerRegistrationImage", userData.trailerRegistrationImage);
 
@@ -235,9 +236,15 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
                     </div>
                     :
                     <div>
-                        <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.insurance}</h3>
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8'>
-                            <DocumentUploadBlock t={t} side={t.carInsurancePolicyImage} file={userData.carInsurancePolicyImage || userData.carInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, carInsurancePolicyImage: e.target.files[0], carInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                            <div>
+                                <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.insurance}</h3>
+                                <DocumentUploadBlock t={t} side={t.carInsurancePolicyImage} file={userData.carInsurancePolicyImage || userData.carInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, carInsurancePolicyImage: e.target.files[0], carInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                            </div>
+                            <div>
+                                <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.faq27Title}</h3>
+                                <DocumentUploadBlock t={t} side={t.faq27DepositField} file={userData.faq27Image || userData.faq27ImageURL} onFileSelect={e => setUserData({ ...userData, faq27Image: e.target.files[0], faq27ImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                            </div>
                         </div>
                     </div>
             }
