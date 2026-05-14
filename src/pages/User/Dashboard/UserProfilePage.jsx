@@ -187,6 +187,7 @@ const DocumentUploadBlock = ({ side, file, onFileSelect, t }) => {
 
 const DocumentUpload = ({ userData, setUserData, t }) => {
     const [loading, setLoading] = useState(false);
+    const isOwner = localStorage.getItem("role") === "owner";
 
     const handleUpload = async () => {
         try {
@@ -224,30 +225,28 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
                 <DocumentUploadBlock t={t} side={t.front} file={userData.licenseFrontImage || userData.licenseFrontImageUrl} onFileSelect={e => setUserData({ ...userData, licenseFrontImage: e.target.files[0], licenseFrontImageUrl: URL.createObjectURL(e.target.files[0]) })} />
                 <DocumentUploadBlock t={t} side={t.back} file={userData.licenseBackImage || userData.licenseBackImageUrl} onFileSelect={e => setUserData({ ...userData, licenseBackImage: e.target.files[0], licenseBackImageUrl: URL.createObjectURL(e.target.files[0]) })} />
             </div>
-            {
-                localStorage.getItem("role") === "owner" ?
-                    <div>
-                        <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.trailerDocuments}</h3>
+            {isOwner ? (
+                <div>
+                    <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.trailerDocuments}</h3>
 
-                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 text-center'>
-                            <DocumentUploadBlock t={t} side={t?.trailerInsurancePolicyImage} file={userData.trailerInsurancePolicyImage || userData.trailerInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, trailerInsurancePolicyImage: e.target.files[0], trailerInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
-                            <DocumentUploadBlock t={t} side={t?.trailerRegistrationImage} file={userData.trailerRegistrationImage || userData.trailerRegistrationImageURL} onFileSelect={e => setUserData({ ...userData, trailerRegistrationImage: e.target.files[0], trailerRegistrationImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 text-center'>
+                        <DocumentUploadBlock t={t} side={t?.trailerRegistrationImage} file={userData.trailerRegistrationImage || userData.trailerRegistrationImageURL} onFileSelect={e => setUserData({ ...userData, trailerRegistrationImage: e.target.files[0], trailerRegistrationImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                    </div>
+                </div>
+            ) : (
+                <div>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8'>
+                        <div>
+                            <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.insurance}</h3>
+                            <DocumentUploadBlock t={t} side={t.carInsurancePolicyImage} file={userData.carInsurancePolicyImage || userData.carInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, carInsurancePolicyImage: e.target.files[0], carInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                        </div>
+                        <div>
+                            <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.faq27Title}</h3>
+                            <DocumentUploadBlock t={t} side={t.faq27DepositField} file={userData.faq27Image || userData.faq27ImageURL} onFileSelect={e => setUserData({ ...userData, faq27Image: e.target.files[0], faq27ImageURL: URL.createObjectURL(e.target.files[0]) })} />
                         </div>
                     </div>
-                    :
-                    <div>
-                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8'>
-                            <div>
-                                <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.insurance}</h3>
-                                <DocumentUploadBlock t={t} side={t.carInsurancePolicyImage} file={userData.carInsurancePolicyImage || userData.carInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, carInsurancePolicyImage: e.target.files[0], carInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
-                            </div>
-                            <div>
-                                <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.faq27Title}</h3>
-                                <DocumentUploadBlock t={t} side={t.faq27DepositField} file={userData.faq27Image || userData.faq27ImageURL} onFileSelect={e => setUserData({ ...userData, faq27Image: e.target.files[0], faq27ImageURL: URL.createObjectURL(e.target.files[0]) })} />
-                            </div>
-                        </div>
-                    </div>
-            }
+                </div>
+            )}
             <div className="mt-8 pt-6 border-t border-gray-200 flex justify-end">
                 <button type="button" disabled={loading} onClick={handleUpload} className="w-full sm:w-auto px-8 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150 shadow-md">
                     {loading ? t.uploading : t.upload}

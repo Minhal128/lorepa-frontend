@@ -18,8 +18,7 @@ export const isProfileComplete = (account, role) => {
   const hasLicenseDocs = hasValue(account.licenseFrontImage) && hasValue(account.licenseBackImage);
 
   if (isOwnerRole) {
-    const hasOwnerDocs =
-      hasValue(account.trailerInsurancePolicyImage) && hasValue(account.trailerRegistrationImage);
+    const hasOwnerDocs = hasValue(account.trailerRegistrationImage);
     return hasRequiredProfile && hasLicenseDocs && hasOwnerDocs;
   }
 
