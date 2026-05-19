@@ -675,7 +675,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                     <p className="text-xs text-blue-600 mt-1 animate-pulse">{t("searchingLocations")}</p>
                   )}
                   {showSuggestions && (
-                    <ul className="absolute z-50 top-full left-0 right-0 bg-white shadow-xl border border-gray-200 rounded-md mt-1 max-h-60 overflow-y-auto">
+                    <ul className="relative z-50 mt-2 w-full bg-white shadow-xl border border-gray-200 rounded-md max-h-60 overflow-y-auto">
                       {suggestions.length > 0 ? (
                         suggestions.map((item, index) => (
                           <li
@@ -697,7 +697,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                   </p>
                 </div>
                 {location.latitude && location.longitude && (
-                  <p className="text-sm text-green-700 bg-green-50 rounded px-2 py-1 mt-2 flex items-center gap-1">
+                  <p className="text-sm text-green-700 bg-green-50 rounded px-2 py-1 mt-4 flex items-center gap-1 break-words">
                     <FaMapMarkerAlt className="text-green-600" />
                     {location.city
                       ? `${location.city}${location.state ? `, ${location.state}` : ""}, ${location.country}`

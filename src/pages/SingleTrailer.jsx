@@ -398,6 +398,7 @@ const SingleTrailer = () => {
   };
 
   const currentLang = localStorage.getItem('lang') || 'en';
+  const canRequestBooking = role !== "owner" && role !== "admin";
 
   if (loading || error || !trailer) {
     return (
@@ -538,6 +539,20 @@ const SingleTrailer = () => {
                     <div className='text-lg font-semibold text-gray-700'>${trailer.depositRate}</div>
                   </div>
                 )}
+                {canRequestBooking && (
+                  <button
+                    type="button"
+                    className="w-full mt-2 mobile-btn-primary"
+                    onClick={async () => {
+                      const canBook = await validateKycBeforeBooking();
+                      if (canBook) {
+                        setIsBookingModalOpen(true);
+                      }
+                    }}
+                  >
+                    {translations2.bookNow}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -638,29 +653,6 @@ const SingleTrailer = () => {
                 {translations.readMore}
               </button>
             </div> */}
-        </motion.div>
-
-        {/* Action Buttons */}
-        <motion.div
-          className="mt-6 flex flex-col sm:flex-row justify-end gap-3"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-        >
-          {
-            (role !== "owner" && role !== "admin") &&
-            <button
-              className='mobile-btn-primary w-full sm:w-auto'
-              onClick={async () => {
-                const canBook = await validateKycBeforeBooking();
-                if (canBook) {
-                  setIsBookingModalOpen(true);
-                }
-              }}
-            >
-              {translations2.bookNow}
-            </button>
-          }
         </motion.div>
 
         {/* FAQ Section */}

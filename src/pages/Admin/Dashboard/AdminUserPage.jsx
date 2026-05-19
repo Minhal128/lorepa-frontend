@@ -246,13 +246,14 @@ const AdminUserPage = () => {
                     <p className="text-sm font-bold text-gray-900">{user.country || '-'}</p>
                     <p className="text-xs text-gray-500 font-medium">{user.state || '-'}, {user.address || '-'}</p>
                     <p className="text-xs text-gray-400">{user.street || '-'}</p>
+                    <p className="text-xs text-gray-400">{user.postalCode || '-'}</p>
                   </td>
                   <td className='px-6 py-4'>
                     <div className="flex flex-wrap gap-2">
                       {[
                         { label: 'License Front', img: user.licenseFrontImage },
                         { label: 'License Back', img: user.licenseBackImage },
-                        { label: 'Car Insurance', img: user.carInsurancePolicyImage },
+                        { label: 'Endorsement / FAQ 27', img: user.faq27Image },
                         { label: 'Registration', img: user.trailerRegistrationImage },
                         { label: 'Insurance', img: user.trailerInsurancePolicyImage }
                       ].map((doc, idx) => (
@@ -349,7 +350,7 @@ const AdminUserPage = () => {
                 <div className="grid grid-cols-1 gap-4 text-xs">
                   <div>
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 text-nowrap">{t.location || 'Location'}</p>
-                    <p className="font-bold text-gray-900">{user.country}, {user.state}, {user.address}, {user.street}</p>
+                    <p className="font-bold text-gray-900">{user.country}, {user.state}, {user.address}, {user.street}, {user.postalCode || '-'}</p>
                   </div>
                 </div>
 
@@ -359,7 +360,7 @@ const AdminUserPage = () => {
                     {[
                       { img: user.licenseFrontImage },
                       { img: user.licenseBackImage },
-                      { img: user.carInsurancePolicyImage },
+                      { img: user.faq27Image },
                       { img: user.trailerRegistrationImage },
                       { img: user.trailerInsurancePolicyImage }
                     ].map((doc, idx) => (

@@ -72,6 +72,7 @@ const AdminUserDetailPage = () => {
   const locationInfo = [
     { label: "Country", value: user.country },
     { label: "Province / State", value: user.state },
+    { label: "Postal Code", value: user.postalCode },
     { label: "Address", value: user.address, full: true },
     { label: "Street", value: user.street, full: true },
   ];
@@ -79,7 +80,7 @@ const AdminUserDetailPage = () => {
   const documents = [
     { key: "licenseFrontImage", label: "License Front" },
     { key: "licenseBackImage", label: "License Back" },
-    { key: "carInsurancePolicyImage", label: "Car Insurance", renterOnly: true },
+    { key: "faq27Image", label: "Endorsement / FAQ 27", renterOnly: true },
     { key: "trailerRegistrationImage", label: "Trailer Registration", ownerOnly: true },
     { key: "trailerInsurancePolicyImage", label: "Trailer Insurance", ownerOnly: true },
   ].filter((doc) => {

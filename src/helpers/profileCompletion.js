@@ -22,6 +22,6 @@ export const isProfileComplete = (account, role) => {
     return hasRequiredProfile && hasLicenseDocs && hasOwnerDocs;
   }
 
-  const hasRenterDocs = hasValue(account.carInsurancePolicyImage);
+  const hasRenterDocs = hasValue(account.faq27Image);
   return hasRequiredProfile && hasLicenseDocs && hasRenterDocs;
 };
