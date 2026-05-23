@@ -27,9 +27,6 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
     const profileInputRef = useRef(null);
 
     const handleSave = async () => {
-        if (!userData.name || !userData.phone || !userData.country || !userData.state || !userData.address || !userData.postalCode) {
-            return toast.error("All fields are mandatory");
-        }
         try {
             setLoading(true);
             const formData = new FormData();
@@ -38,13 +35,13 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             formData.append("address", userData.address || "");
             formData.append("state", userData.state || "");
             formData.append("country", userData.country || "");
-            formData.append("postalCode", userData.postalCode || "");
+            formData.append("street", userData.street || "");
             if (userData.profilePicture instanceof File) formData.append("profilePicture", userData.profilePicture);
             if (userData.licenseFrontImage instanceof File) formData.append("licenseFrontImage", userData.licenseFrontImage);
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
 
             const res = await axios.put(`${config.baseUrl}/account/update/${localStorage.getItem("userId")}`, formData, {
-                timeout: 30000,
+                headers: { "Content-Type": "multipart/form-data" }
             });
             toast.success(res.data.msg);
             if (onSaveSuccess) onSaveSuccess();
@@ -83,13 +80,13 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             <h3 className='text-xl font-bold text-gray-900 mb-6'>{t.personalInfo}</h3>
 
             <form>
-                <InputField label={<>{t.fullName} <span className="text-red-500">*</span></>} value={userData?.name || ""} onChange={e => setUserData({ ...userData, name: e.target.value })} />
+                <InputField label={t.fullName} value={userData?.name || ""} onChange={e => setUserData({ ...userData, name: e.target.value })} />
                 <InputField label={t.email} value={userData?.email || ""} readOnly />
-                <InputField label={<>{t.phone} <span className="text-red-500">*</span></>} value={userData?.phone || ""} onChange={e => setUserData({ ...userData, phone: e.target.value })} />
-                <InputField label={<>{t.country} <span className="text-red-500">*</span></>} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} />
-                <InputField label={<>{t.state} <span className="text-red-500">*</span></>} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} />
-                <InputField label={<>{t.address} <span className="text-red-500">*</span></>} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} />
-                <InputField label={<>{t.postalCode} <span className="text-red-500">*</span></>} value={userData?.postalCode || ""} onChange={e => setUserData({ ...userData, postalCode: e.target.value })} />
+                <InputField label={t.phone} value={userData?.phone || ""} onChange={e => setUserData({ ...userData, phone: e.target.value })} />
+                <InputField label={t.country} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} />
+                <InputField label={t.state} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} />
+                <InputField label={t.address} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} />
+                <InputField label={t.street} value={userData?.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
 
                 <div className="flex justify-end mt-6">
                     <button type="button" disabled={loading} onClick={handleSave} className="w-full sm:w-auto px-6 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150 shadow-md">
@@ -187,27 +184,19 @@ const DocumentUploadBlock = ({ side, file, onFileSelect, t }) => {
 
 const DocumentUpload = ({ userData, setUserData, t }) => {
     const [loading, setLoading] = useState(false);
-    const isOwner = localStorage.getItem("role") === "owner";
 
     const handleUpload = async () => {
         try {
             setLoading(true);
             const formData = new FormData();
-            formData.append("name", userData.name || "");
-            formData.append("phone", userData.phone || "");
-            formData.append("address", userData.address || "");
-            formData.append("state", userData.state || "");
-            formData.append("country", userData.country || "");
-            formData.append("postalCode", userData.postalCode || "");
-
             if (userData.licenseFrontImage instanceof File) formData.append("licenseFrontImage", userData.licenseFrontImage);
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
-            if (userData.faq27Image instanceof File) formData.append("faq27Image", userData.faq27Image);
+            if (userData.carInsurancePolicyImage instanceof File) formData.append("carInsurancePolicyImage", userData.carInsurancePolicyImage);
             if (userData.trailerInsurancePolicyImage instanceof File) formData.append("trailerInsurancePolicyImage", userData.trailerInsurancePolicyImage);
             if (userData.trailerRegistrationImage instanceof File) formData.append("trailerRegistrationImage", userData.trailerRegistrationImage);
 
             const res = await axios.put(`${config.baseUrl}/account/update/${localStorage.getItem("userId")}`, formData, {
-                timeout: 30000,
+                headers: { "Content-Type": "multipart/form-data" }
             });
             toast.success(res.data.msg);
         } catch (error) {
@@ -224,20 +213,24 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
                 <DocumentUploadBlock t={t} side={t.front} file={userData.licenseFrontImage || userData.licenseFrontImageUrl} onFileSelect={e => setUserData({ ...userData, licenseFrontImage: e.target.files[0], licenseFrontImageUrl: URL.createObjectURL(e.target.files[0]) })} />
                 <DocumentUploadBlock t={t} side={t.back} file={userData.licenseBackImage || userData.licenseBackImageUrl} onFileSelect={e => setUserData({ ...userData, licenseBackImage: e.target.files[0], licenseBackImageUrl: URL.createObjectURL(e.target.files[0]) })} />
             </div>
-            {isOwner ? (
-                <div>
-                    <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.trailerDocuments}</h3>
+            {
+                localStorage.getItem("role") === "owner" ?
+                    <div>
+                        <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.trailerDocuments}</h3>
 
-                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 text-center'>
-                        <DocumentUploadBlock t={t} side={t?.trailerRegistrationImage} file={userData.trailerRegistrationImage || userData.trailerRegistrationImageURL} onFileSelect={e => setUserData({ ...userData, trailerRegistrationImage: e.target.files[0], trailerRegistrationImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 text-center'>
+                            <DocumentUploadBlock t={t} side={t?.trailerInsurancePolicyImage} file={userData.trailerInsurancePolicyImage || userData.trailerInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, trailerInsurancePolicyImage: e.target.files[0], trailerInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                            <DocumentUploadBlock t={t} side={t?.trailerRegistrationImage} file={userData.trailerRegistrationImage || userData.trailerRegistrationImageURL} onFileSelect={e => setUserData({ ...userData, trailerRegistrationImage: e.target.files[0], trailerRegistrationImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                        </div>
                     </div>
-                </div>
-            ) : (
-                <div>
-                    <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.faq27Title}</h3>
-                    <DocumentUploadBlock t={t} side={t.faq27DepositField} file={userData.faq27Image || userData.faq27ImageURL} onFileSelect={e => setUserData({ ...userData, faq27Image: e.target.files[0], faq27ImageURL: URL.createObjectURL(e.target.files[0]) })} />
-                </div>
-            )}
+                    :
+                    <div>
+                        <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.insurance}</h3>
+                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8'>
+                            <DocumentUploadBlock t={t} side={t.carInsurancePolicyImage} file={userData.carInsurancePolicyImage || userData.carInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, carInsurancePolicyImage: e.target.files[0], carInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                        </div>
+                    </div>
+            }
             <div className="mt-8 pt-6 border-t border-gray-200 flex justify-end">
                 <button type="button" disabled={loading} onClick={handleUpload} className="w-full sm:w-auto px-8 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150 shadow-md">
                     {loading ? t.uploading : t.upload}

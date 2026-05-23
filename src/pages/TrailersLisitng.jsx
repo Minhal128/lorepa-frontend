@@ -338,27 +338,15 @@ const TrailersListing = () => {
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
 
-          const getLocationTokens = (value = '') => normalizeText(value)
-            .split(/[\s,.-]+/)
-            .filter(Boolean);
-
-          const matchesSearchPart = (haystack, part) => {
-            if (part.length === 1) {
-              return getLocationTokens(haystack).some((token) => token.startsWith(part));
-            }
-
-            return haystack.includes(part);
-          };
-
           const searchParts = normalizeText(cityFilter)
             .split(/[,\s]+/)
-            .filter((part) => part.length >= 1);
+            .filter((part) => part.length >= 2);
 
           allTrailers = allData.filter((t) => {
             const haystack = normalizeText(`${t.city || ''} ${t.state || ''} ${t.country || ''}`);
             if (searchParts.length === 0) return true;
 
-            const matchedParts = searchParts.filter((part) => matchesSearchPart(haystack, part)).length;
+            const matchedParts = searchParts.filter((part) => haystack.includes(part)).length;
             const minRequiredMatches = searchParts.length === 1 ? 1 : Math.min(2, searchParts.length);
 
             return matchedParts >= minRequiredMatches;

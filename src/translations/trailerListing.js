@@ -50,6 +50,7 @@ export const trailersListingTranslations = {
     trailerUnavailable: "Selected dates include unavailable days.",
     securityDeposit: "Security Deposit (held on card)",
     next: "Next",
+  
     sendMessage: "Send a message",
     messagePlaceholder: "Type here...",
   },

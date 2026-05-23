@@ -22,12 +22,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { blurIn, fadeIn, fadeInDown, fadeInUp, flipIn, scaleIn, zoomBounce } from "../../animation";
 import AccordionItem from "./AccordionItem";
 
-const getStoredLanguage = () => {
-    const rawLang = localStorage.getItem('lang') || localStorage.getItem('i18nextLng') || 'fr';
-    const normalizedLang = rawLang.split('-')[0];
-    return normalizedLang;
-};
-
 const translations = {
     en: {
         trailerRental: "Trailer rental reinvented",
@@ -54,7 +48,6 @@ const translations = {
         carHauler: "Browse Trailers",
         faq: "Frequently asked questions",
         seeAllFaq: "See all FAQ",
-        searchButton: "Search",
         searching: "Searching...",
         noResults: "No results found",
         guests: "Guests",
@@ -101,7 +94,6 @@ const translations = {
         "carHauler": "Explorar Remolques",
         faq: "Preguntas frecuentes",
         seeAllFaq: "Ver todas las FAQ",
-        searchButton: "Buscar",
         searching: "Buscando...",
         noResults: "No se encontraron resultados",
         guests: "Invitados",
@@ -148,7 +140,6 @@ const translations = {
         carHauler: "浏览拖车",
         faq: "常见问题",
         seeAllFaq: "查看所有 FAQ",
-        searchButton: "搜索",
         searching: "搜索中...",
         noResults: "未找到结果",
         guests: "客人",
@@ -180,7 +171,7 @@ const translations = {
         newWay: "La nouvelle façon de louer une remorque 24h/24 et 7j/7 !",
         discover: "Découvrez la plateforme leader de partage de remorques entre particuliers au Québec.",
         needTrailer: "Que vous ayez besoin d'une remorque",
-        shareOne: "ou que vous en ayez une à mettre en location",
+        shareOne: "ou que vous en ayez une à partager",
         rentTrailerTitle: "Louer une remorque",
         rentTrailerDescription: "Trouvez la remorque parfaite pour vos besoins, où que vous soyez au Québec. Parcourez, réservez et partez !",
         rentTrailerButton: "Louer une remorque",
@@ -195,7 +186,6 @@ const translations = {
         carHauler: "Parcourir les remorques",
         faq: "Questions fréquemment posées",
         seeAllFaq: "Voir toutes les FAQ",
-        searchButton: "Rechercher",
         searching: "Recherche en cours...",
         noResults: "Aucun résultat trouvé",
         guests: "Invités",
@@ -234,7 +224,6 @@ const AnimatedText = ({ text, variant, className = "" }) => (
 const trustedAvatarImages = ["/6.png", "/7.png", "/8.png", "/9.png", "/10.png", "/11.png"];
 const popularLocationImages = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
 const browseTrailerImages = ["/12.png", "/13.png", "/14.png", "/15.png"];
-const MIN_LOCATION_QUERY_LENGTH = 1;
 
 const LandingPage = () => {
     const [trustedByItems, setTrustedByItems] = useState([]);
@@ -242,12 +231,8 @@ const LandingPage = () => {
     const [trailers, setTrailers] = useState([]);
     const [fallbackFaqContent, setFallbackFaqContent] = useState({ renters: [], owners: [], global: [] });
     const [adminFaqContent, setAdminFaqContent] = useState({ renters: [], owners: [] });
-    const [currentLang, setCurrentLang] = useState(() => {
-        const lang = getStoredLanguage();
-        return translations[lang] ? lang : 'fr';
-    });
     const [translationsData, setTranslationsData] = useState(() => {
-        const storedLang = getStoredLanguage();
+        const storedLang = localStorage.getItem('lang');
         return translations[storedLang] || translations.fr;
     });
     const wrapperRef = useRef(null);
@@ -280,21 +265,18 @@ const LandingPage = () => {
     }, [trustedByItems]);
     useEffect(() => {
         const handleStorageChange = () => {
-            const storedLang = getStoredLanguage();
-            setCurrentLang(translations[storedLang] ? storedLang : 'fr');
+            const storedLang = localStorage.getItem('lang');
             const data = translations[storedLang] || translations.fr;
             setTranslationsData(data);
             setFallbackFaqContent(data.faqContent);
         };
 
         window.addEventListener('storage', handleStorageChange);
-        window.addEventListener('app-language-changed', handleStorageChange);
         // Also run on mount to ensure the latest language is picked up if it changes externally
         handleStorageChange();
 
         return () => {
             window.removeEventListener('storage', handleStorageChange);
-            window.removeEventListener('app-language-changed', handleStorageChange);
         };
     }, []);
 
@@ -328,22 +310,15 @@ const LandingPage = () => {
         fetchContent();
     }, []);
 
-    const useAdminFaqContent = currentLang === "en";
     const mergedFaqContent = {
-        renters:
-            useAdminFaqContent && adminFaqContent.renters.length > 0
-                ? adminFaqContent.renters
-                : (fallbackFaqContent.renters || []),
-        owners:
-            useAdminFaqContent && adminFaqContent.owners.length > 0
-                ? adminFaqContent.owners
-                : (fallbackFaqContent.owners || []),
+        renters: adminFaqContent.renters.length > 0 ? adminFaqContent.renters : (fallbackFaqContent.renters || []),
+        owners: adminFaqContent.owners.length > 0 ? adminFaqContent.owners : (fallbackFaqContent.owners || []),
     };
     const fetchSuggestions = async (inputText) => {
         const normalizedInput = (inputText || "").trim();
         const normalizedQuery = normalizedInput.toLowerCase();
 
-        if (!normalizedInput || normalizedInput.length < MIN_LOCATION_QUERY_LENGTH) {
+        if (!normalizedInput || normalizedInput.length < 2) {
             setSuggestions([]);
             setShowSuggestions(false);
             setIsLoadingSuggestions(false);
@@ -356,11 +331,7 @@ const LandingPage = () => {
             // Get base URL without /api/v1 suffix
             const baseUrlWithoutApiV1 = config.baseUrl.replace(/\/api\/v1\/?$/, '');
             const res = await axios.get(`${baseUrlWithoutApiV1}/api/autocomplete`, {
-                params: {
-                    input: normalizedInput,
-                    onlyWithTrailers: true,
-                    limit: 25,
-                },
+                params: { input: normalizedInput },
             });
 
             // Ignore stale async responses
@@ -373,7 +344,7 @@ const LandingPage = () => {
                 setShowSuggestions(true);
             } else {
                 setSuggestions([]);
-                setShowSuggestions(normalizedInput.length >= MIN_LOCATION_QUERY_LENGTH); // show "no results" feedback
+                setShowSuggestions(normalizedInput.length >= 2); // show "no results" feedback
             }
         } catch (error) {
             console.error("Error fetching suggestions:", error);
@@ -392,7 +363,7 @@ const LandingPage = () => {
         latestSuggestionQueryRef.current = normalizedQuery;
 
         if (debounceRef.current) clearTimeout(debounceRef.current);
-        if (!value || value.trim().length < MIN_LOCATION_QUERY_LENGTH) {
+        if (!value || value.trim().length < 2) {
             setSuggestions([]);
             setShowSuggestions(false);
             setIsLoadingSuggestions(false);
@@ -569,20 +540,20 @@ const LandingPage = () => {
 
                         {/* Search Button */}
                         <div className="w-full mt-2">
-                            <button onClick={() => nav(buildSearchUrl())} className="w-full h-[3rem] bg-[#2563EB] rounded-md text-white">{translationsData?.searchButton}</button>
+                            <button onClick={() => nav(buildSearchUrl())} className="w-full h-[3rem] bg-[#2563EB] rounded-md text-white">Search</button>
                         </div>
                     </motion.div>
                 </motion.div>
             </div>
 
-            <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col my-12 sm:my-20 mobile-px">
-                <AnimatedText text={translationsData.newWay} variant={flipIn} className="text-3xl sm:text-4xl lg:text-[48px] font-semibold text-black text-center leading-[1.2] tracking-tight" />
+            <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col my-8 sm:my-10 mobile-px">
+                <AnimatedText text={translationsData.newWay} variant={flipIn} className="text-2xl sm:text-3xl lg:text-[40px] font-medium text-black text-center" />
                 <AnimatedText
                     text={translationsData.discover}
                     variant={fadeInUp}
-                    className="text-sm sm:text-base text-gray-600 mt-4 text-center max-w-2xl leading-relaxed"
+                    className="text-xs sm:text-sm text-black mt-2 text-center max-w-lg"
                 />
-                <motion.img variants={scaleIn} src={Img} alt="" className="mt-10 max-w-full h-auto rounded-2xl shadow-sm" />
+                <motion.img variants={scaleIn} src={Img} alt="" className="mt-6 max-w-full h-auto" />
             </motion.div>
 
             <div className="bg-[#2563EB] mobile-px py-8 sm:py-10">
@@ -596,59 +567,49 @@ const LandingPage = () => {
                     variant={fadeInDown}
                     className="text-xl sm:text-2xl lg:text-[40px] text-white font-semibold mb-6 sm:mb-10 text-center"
                 />
-                <div className="flex justify-center items-stretch flex-wrap gap-6 sm:gap-8 pb-12 sm:pb-20">
+                <div className="flex justify-center items-center flex-wrap gap-4 sm:gap-6 pb-8 sm:pb-10">
                     {/* Rent a Trailer Card */}
-                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md lg:max-w-xl overflow-hidden flex flex-col">
-                        <div className="p-8 sm:p-12 flex-1">
-                            <h2 className="text-3xl sm:text-[52px] font-light leading-[1.1] mb-4 sm:mb-8 text-gray-900 tracking-tight">
-                                {translationsData.rentTrailerTitle}
-                            </h2>
-                            <p className="text-gray-600 mb-8 sm:text-lg text-base leading-relaxed">
-                                {translationsData.rentTrailerDescription}
-                            </p>
+                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg w-full max-w-sm sm:max-w-md lg:max-w-lg overflow-hidden px-4 sm:px-5">
+                        <div className="py-7 sm:py-10">
+                            <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.rentTrailerTitle}</h2>
+                            <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.rentTrailerDescription}</p>
                             <Link to="/trailers">
-                                <button className="border-2 border-black text-black px-8 py-3 rounded-xl font-medium hover:bg-black hover:text-white transition-all duration-300">
-                                    {translationsData.rentTrailerButton}
-                                </button>
+                                <button className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent">{translationsData.rentTrailerButton}</button>
                             </Link>
                         </div>
-                        <img src={Host1} alt="Rent a Trailer" className="w-full h-[24rem] object-cover hover:scale-105 transition-transform duration-500" />
+                        <img src={Host1} alt="Rent a Trailer" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
                     </motion.div>
 
                     {/* Become a Host Card */}
-                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-2xl shadow-xl w-full max-w-sm sm:max-w-md lg:max-w-xl overflow-hidden flex flex-col">
-                        <div className="p-8 sm:p-12 flex-1">
-                            <h2 className="text-3xl sm:text-[52px] font-light leading-[1.1] mb-4 sm:mb-8 text-gray-900 tracking-tight">
-                                {translationsData.becomeHostTitle}
-                            </h2>
-                            <p className="text-gray-600 mb-8 sm:text-lg text-base leading-relaxed">
-                                {translationsData.becomeHostDescription}
-                            </p>
+                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg w-full max-w-sm sm:max-w-md lg:max-w-lg overflow-hidden px-4 sm:px-5">
+                        <div className="py-7 sm:py-10">
+                            <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.becomeHostTitle}</h2>
+                            <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.becomeHostDescription}</p>
                             {!isLogin && (
                                 <button
                                     onClick={() => nav('/login')}
-                                    className="border-2 border-black text-black px-8 py-3 rounded-xl font-medium hover:bg-black hover:text-white transition-all duration-300"
+                                    className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent"
                                 >
                                     {translationsData.becomeHostButton}
                                 </button>
                             )}
                         </div>
-                        <img src={Host2} alt="Become a Host" className="w-full h-[24rem] object-cover hover:scale-105 transition-transform duration-500" />
+                        <img src={Host2} alt="Become a Host" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
                     </motion.div>
                 </div>
             </div>
 
-            <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col bg-[#E9EFFD] py-20 px-4 sm:px-6">
-                <AnimatedText text={translationsData.trustedBy} variant={fadeInDown} className="text-[44px] sm:text-[64px] text-gray-900 font-bold leading-tight tracking-tighter" />
-                <AnimatedText text={`${translationsData.leadingPlatform} ${translationsData.dynamicCommunity}`} variant={fadeInUp} className="text-sm sm:text-lg text-gray-600 mt-4 text-center max-w-4xl leading-relaxed" />
+            <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col bg-[#E9EFFD] py-14 px-3 sm:px-4">
+                <AnimatedText text={translationsData.trustedBy} variant={fadeInDown} className="text-[44px] sm:text-[56px] text-black font-medium leading-tight" />
+                <AnimatedText text={`${translationsData.leadingPlatform} ${translationsData.dynamicCommunity}`} variant={fadeInUp} className="text-xs sm:text-sm text-black mt-2 text-center max-w-[52rem]" />
 
-                <div className="flex items-center justify-center mt-8">
+                <div className="flex items-center justify-center mt-4">
                     {trustedImageUrls.map((img, i) => (
                         <img
                             key={`${img}-${i}`}
                             src={img}
                             alt={`Trusted host ${i + 1}`}
-                            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-4 border-white shadow-md -ml-3 first:ml-0 hover:z-10 transition-transform hover:scale-110"
+                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E9EFFD] shadow-sm -ml-2 first:ml-0"
                             onError={(e) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.src = trustedAvatarImages[i % trustedAvatarImages.length];
@@ -657,7 +618,7 @@ const LandingPage = () => {
                     ))}
                 </div>
 
-                <AnimatedText text={translationsData.thankYou} variant={blurIn} className="text-xl font-semibold text-blue-600 mt-10 text-center" />
+                <AnimatedText text={translationsData.thankYou} variant={blurIn} className="text-lg font-semibold text-black mt-8 text-center" />
             </motion.div>
 
             <motion.div variants={flipIn} whileInView="visible" className="flex justify-center items-center flex-col p-3">
@@ -734,49 +695,44 @@ const LandingPage = () => {
                 </Link>
             </motion.div>
 
-            <div className="mobile-px py-16 sm:py-24 text-gray-900">
+            <div className="mobile-px py-6 sm:py-8 text-black">
                 <motion.div
                     variants={fadeInUp}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.3 }}
-                    className="flex justify-between items-end mb-12 w-full flex-wrap gap-4"
+                    className="flex justify-between items-center mt-10 w-full flex-wrap text-black"
                 >
-                    <div className="flex-1 min-w-[300px]">
-                        <AnimatedText
-                            text={translationsData.faq}
-                            variant={fadeInUp}
-                            className="text-3xl sm:text-5xl font-bold text-left tracking-tight"
-                        />
-                        <p className="text-gray-500 mt-2 text-lg font-medium">Everything you need to know about Lorepa.</p>
-                    </div>
-                    <button className="px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 transition-all text-white font-semibold shadow-xl shadow-blue-100 mb-2">
+                    <AnimatedText
+                        text={translationsData.faq}
+                        variant={fadeInUp}
+                        className="text-lg sm:text-2xl font-semibold mt-2"
+                    />
+                    <button className="px-3 py-2 mt-2 rounded-md bg-[#2563EB] text-white text-xs">
                         <Link to={"/faq"}>{translationsData.seeAllFaq}</Link>
                     </button>
                 </motion.div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
                     {/* Renters (Guests) FAQ Section */}
                     <motion.div
                         variants={flipIn}
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="bg-white p-8 sm:p-10 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/50"
+                        className="bg-[#F1F1F1] p-4 sm:p-5 rounded-xl"
                     >
                         <AnimatedText
                             text={translationsData.guests}
                             variant={fadeInUp}
-                            className="text-2xl font-bold mb-8 text-left text-blue-600 tracking-tight"
+                            className="text-xl font-semibold mb-4"
                         />
-                        <div className="space-y-4">
-                            {mergedFaqContent.renters.map((faq, index) => (
-                                <AccordionItem
-                                    key={`renter-faq-${index}`}
-                                    question={faq.question}
-                                    answer={faq.answer}
-                                />
-                            ))}
-                        </div>
+                        {mergedFaqContent.renters.map((faq, index) => (
+                            <AccordionItem
+                                key={`renter-faq-${index}`}
+                                question={faq.question}
+                                answer={faq.answer}
+                            />
+                        ))}
                     </motion.div>
 
                     {/* Owners (Hosts) FAQ Section */}
@@ -785,22 +741,20 @@ const LandingPage = () => {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true, amount: 0.3 }}
-                        className="bg-white p-8 sm:p-10 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-100/50"
+                        className="bg-[#F1F1F1] p-4 sm:p-5 rounded-xl"
                     >
                         <AnimatedText
                             text={translationsData.hosts}
                             variant={fadeInUp}
-                            className="text-2xl font-bold mb-8 text-left text-blue-600 tracking-tight"
+                            className="text-xl font-semibold mb-4"
                         />
-                        <div className="space-y-4">
-                            {mergedFaqContent.owners.map((faq, index) => (
-                                <AccordionItem
-                                    key={`owner-faq-${index}`}
-                                    question={faq.question}
-                                    answer={faq.answer}
-                                />
-                            ))}
-                        </div>
+                        {mergedFaqContent.owners.map((faq, index) => (
+                            <AccordionItem
+                                key={`owner-faq-${index}`}
+                                question={faq.question}
+                                answer={faq.answer}
+                            />
+                        ))}
                     </motion.div>
                 </div>
             </div>
