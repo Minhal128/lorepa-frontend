@@ -589,41 +589,15 @@ const LandingPage = () => {
                         <div className="py-7 sm:py-10">
                             <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.becomeHostTitle}</h2>
                             <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.becomeHostDescription}</p>
-                            {!isLogin && (
-                                <motion.div
-                                    variants={fadeInUp}
-                                    initial="hidden"
-                                    whileInView="visible"
-                                    viewport={{ once: true, amount: 0.3 }}
-                                    className="flex flex-col items-center mt-10 w-full text-black"
-                                >
-                                    <AnimatedText
-                                        text={translationsData.faq}
-                                        variant={fadeInUp}
-                                        className="text-lg sm:text-2xl font-semibold mt-2 text-center"
-                                    />
-                                </motion.div>
+                            <Link to="/become-host">
+                                <button className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent">{translationsData.becomeHostButton || translationsData.becomeHostTitle}</button>
+                            </Link>
+                        </div>
+                        <img src={Host2} alt="Become a Host" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
+                    </motion.div>
 
-                                <p className="text-center text-gray-500 mt-4 max-w-2xl mx-auto">{translationsData.faqDesc}</p>
-
-                                <div className="w-full flex justify-center mt-4">
-                                    <Link to={'/faq'} className="px-6 py-3 rounded-md bg-[#2563EB] text-white text-sm shadow-md">
-                                        {translationsData.seeAllFaq}
-                                    </Link>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
-                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E9EFFD] shadow-sm -ml-2 first:ml-0"
-                            onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = trustedAvatarImages[i % trustedAvatarImages.length];
-                            }}
-                        />
-                    ))}
                 </div>
-
-                <AnimatedText text={translationsData.thankYou} variant={blurIn} className="text-lg font-semibold text-black mt-8 text-center" />
-            </motion.div>
+            </div>
 
             <motion.div variants={flipIn} whileInView="visible" className="flex justify-center items-center flex-col p-3">
                 <AnimatedText text={translationsData.popularLocations} variant={scaleIn} className="text-2xl text-black font-semibold mt-10" />
