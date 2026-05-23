@@ -47,6 +47,7 @@ const translations = {
         popularLocations: "Popular Locations",
         carHauler: "Browse Trailers",
         faq: "Frequently asked questions",
+        faqDesc: "Everything you need to know about Lorepa.",
         seeAllFaq: "See all FAQ",
         searching: "Searching...",
         noResults: "No results found",
@@ -93,6 +94,7 @@ const translations = {
         popularLocations: "Lugares populares",
         "carHauler": "Explorar Remolques",
         faq: "Preguntas frecuentes",
+        faqDesc: "Todo lo que necesitas saber sobre Lorepa.",
         seeAllFaq: "Ver todas las FAQ",
         searching: "Buscando...",
         noResults: "No se encontraron resultados",
@@ -139,6 +141,7 @@ const translations = {
         popularLocations: "热门地点",
         carHauler: "浏览拖车",
         faq: "常见问题",
+        faqDesc: "Lorepa 的相关常见问题与解答。",
         seeAllFaq: "查看所有 FAQ",
         searching: "搜索中...",
         noResults: "未找到结果",
@@ -185,6 +188,7 @@ const translations = {
         popularLocations: "Lieux populaires",
         carHauler: "Parcourir les remorques",
         faq: "Questions fréquemment posées",
+        faqDesc: "Tout ce que vous devez savoir sur Lorepa.",
         seeAllFaq: "Voir toutes les FAQ",
         searching: "Recherche en cours...",
         noResults: "Aucun résultat trouvé",
@@ -701,17 +705,23 @@ const LandingPage = () => {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.3 }}
-                    className="flex justify-between items-center mt-10 w-full flex-wrap text-black"
+                    className="flex flex-col sm:flex-row sm:justify-between items-center mt-10 w-full text-black"
                 >
                     <AnimatedText
                         text={translationsData.faq}
                         variant={fadeInUp}
-                        className="text-lg sm:text-2xl font-semibold mt-2"
+                        className="text-lg sm:text-2xl font-semibold mt-2 text-center sm:text-left"
                     />
-                    <button className="px-3 py-2 mt-2 rounded-md bg-[#2563EB] text-white text-xs">
-                        <Link to={"/faq"}>{translationsData.seeAllFaq}</Link>
-                    </button>
+
+                    <div className="w-full sm:w-auto flex justify-center sm:justify-end mt-4 sm:mt-0">
+                        <Link to={'/faq'} className="px-6 py-3 rounded-md bg-[#2563EB] text-white text-sm shadow-md">
+                            {translationsData.seeAllFaq}
+                        </Link>
+                    </div>
                 </motion.div>
+
+                <p className="text-center text-gray-500 mt-4 max-w-2xl mx-auto">{translationsData.faqDesc}</p>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
                     {/* Renters (Guests) FAQ Section */}
                     <motion.div
