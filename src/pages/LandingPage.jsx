@@ -590,29 +590,29 @@ const LandingPage = () => {
                             <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.becomeHostTitle}</h2>
                             <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.becomeHostDescription}</p>
                             {!isLogin && (
-                                <button
-                                    onClick={() => nav('/login')}
-                                    className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent"
+                                <motion.div
+                                    variants={fadeInUp}
+                                    initial="hidden"
+                                    whileInView="visible"
+                                    viewport={{ once: true, amount: 0.3 }}
+                                    className="flex flex-col items-center mt-10 w-full text-black"
                                 >
-                                    {translationsData.becomeHostButton}
-                                </button>
-                            )}
-                        </div>
-                        <img src={Host2} alt="Become a Host" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
-                    </motion.div>
-                </div>
-            </div>
+                                    <AnimatedText
+                                        text={translationsData.faq}
+                                        variant={fadeInUp}
+                                        className="text-lg sm:text-2xl font-semibold mt-2 text-center"
+                                    />
+                                </motion.div>
 
-            <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col bg-[#E9EFFD] py-14 px-3 sm:px-4">
-                <AnimatedText text={translationsData.trustedBy} variant={fadeInDown} className="text-[44px] sm:text-[56px] text-black font-medium leading-tight" />
-                <AnimatedText text={`${translationsData.leadingPlatform} ${translationsData.dynamicCommunity}`} variant={fadeInUp} className="text-xs sm:text-sm text-black mt-2 text-center max-w-[52rem]" />
+                                <p className="text-center text-gray-500 mt-4 max-w-2xl mx-auto">{translationsData.faqDesc}</p>
 
-                <div className="flex items-center justify-center mt-4">
-                    {trustedImageUrls.map((img, i) => (
-                        <img
-                            key={`${img}-${i}`}
-                            src={img}
-                            alt={`Trusted host ${i + 1}`}
+                                <div className="w-full flex justify-center mt-4">
+                                    <Link to={'/faq'} className="px-6 py-3 rounded-md bg-[#2563EB] text-white text-sm shadow-md">
+                                        {translationsData.seeAllFaq}
+                                    </Link>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
                             className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E9EFFD] shadow-sm -ml-2 first:ml-0"
                             onError={(e) => {
                                 e.currentTarget.onerror = null;
