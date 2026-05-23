@@ -679,22 +679,22 @@ const LandingPage = () => {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.3 }}
-                    className="flex flex-col sm:flex-row sm:justify-between items-center mt-10 w-full text-black"
+                    className="flex flex-col items-center mt-10 w-full text-black"
                 >
                     <AnimatedText
                         text={translationsData.faq}
                         variant={fadeInUp}
-                        className="text-lg sm:text-2xl font-semibold mt-2 text-center sm:text-left"
+                        className="text-lg sm:text-2xl font-semibold mt-2 text-center"
                     />
 
-                    <div className="w-full sm:w-auto flex justify-center sm:justify-end mt-4 sm:mt-0">
+                    <p className="text-center text-gray-500 mt-4 max-w-2xl mx-auto">{translationsData.faqDesc}</p>
+
+                    <div className="w-full sm:w-auto flex justify-center mt-4">
                         <Link to={'/faq'} className="px-6 py-3 rounded-md bg-[#2563EB] text-white text-sm shadow-md">
                             {translationsData.seeAllFaq}
                         </Link>
                     </div>
                 </motion.div>
-
-                <p className="text-center text-gray-500 mt-4 max-w-2xl mx-auto">{translationsData.faqDesc}</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
                     {/* Renters (Guests) FAQ Section */}
