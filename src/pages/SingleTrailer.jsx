@@ -642,7 +642,7 @@ const SingleTrailer = () => {
 
         {/* Action Buttons */}
         <motion.div
-          className="mt-6 flex flex-col sm:flex-row justify-end gap-3"
+          className="mt-6 hidden sm:flex flex-col sm:flex-row justify-end gap-3"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.4 }}
