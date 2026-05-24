@@ -663,7 +663,7 @@ const SingleTrailer = () => {
             <div className="flex justify-center">
               <button
                 type="button"
-                className="mobile-btn-primary w-56 text-center mb-6"
+                className="mobile-btn-primary w-56 text-center mb-6 lg:hidden"
                 onClick={async () => {
                   const canBook = await validateKycBeforeBooking();
                   if (canBook) setIsBookingModalOpen(true);
