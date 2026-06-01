@@ -55,6 +55,7 @@ import CookieConsent from './components/CookieConsent';
 import UserProfilePage from './pages/User/Dashboard/UserProfilePage';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
+import LouerUneRemorquePage from './pages/LouerUneRemorquePage';
 import ForgetPasswordPage from './pages/Auth/ForgetPasswordPage';
 import VerifyOtpPage from './pages/Auth/VerifyOtpPage';
 import ChangePasswordPage from './pages/Auth/ChangePasswordPage';
@@ -194,6 +195,7 @@ function App() {
 
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel/>} />
+            <Route path="/louer-une-remorque" element={<LouerUneRemorquePage />} />
 
 
 
