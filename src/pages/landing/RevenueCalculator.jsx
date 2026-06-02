@@ -68,15 +68,9 @@ const Donut = ({ pct }) => {
   );
 };
 
-/* ── animated result number ── */
-const ResultNumber = ({ value, fmt }) => (
-  <motion.p
-    key={value}
-    className="text-white font-black text-[3rem] leading-none tracking-tight"
-    initial={{ scale: 0.9, opacity: 0.6 }}
-    animate={{ scale: 1, opacity: 1 }}
-    transition={{ duration: 0.22 }}
-  >
+/* ── (ResultNumber inlined for responsive sizing) ── */
+const _unused = ({ value, fmt }) => (
+  <motion.p key={value} className="text-white font-black text-[3rem] leading-none tracking-tight" initial={{ scale: 0.9, opacity: 0.6 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.22 }}>
     {fmt(value)}&nbsp;$
   </motion.p>
 );
@@ -155,18 +149,18 @@ const RevenueCalculator = () => {
   const fmt = (n) => n.toLocaleString('fr-CA');
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white">
+    <section className="py-10 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-50 to-white">
       <div className="max-w-4xl mx-auto">
 
         {/* section header */}
         <motion.div
-          className="text-center mb-10"
+          className="text-center mb-7 sm:mb-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55 }}
         >
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight mb-2">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 leading-tight mb-2">
             Combien votre remorque peut-elle rapporter&nbsp;?
           </h2>
           <p className="text-slate-500 text-sm sm:text-base">
@@ -176,15 +170,15 @@ const RevenueCalculator = () => {
 
         {/* unified card */}
         <motion.div
-          className="bg-white rounded-[32px] shadow-[0_4px_6px_rgba(0,0,0,0.04),0_12px_50px_rgba(37,99,235,0.13)] overflow-hidden"
+          className="bg-white rounded-[24px] sm:rounded-[32px] shadow-[0_4px_6px_rgba(0,0,0,0.04),0_12px_50px_rgba(37,99,235,0.13)] overflow-hidden"
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, delay: 0.08 }}
         >
 
-          {/* ── controls row ── */}
-          <div className="px-6 sm:px-8 pt-7 pb-7 grid grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* ── controls row: 2-col on mobile, 4-col on lg ── */}
+          <div className="px-4 sm:px-6 lg:px-8 pt-5 sm:pt-7 pb-5 sm:pb-7 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
             <SelectControl
               label="Type de remorque"
               value={trailerType}
@@ -214,39 +208,63 @@ const RevenueCalculator = () => {
           </div>
 
           {/* ── results panel (blue gradient) ── */}
-          <div className="px-5 sm:px-7 pb-7">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-[22px] px-6 sm:px-10 py-8 flex flex-col sm:flex-row items-center justify-around gap-8 shadow-[0_8px_30px_rgba(37,99,235,0.35)]">
+          <div className="px-3 sm:px-5 lg:px-7 pb-5 sm:pb-7">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-[18px] sm:rounded-[22px] px-5 sm:px-8 lg:px-10 py-6 sm:py-8 flex flex-col sm:flex-row items-center justify-around gap-5 sm:gap-8 shadow-[0_8px_30px_rgba(37,99,235,0.30)]">
 
-              {/* monthly */}
-              <div className="text-center">
-                <p className="text-blue-200 text-sm font-semibold mb-2 tracking-wide">Revenu mensuel estimé</p>
-                <ResultNumber value={monthly} fmt={fmt} />
-                <div className="flex items-center justify-center gap-1.5 mt-2.5">
-                  {vsAvgPct >= 0 ? (
-                    <>
-                      <span className="text-green-300 font-bold text-sm">↗ +{vsAvgPct}%</span>
-                      <span className="text-blue-200 text-xs">vs la moyenne</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-orange-300 font-bold text-sm">↘ {vsAvgPct}%</span>
-                      <span className="text-blue-200 text-xs">vs la moyenne</span>
-                    </>
-                  )}
+              {/* monthly + donut side by side on mobile */}
+              <div className="flex sm:contents items-center justify-around w-full gap-4 sm:gap-0">
+
+                {/* monthly */}
+                <div className="text-center flex-1 sm:flex-none">
+                  <p className="text-blue-200 text-xs sm:text-sm font-semibold mb-1 sm:mb-2 tracking-wide">Revenu mensuel estimé</p>
+                  <motion.p
+                    key={monthly}
+                    className="text-white font-black text-[2rem] sm:text-[3rem] leading-none tracking-tight"
+                    initial={{ scale: 0.9, opacity: 0.6 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.22 }}
+                  >
+                    {fmt(monthly)}&nbsp;$
+                  </motion.p>
+                  <div className="flex items-center justify-center gap-1 mt-2">
+                    {vsAvgPct >= 0 ? (
+                      <>
+                        <span className="text-green-300 font-bold text-xs sm:text-sm">↗ +{vsAvgPct}%</span>
+                        <span className="text-blue-200 text-[10px] sm:text-xs">vs la moyenne</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-orange-300 font-bold text-xs sm:text-sm">↘ {vsAvgPct}%</span>
+                        <span className="text-blue-200 text-[10px] sm:text-xs">vs la moyenne</span>
+                      </>
+                    )}
+                  </div>
                 </div>
+
+                {/* donut — inline with monthly on mobile */}
+                <div className="flex-shrink-0 scale-75 sm:scale-100 origin-center">
+                  <Donut pct={occupancy} />
+                </div>
+
               </div>
 
-              <div className="hidden sm:block h-20 w-px bg-white/20 flex-shrink-0" />
-
-              <Donut pct={occupancy} />
-
+              {/* horizontal divider on mobile between the two halves */}
+              <div className="w-full h-px bg-white/15 sm:hidden" />
               <div className="hidden sm:block h-20 w-px bg-white/20 flex-shrink-0" />
 
               {/* annual */}
-              <div className="text-center">
-                <p className="text-blue-200 text-sm font-semibold mb-2 tracking-wide">Revenu annuel estimé</p>
-                <ResultNumber value={annual} fmt={fmt} />
-                <p className="text-blue-200 text-xs mt-2.5">
+              <div className="text-center w-full sm:w-auto">
+                <p className="text-blue-200 text-xs sm:text-sm font-semibold mb-1 sm:mb-2 tracking-wide">Revenu annuel estimé</p>
+                <motion.p
+                  key={annual}
+                  className="text-white font-black text-[2rem] sm:text-[3rem] leading-none tracking-tight"
+                  initial={{ scale: 0.9, opacity: 0.6 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.22 }}
+                >
+                  {fmt(annual)}&nbsp;$
+                </motion.p>
+                <p className="text-blue-200 text-[10px] sm:text-xs mt-2">
                   Basé sur {bookedDays * 12} jours&nbsp;/&nbsp;an
                 </p>
               </div>
@@ -255,7 +273,7 @@ const RevenueCalculator = () => {
           </div>
 
           {/* footer link */}
-          <div className="px-6 sm:px-8 pb-7 flex items-center justify-center">
+          <div className="px-4 sm:px-8 pb-5 sm:pb-7 flex items-center justify-center">
             <a
               href="/calculator"
               className="inline-flex items-center gap-1.5 text-blue-600 font-semibold text-sm hover:text-blue-700 transition-colors group"
