@@ -1,7 +1,7 @@
 
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import React, { Suspense, lazy, useState, useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import LoaderGif from './assets/loader.gif';
 import LandingPage from './pages/LandingPage';
@@ -92,22 +92,11 @@ const BuyerLayout = lazyWithRetry(() => import('./components/buyer/Layout'));
 
 
 
-function SuspenseWithDelay({ children, fallback, delay = 0, minDisplayTime = 2000 }) {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), minDisplayTime);
-    return () => clearTimeout(timer);
-  }, [minDisplayTime]);
-
-  return isLoading ? (
-    <div className="flex justify-center items-center w-screen h-screen">
-      <img src={LoaderGif} alt="Loading..." className="h-[6rem]" />
-    </div>
-  ) : (
-    <Suspense fallback={fallback}>{children}</Suspense>
-  );
-}
+const PageLoader = () => (
+  <div className="flex justify-center items-center w-screen h-screen">
+    <img src={LoaderGif} alt="Loading..." className="h-[6rem]" />
+  </div>
+);
 
 function App() {
   useEffect(() => {
@@ -121,7 +110,7 @@ function App() {
       <Toaster />
       <CookieConsent />
       <BrowserRouter>
-        <SuspenseWithDelay fallback={<div className="flex justify-center items-center w-screen h-screen"><img src={LoaderGif} alt="HopOn Dashboard- Loader" className="h-[6rem]" /></div>} minDisplayTime={2000}>
+        <Suspense fallback={<PageLoader />}>
 
           <Routes>
             <Route path='/user/login' element={<UserLogin />} />
@@ -205,7 +194,7 @@ function App() {
 
 
           </Routes>
-        </SuspenseWithDelay>
+        </Suspense>
       </BrowserRouter>
     </>
   );
