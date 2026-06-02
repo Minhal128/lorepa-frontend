@@ -3,10 +3,8 @@ import { Link } from "react-router-dom";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { BoxesIcon, StarIcon, CompassIcon } from "@animateicons/react/lucide";
 import Logo from "../assets/logo.svg";
-import TrailerImg from "../assets/trailer.png";
-import TrailerImg2 from "../assets/trailer2.png";
-import RentTrailerImg from "../assets/landing/rent_trailer_img.png";
-import Card1 from "../assets/landing/card1.png";
+import LogoCropped from "../assets/logo_cropped.svg";
+// Unused imports removed since we now use public directory images directly
 
 import { FaStar, FaHeart } from "react-icons/fa";
 import {
@@ -187,42 +185,50 @@ function UseCaseCard({ item, index }) {
 
 const listings = [
   {
-    img: TrailerImg,
-    title: "Remorque utilitaire 5' x 10'",
-    location: "Laval, QC",
-    price: 45,
-    rating: 4.8,
-    reviews: 24,
-  },
-  {
-    img: TrailerImg2,
-    title: "Remorque fermée 6' x 12'",
-    location: "Montréal, QC",
-    price: 65,
+    img: "/img4.webp",
+    title: "Remorque cargo 5' x 8'",
+    location: "Châteauguay, QC",
+    price: 115,
     rating: 4.9,
-    reviews: 18,
+    reviews: 15,
   },
   {
-    img: RentTrailerImg,
+    img: "/img5.webp",
     title: "Remorque plateau 7' x 16'",
-    location: "Longueuil, QC",
-    price: 55,
+    location: "Drummondville, QC",
+    price: 60,
+    rating: 4.6,
+    reviews: 12,
+  },
+  {
+    img: "/img3.webp",
+    title: "Remorque fermée 6' x 12'",
+    location: "Saint-Hyacinthe, QC",
+    price: 95,
     rating: 4.7,
     reviews: 31,
   },
   {
-    img: Card1,
-    title: "Remorque cargo 5' x 8'",
-    location: "Québec, QC",
-    price: 38,
-    rating: 4.6,
-    reviews: 12,
+    img: "/img2.webp",
+    title: "Remorque Plateforme 20' PJ (Porte-Auto)",
+    location: "Montréal, QC",
+    price: 140,
+    rating: 4.9,
+    reviews: 18,
+  },
+  {
+    img: "/img1.webp",
+    title: "Remorque utilitaire 5' x 10'",
+    location: "Laval, QC",
+    price: 100,
+    rating: 4.8,
+    reviews: 24,
   },
 ];
 
 /* ─── glassmorphism + diamond listing card ───────────────────────────────── */
 
-function ListingCard({ listing }) {
+function ListingCard({ listing, index }) {
   return (
     <div
       className="w-full h-full flex flex-col overflow-hidden relative"
@@ -349,7 +355,7 @@ function ListingCard({ listing }) {
           }}
         >
           <div className="flex items-center gap-2">
-            <img src={Logo} alt="Lorepa" className="h-5 w-auto" />
+            <img src={LogoCropped} alt="Lorepa" className="h-5 w-auto" />
             <span className="font-bold text-[#0F172A] text-sm tracking-tight">
               Lorepa
             </span>
@@ -370,7 +376,7 @@ function ListingCard({ listing }) {
           >
             <FiMapPin className="w-4 h-4 text-[#64748B] shrink-0" />
             <span className="text-sm text-[#1E293B] flex-1 font-medium">
-              Montréal, QC
+              {listing.location}
             </span>
             <div
               className="rounded-lg p-2 shrink-0"
@@ -471,18 +477,18 @@ function ListingCard({ listing }) {
 
         {/* Dots */}
         <div className="flex justify-center items-center gap-2 pb-4 shrink-0">
-          {[0, 1, 2, 3].map((i) => (
+          {listings.map((_, i) => (
             <div
               key={i}
               style={{
                 height: "6px",
-                width: i === 0 ? "20px" : "6px",
+                width: i === index ? "20px" : "6px",
                 borderRadius: "99px",
                 background:
-                  i === 0
+                  i === index
                     ? "linear-gradient(90deg, #2563EB, #60A5FA)"
                     : "rgba(191,219,254,0.70)",
-                boxShadow: i === 0 ? "0 0 8px rgba(37,99,235,0.50)" : "none",
+                boxShadow: i === index ? "0 0 8px rgba(37,99,235,0.50)" : "none",
                 transition: "all 0.3s",
               }}
             />
@@ -497,7 +503,7 @@ function ListingCard({ listing }) {
 
 export default function LouerUneRemorquePage() {
   const stackCards = listings.map((listing, i) => (
-    <ListingCard key={i} listing={listing} />
+    <ListingCard key={i} listing={listing} index={i} />
   ));
 
   return (
@@ -531,7 +537,7 @@ export default function LouerUneRemorquePage() {
                 "0 4px 20px rgba(37,99,235,0.10), inset 0 1px 0 rgba(255,255,255,0.9)",
             }}
           >
-            <img src={Logo} alt="Lorepa" className="h-6 w-auto" />
+            <img src={LogoCropped} alt="Lorepa" className="h-8 w-auto" />
             <span className="text-sm font-medium text-slate-600 tracking-tight">
               Plateforme 100% québécoise
             </span>
