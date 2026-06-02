@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import SEO from '../components/SEO';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
@@ -733,6 +734,11 @@ const FaqPage = () => {
 
     return (
         <div className="min-h-screen text-black bg-[#F9FAFB]">
+            <SEO
+                title="Questions fréquentes sur la location de remorques | LOREPA"
+                description="Toutes vos questions sur la location de remorques entre particuliers au Québec. Comment ça fonctionne, assurance, prix, annulation et plus."
+                canonical="/faq"
+            />
             <Navbar />
 
             <div className="p-4">

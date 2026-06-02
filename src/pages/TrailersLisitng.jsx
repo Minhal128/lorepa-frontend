@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import SEO from '../components/SEO';
 import Footer from '../components/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -419,6 +420,11 @@ const TrailersListing = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      <SEO
+        title="Remorques disponibles à louer au Québec | LOREPA"
+        description="Parcourez toutes les remorques disponibles à la location partout au Québec. Filtrez par ville, type et disponibilité. Réservez en quelques clics."
+        canonical="/trailers"
+      />
       <Navbar2 />
       <main className="flex-1 mobile-px py-4 sm:py-6 lg:py-8">
         {/* Mobile Map/List Toggle */}

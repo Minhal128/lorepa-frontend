@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SEO from '../components/SEO';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { FaPhone, FaEnvelope } from 'react-icons/fa';
@@ -104,6 +105,11 @@ const ContactPage = () => {
 
     return (
         <div className="min-h-screen bg-white text-black overflow-x-hidden">
+            <SEO
+                title="Contactez-nous | LOREPA"
+                description="Une question sur la location de remorques au Québec ? Contactez l'équipe LOREPA. Nous vous répondons rapidement."
+                canonical="/contact"
+            />
             <Navbar />
 
             <motion.div

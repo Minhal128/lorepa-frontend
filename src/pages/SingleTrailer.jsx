@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import SEO from '../components/SEO';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -412,8 +413,34 @@ const SingleTrailer = () => {
     );
   }
 
+  const trailerDescription = trailer?.description
+    ? trailer.description.slice(0, 155)
+    : 'Louez cette remorque au Québec via LOREPA, la plateforme de location entre particuliers.';
+
   return (
     <div className="min-h-screen bg-white flex flex-col font-inter overflow-x-hidden">
+      <SEO
+        title={trailer ? `${trailer.title} – ${trailer.category} à louer | LOREPA` : 'Remorque à louer | LOREPA'}
+        description={trailer ? `Louez ${trailer.title} pour ${trailer.dailyRate}$/jour. ${trailerDescription}` : 'Détails de la remorque disponible sur LOREPA.'}
+        canonical={`/trailers/${id}`}
+        image={trailerImages[0] || undefined}
+        type="product"
+        structuredData={trailer ? {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": trailer.title,
+          "description": trailer.description,
+          "image": trailerImages,
+          "category": trailer.category,
+          "offers": {
+            "@type": "Offer",
+            "price": trailer.dailyRate,
+            "priceCurrency": "CAD",
+            "availability": "https://schema.org/InStock",
+            "url": `https://lorepa.ca/trailers/${id}`
+          }
+        } : null}
+      />
       <Navbar />
 
       <main className="flex-1 mobile-px py-4 sm:py-6 lg:py-8">

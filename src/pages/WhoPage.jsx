@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import SEO from '../components/SEO';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import WhoImage from '../assets/landing/who.png';
@@ -127,6 +128,11 @@ const WhoPage = () => {
 
     return (
         <div className="text-black overflow-x-hidden">
+            <SEO
+                title="Qui sommes-nous | LOREPA"
+                description="Découvrez l'équipe derrière LOREPA, la plateforme de location de remorques entre particuliers au Québec. Notre mission, nos valeurs."
+                canonical="/who"
+            />
             <Navbar />
 
             <motion.div
