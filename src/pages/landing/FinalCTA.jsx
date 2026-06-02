@@ -45,10 +45,10 @@ const CountUp = ({ end, decimals = 0, suffix = '', duration = 2.2 }) => {
 };
 
 const stats = [
-  { Icon: LuUsers,             end: 2500,   suffix: '+',    label: 'Propriétaires inscrits', color: 'text-blue-600' },
-  { Icon: LuMapPin,            end: 15000,  suffix: '+',    label: 'Locations complétées',   color: 'text-blue-600' },
-  { Icon: LuCircleDollarSign,  end: 750000, suffix: ' $+',  label: 'Revenus générés',        color: 'text-blue-600' },
-  { Icon: LuStar,              end: 4.9,    decimals: 1, suffix: '/5', label: 'Satisfaction moyenne', color: 'text-amber-400' },
+  { Icon: LuUsers,             end: 18,    suffix: '+',   label: 'Propriétaires inscrits', color: 'text-blue-600' },
+  { Icon: LuMapPin,            end: 60,    suffix: '+',   label: 'Locations complétées',   color: 'text-blue-600' },
+  { Icon: LuCircleDollarSign,  end: 10000, suffix: ' $+', label: 'Revenus générés',        color: 'text-blue-600' },
+  { Icon: LuStar,              end: 4.9,   decimals: 1, suffix: '/5', label: 'Satisfaction moyenne', color: 'text-amber-400' },
 ];
 
 const cardVariants = {

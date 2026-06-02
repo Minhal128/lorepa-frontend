@@ -52,7 +52,7 @@ const HeroSection = () => {
             >
               Mets ta remorque en location sur Lorepa.ca.
               Tu fixes ton prix, tes disponibilités. Des Québécois
-              près de toi en ont besoin dès maintenant.
+              près de chez vous en ont besoin dès maintenant.
             </motion.p>
 
             {/* CTA — full-width on mobile, auto on sm+ */}
