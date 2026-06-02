@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { BoxesIcon, StarIcon, CompassIcon } from "@animateicons/react/lucide";
 import Logo from "../assets/logo.svg";
@@ -421,7 +422,7 @@ function ListingCard({ listing, index }) {
         <div
           className="mx-5 rounded-2xl overflow-hidden shrink-0"
           style={{
-            height: "185px",
+            height: "200px",
             boxShadow: "0 4px 16px rgba(37,99,235,0.15)",
           }}
         >
@@ -508,6 +509,11 @@ export default function LouerUneRemorquePage() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden font-sans">
+      <Helmet>
+        <title>Louer une remorque au Québec | Lorepa.ca</title>
+        <meta name="description" content="Loue une remorque près de chez toi partout au Québec. Déménagement, rénovation, transport. Réserve facilement sur Lorepa.ca, la plateforme 100% québécoise." />
+        <link rel="canonical" href="https://lorepa.ca/louer-une-remorque" />
+      </Helmet>
 
       {/* ══ GLOBAL BACKGROUND ══════════════════════════════════════════════ */}
       <div
@@ -580,6 +586,7 @@ export default function LouerUneRemorquePage() {
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.background = "#2563EB")
                 }
+                onClick={() => window.gtag?.('event', 'conversion', { send_to: 'AW-CONVERSION_ID/CONVERSION_LABEL' })}
               >
                 Trouver une remorque près de moi
                 <FiArrowRight className="w-5 h-5" />
@@ -595,7 +602,7 @@ export default function LouerUneRemorquePage() {
               <div
                 style={{
                   width: "clamp(220px, 68vw, 460px)",
-                  height: "clamp(340px, 52vw, 610px)",
+                  height: "clamp(510px, 65vw, 650px)",
                   paddingRight: "min(70px, 10vw)",
                   paddingBottom: "min(70px, 10vw)",
                   position: "relative",
@@ -979,6 +986,7 @@ export default function LouerUneRemorquePage() {
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#EFF6FF")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "#ffffff")}
+                  onClick={() => window.gtag?.('event', 'conversion', { send_to: 'AW-CONVERSION_ID/CONVERSION_LABEL' })}
                 >
                   Voir les remorques disponibles
                   <FiArrowRight className="w-5 h-5" />

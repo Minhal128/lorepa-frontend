@@ -5,13 +5,16 @@ import App from './App.jsx'
 import './i18n.js'
 import { SidebarContext } from './context/SidebarContext.jsx'
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { HelmetProvider } from 'react-helmet-async';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <SidebarContext>
-      <GoogleOAuthProvider clientId="773585512502-tpu8hjfbera7v5tvehb6btp4alie4u5g.apps.googleusercontent.com">
-        <App />
-      </GoogleOAuthProvider>
-    </SidebarContext>
+    <HelmetProvider>
+      <SidebarContext>
+        <GoogleOAuthProvider clientId="773585512502-tpu8hjfbera7v5tvehb6btp4alie4u5g.apps.googleusercontent.com">
+          <App />
+        </GoogleOAuthProvider>
+      </SidebarContext>
+    </HelmetProvider>
   </StrictMode>,
 )
