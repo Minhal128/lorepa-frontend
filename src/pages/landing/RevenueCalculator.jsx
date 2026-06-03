@@ -4,12 +4,12 @@ import { LuTruck, LuMapPin, LuChevronDown } from 'react-icons/lu';
 
 /* ── data (sourced from CalculatorPage.jsx daily rates) ── */
 const TRAILER_TYPES = [
-  { id: 'utilitaire', label: 'Remorque utilitaire',  rate: 55  },
-  { id: 'fermee',     label: 'Remorque fermée',       rate: 80  },
-  { id: 'plateforme', label: 'Plateforme',             rate: 100 },
-  { id: 'dompeur',    label: 'Dompeur',                rate: 115 },
+  { id: 'utilitaire', label: 'Remorque utilitaire',  rate: 60  },
+  { id: 'fermee',     label: 'Remorque fermée',       rate: 100 },
+  { id: 'plateforme', label: 'Plateforme',             rate: 120 },
+  { id: 'dompeur',    label: 'Dompeur',                rate: 95  },
   { id: 'bateau',     label: 'Remorque',               rate: 65  },
-  { id: 'voiture',    label: 'Transport voiture',      rate: 90  },
+  { id: 'voiture',    label: 'Transport voiture',      rate: 125 },
 ];
 
 const LOCATIONS = [
@@ -22,7 +22,7 @@ const LOCATIONS = [
 ];
 
 /* Platform-average daily rate per type (used for the "+X% vs average" comparison) */
-const AVG_RATE = { utilitaire: 50, fermee: 73, plateforme: 90, dompeur: 107, bateau: 59, voiture: 83 };
+const AVG_RATE = { utilitaire: 50, fermee: 85, plateforme: 105, dompeur: 80, bateau: 55, voiture: 110 };
 
 /* Platform average occupancy (70%) – used to convert "available days" to "booked days" */
 const OCCUPANCY = 0.70;
