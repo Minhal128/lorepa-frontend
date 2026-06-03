@@ -134,16 +134,15 @@ const RevenueCalculator = () => {
   }, [trailerType]);
 
   /* ── calculations (mirrors CalculatorPage logic) ── */
-  const locMult    = LOCATIONS.find((l) => l.id === location)?.mult ?? 1;
-  const bookedDays = Math.round(daysAvail * OCCUPANCY);          // ~70% of available days
-  const discount   = getDiscount(bookedDays);                    // volume discount
-  const monthly    = Math.round(pricePerDay * bookedDays * discount * locMult);
-  const annual     = monthly * 12;
-  const occupancy  = Math.round(OCCUPANCY * 100);                // platform avg 70%
+  const locMult   = LOCATIONS.find((l) => l.id === location)?.mult ?? 1;
+  const discount  = getDiscount(daysAvail);
+  const monthly   = Math.round(pricePerDay * daysAvail * OCCUPANCY * discount * locMult);
+  const annual    = monthly * 12;
+  const occupancy = Math.round(OCCUPANCY * 100);
 
   /* comparison vs platform average owner */
   const avgRate    = AVG_RATE[trailerType] ?? 55;
-  const avgMonthly = Math.round(avgRate * bookedDays * getDiscount(bookedDays));
+  const avgMonthly = Math.round(avgRate * daysAvail * OCCUPANCY * getDiscount(daysAvail));
   const vsAvgPct   = avgMonthly > 0 ? Math.round(((monthly - avgMonthly) / avgMonthly) * 100) : 0;
 
   const fmt = (n) => n.toLocaleString('fr-CA');
