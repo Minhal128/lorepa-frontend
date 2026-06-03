@@ -8,7 +8,7 @@ const TRAILER_TYPES = [
   { id: 'fermee',     label: 'Remorque fermée',       rate: 80  },
   { id: 'plateforme', label: 'Plateforme',             rate: 100 },
   { id: 'dompeur',    label: 'Dompeur',                rate: 115 },
-  { id: 'bateau',     label: 'Remorque bateau',        rate: 65  },
+  { id: 'bateau',     label: 'Remorque',               rate: 65  },
   { id: 'voiture',    label: 'Transport voiture',      rate: 90  },
 ];
 

@@ -456,7 +456,7 @@ const CalculatorPage = () => {
 
             {/* CTA */}
             <a
-              href="/mettre-en-location"
+              href="/register"
               className="block w-full text-center bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold text-base py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(37,99,235,0.42)] shadow-[0_4px_16px_rgba(37,99,235,0.32)]"
             >
               Inscrire ma remorque gratuitement&nbsp;→
