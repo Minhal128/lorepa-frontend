@@ -90,68 +90,16 @@ const HeroSection = () => {
 
           {/* ── Right illustration ── */}
           <motion.div
-            className="lg:w-[45%] w-full max-w-[480px] sm:max-w-[520px] mx-auto lg:max-w-none"
+            className="lg:w-[45%] w-full mx-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.75, delay: 0.25, ease: 'easeOut' }}
           >
-            <div className="relative rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-[0_20px_56px_rgba(37,99,235,0.22)] aspect-[4/3]">
-              <img
-                src="/lorepa-hero-trailer-image.png"
-                alt="Remorque utilitaire en location sur Lorepa"
-                className="object-cover w-full h-full"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 via-blue-900/5 to-transparent pointer-events-none" />
-
-              {/* Income card 1 — hidden on very small, scaled on mobile */}
-              <motion.div
-                className="absolute top-3 left-3 sm:top-4 sm:left-4 backdrop-blur-xl bg-white/20 border border-white/35 rounded-2xl sm:rounded-3xl px-3 py-2 sm:px-4 sm:py-3 shadow-xl"
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 3.0, repeat: Infinity, ease: 'easeInOut' }}
-              >
-                <p className="text-white font-bold text-sm sm:text-lg leading-tight">+75 $</p>
-                <p className="text-white/75 text-[9px] sm:text-xs">Cette semaine</p>
-              </motion.div>
-
-              {/* Income card 2 — hide on mobile, show from sm */}
-              <motion.div
-                className="hidden sm:block absolute top-[88px] left-4 backdrop-blur-xl bg-white/20 border border-white/35 rounded-3xl px-4 py-3 shadow-xl"
-                animate={{ y: [0, -11, 0] }}
-                transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut', delay: 0.7 }}
-              >
-                <p className="text-white font-bold text-lg leading-tight">+120 $</p>
-                <p className="text-white/75 text-xs">Cette semaine</p>
-              </motion.div>
-
-              {/* Income card 3 — hide on mobile */}
-              <motion.div
-                className="hidden sm:block absolute top-[172px] left-4 backdrop-blur-xl bg-white/20 border border-white/35 rounded-3xl px-4 py-3 shadow-xl"
-                animate={{ y: [0, -7, 0] }}
-                transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut', delay: 1.4 }}
-              >
-                <p className="text-white font-bold text-lg leading-tight">+300 $/mois</p>
-                <p className="text-white/75 text-xs">Revenu potentiel</p>
-              </motion.div>
-
-              {/* Revenue dashboard — scaled down on mobile */}
-              <motion.div
-                className="absolute bottom-3 right-3 sm:bottom-5 sm:right-5 backdrop-blur-xl bg-white/20 border border-white/30 rounded-[16px] sm:rounded-[20px] p-3 sm:p-4 shadow-2xl min-w-[130px] sm:min-w-[160px]"
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 1.0 }}
-              >
-                <p className="text-white/70 text-[9px] sm:text-xs mb-1">Revenus ce mois</p>
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <p className="text-white font-black text-xl sm:text-[1.6rem] leading-none">+300 $</p>
-                  <span className="bg-green-400/35 text-green-300 text-[9px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap">+32%</span>
-                </div>
-                <div className="flex items-end gap-[2px] sm:gap-[3px] h-7 sm:h-9">
-                  {[28, 42, 32, 55, 38, 62, 48, 70, 54, 82, 65, 90].map((h, i) => (
-                    <div key={i} className="flex-1 bg-white/40 rounded-[2px]" style={{ height: `${h}%` }} />
-                  ))}
-                </div>
-                <p className="text-white/50 text-[9px] sm:text-[10px] mt-1 text-center">vs mois dernier</p>
-              </motion.div>
-            </div>
+            <img
+              src="/lorepa-hero-trailer-image.png"
+              alt="Remorque utilitaire en location sur Lorepa"
+              className="w-full h-auto object-contain rounded-[20px] sm:rounded-[28px] shadow-[0_20px_56px_rgba(37,99,235,0.22)]"
+            />
           </motion.div>
 
         </div>

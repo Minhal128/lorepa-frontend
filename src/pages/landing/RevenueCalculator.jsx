@@ -265,7 +265,7 @@ const RevenueCalculator = () => {
                   {fmt(annual)}&nbsp;$
                 </motion.p>
                 <p className="text-blue-200 text-[10px] sm:text-xs mt-2">
-                  Basé sur {bookedDays * 12} jours&nbsp;/&nbsp;an
+                  Prix des locations réalisés par les propriétaires en 2026
                 </p>
               </div>
 

@@ -1,478 +1,475 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+  ResponsiveContainer, Cell, ReferenceLine,
+} from 'recharts';
+import { LuTruck, LuPackage, LuLayers, LuHardHat, LuCar } from 'react-icons/lu';
 
-const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.6, ease: 'easeOut' },
-    },
+/* ── Trailer types ── */
+const TRAILERS = [
+  { id: 'utilitaire', label: 'Utilitaire', Icon: LuTruck,   rate: 60,  desc: 'Déménagements et travaux légers' },
+  { id: 'fermee',     label: 'Fermée',     Icon: LuPackage, rate: 100, desc: 'Marchandises protégées des intempéries' },
+  { id: 'plateforme', label: 'Plateforme', Icon: LuLayers,  rate: 120, desc: 'Équipements lourds, machinerie' },
+  { id: 'dompeur',    label: 'Dompeuse',   Icon: LuHardHat, rate: 95,  desc: 'Déchets et matériaux en vrac' },
+  { id: 'voiture',    label: 'Voiture',    Icon: LuCar,     rate: 125, desc: 'Transport de véhicules' },
+];
+
+/* ── Discount tiers ── */
+const getDiscount   = (d) => d >= 7 ? 0.85 : d >= 5 ? 0.90 : d >= 3 ? 0.95 : 1.00;
+const getDiscountPct = (d) => d >= 7 ? 15   : d >= 5 ? 10   : d >= 3 ? 5    : 0;
+const getBarColor   = (d) => d >= 7 ? '#10b981' : d >= 5 ? '#3b82f6' : d >= 3 ? '#8b5cf6' : '#94a3b8';
+
+const TIER_BADGE = {
+  0:  { bg: 'bg-slate-100',   text: 'text-slate-500',   label: 'Aucun rabais',  sub: '< 3 jours'   },
+  5:  { bg: 'bg-violet-100',  text: 'text-violet-700',  label: 'Rabais –5 %',   sub: '3–4 jours'   },
+  10: { bg: 'bg-blue-100',    text: 'text-blue-700',    label: 'Rabais –10 %',  sub: '5–6 jours'   },
+  15: { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Rabais –15 %',  sub: '7+ jours'    },
 };
 
-const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: { duration: 0.8 },
-    },
+const CHART_DAYS = [1, 2, 3, 4, 5, 6, 7, 10, 14, 21, 30];
+
+const fmt = (n) => Math.round(n).toLocaleString('fr-CA');
+
+/* ── Custom tooltip ── */
+const CustomTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-white rounded-xl shadow-xl border border-slate-100 px-4 py-3 text-sm">
+      <p className="font-bold text-slate-700 mb-0.5">{label} de location</p>
+      <p className="text-blue-600 font-black text-base">{fmt(payload[0].value)} $</p>
+    </div>
+  );
 };
 
-const calculatorPageTranslations = {
-    en: {
-        estimateIncome: "Estimate your rental income",
-        yourTrailer: "Your Trailer",
-        selectTrailer: "Select a trailer",
-        fermee5x8x60: "Enclosed 5' x 8' x 60\"",
-        enclosed5x8x72: "Enclosed 5' x 8' x 72\" ramp",
-        enclosed5x10x72: "Enclosed 5' x 10' x 72\"",
-        enclosed5x10x72ramp: "Enclosed 5' x 10' x 72\" ramp",
-        enclosed6x12x72ramp: "Enclosed 6' x 12' x 72\" ramp",
-        enclosed6x12dualAxle: "Enclosed 6' x 12' dual axle",
-        enclosed7x14x78: "Enclosed 7' x 14' x 78\"",
-        enclosed7x14x84ramp: "Enclosed 7' x 14' x 84\" ramp",
-        enclosed7x16x78ramp: "Enclosed 7' x 16' x 78\" ramp",
-        enclosed7x16x84ramp: "Enclosed 7' x 16' x 84\" ramp",
-        enclosed8x20x78ramp: "Enclosed 8' x 20' x 78\" ramp",
-        enclosed8x20x88ramp: "Enclosed 8' x 20' x 88\" ramp",
-        enclosed8x24x78ramp: "Enclosed 8' x 24' x 78\" ramp",
-        enclosed8x24x84ramp: "Enclosed 8' x 24' x 84\" ramp",
-        ouverte4x8: "Open 4' x 8'",
-        ouverte5x8: "Open 5' x 8'",
-        ouverte5x10ramp: "Open 5' x 10' ramp",
-        ouverte5x10tandem: "Open 5' x 10' tandem",
-        ouverte5x10plato: "Open 5' x 10' plato-lift",
-        ouverte6x12: "Open 6' x 12'",
-        ouverte6x12rampeTandem: "Open 6' x 12' ramp tandem",
-        plateforme6x20: "Flatbed 6' x 20'",
-        plateforme7x14: "Flatbed 7' x 14'",
-        plateforme8x16: "Flatbed 8' x 16'",
-        plateforme8x18: "Flatbed 8' x 18'",
-        plateforme8x20: "Flatbed 8' x 20'",
-        plateforme8x24: "Flatbed 8'6 x 24'",
-        dompeur5x10: "Dump 5' x 10'",
-        dompeur6x12: "Dump 6' x 12'",
-        dompeur7x14: "Dump 7' x 14'",
-        gooseneck24: "Gooseneck 8'6 x 24' tilting",
-        gooseneck30ramp: "Gooseneck 8'6 x 30' with ramp",
-        perDay: "/day",
-        daysRented: "Days rented",
-        accessories: "Accessories",
-        straps: "Straps",
-        dolly: "Dolly",
-        rentalIncome: "Rental income"
-    },
-    fr: {
-        estimateIncome: "Estimez vos revenus de location",
-        yourTrailer: "Votre Remorque",
-        selectTrailer: "Sélectionnez une remorque",
-        fermee5x8x60: "Remorque fermée 5' x 8' x 60\"",
-        enclosed5x8x72: "Remorque fermée 5' x 8' x 72\" rampe",
-        enclosed5x10x72: "Remorque fermée 5' x 10' x 72\"",
-        enclosed5x10x72ramp: "Remorque fermée 5' x 10' x 72\" rampe",
-        enclosed6x12x72ramp: "Remorque fermée 6' x 12' x 72\" rampe",
-        enclosed6x12dualAxle: "Remorque fermée 6' x 12' double essieu",
-        enclosed7x14x78: "Remorque fermée 7' x 14' x 78\"",
-        enclosed7x14x84ramp: "Remorque fermée 7' x 14' x 84\" rampe",
-        enclosed7x16x78ramp: "Remorque fermée 7' x 16' x 78\" rampe",
-        enclosed7x16x84ramp: "Remorque fermée 7' x 16' x 84\" rampe",
-        enclosed8x20x78ramp: "Remorque fermée 8' x 20' x 78\" rampe",
-        enclosed8x20x88ramp: "Remorque fermée 8' x 20' x 88\" rampe",
-        enclosed8x24x78ramp: "Remorque fermée 8' x 24' x 78\" rampe",
-        enclosed8x24x84ramp: "Remorque fermée 8' x 24' x 84\" rampe",
-        ouverte4x8: "Ouverte 4' x 8'",
-        ouverte5x8: "Ouverte 5' x 8'",
-        ouverte5x10ramp: "Ouverte 5' x 10' rampe",
-        ouverte5x10tandem: "Ouverte 5' x 10' tandem",
-        ouverte5x10plato: "Ouverte 5' x 10' plato-lift",
-        ouverte6x12: "Ouverte 6' x 12'",
-        ouverte6x12rampeTandem: "Ouverte 6' x 12' rampe tandem",
-        plateforme6x20: "Plateforme 6' x 20'",
-        plateforme7x14: "Plateforme 7' x 14'",
-        plateforme8x16: "Plateforme 8' x 16'",
-        plateforme8x18: "Plateforme 8' x 18'",
-        plateforme8x20: "Plateforme 8' x 20'",
-        plateforme8x24: "Plateforme 8'6 x 24'",
-        dompeur5x10: "Dompeur 5' x 10'",
-        dompeur6x12: "Dompeur 6' x 12'",
-        dompeur7x14: "Dompeur 7' x 14'",
-        gooseneck24: "Gooseneck 8'6 x 24' basculante",
-        gooseneck30ramp: "Gooseneck 8'6 x 30' avec rampe",
-        perDay: "/jour",
-        daysRented: "Jours loués",
-        accessories: "Accessoires",
-        straps: "Sangles",
-        dolly: "Diable",
-        rentalIncome: "Revenus de location"
-    },
-    es: {
-        estimateIncome: "Estima tus ingresos por alquiler",
-        yourTrailer: "Tu Remolque",
-        selectTrailer: "Selecciona un remolque",
-        fermee5x8x60: "Remolque Cerrado 5' x 8' x 60\"",
-        enclosed5x8x72: "Remolque Cerrado 5' x 8' x 72\" rampa",
-        enclosed5x10x72: "Remolque Cerrado 5' x 10' x 72\"",
-        enclosed5x10x72ramp: "Remolque Cerrado 5' x 10' x 72\" rampa",
-        enclosed6x12x72ramp: "Remolque Cerrado 6' x 12' x 72\" rampa",
-        enclosed6x12dualAxle: "Remolque Cerrado 6' x 12' doble eje",
-        enclosed7x14x78: "Remolque Cerrado 7' x 14' x 78\"",
-        enclosed7x14x84ramp: "Remolque Cerrado 7' x 14' x 84\" rampa",
-        enclosed7x16x78ramp: "Remolque Cerrado 7' x 16' x 78\" rampa",
-        enclosed7x16x84ramp: "Remolque Cerrado 7' x 16' x 84\" rampa",
-        enclosed8x20x78ramp: "Remolque Cerrado 8' x 20' x 78\" rampa",
-        enclosed8x20x88ramp: "Remolque Cerrado 8' x 20' x 88\" rampa",
-        enclosed8x24x78ramp: "Remolque Cerrado 8' x 24' x 78\" rampa",
-        enclosed8x24x84ramp: "Remolque Cerrado 8' x 24' x 84\" rampa",
-        ouverte4x8: "Abierta 4' x 8'",
-        ouverte5x8: "Abierta 5' x 8'",
-        ouverte5x10ramp: "Abierta 5' x 10' rampa",
-        ouverte5x10tandem: "Abierta 5' x 10' tándem",
-        ouverte5x10plato: "Abierta 5' x 10' plato-lift",
-        ouverte6x12: "Abierta 6' x 12'",
-        ouverte6x12rampeTandem: "Abierta 6' x 12' rampa tándem",
-        plateforme6x20: "Plataforma 6' x 20'",
-        plateforme7x14: "Plataforma 7' x 14'",
-        plateforme8x16: "Plataforma 8' x 16'",
-        plateforme8x18: "Plataforma 8' x 18'",
-        plateforme8x20: "Plataforma 8' x 20'",
-        plateforme8x24: "Plataforma 8'6 x 24'",
-        dompeur5x10: "Volquete 5' x 10'",
-        dompeur6x12: "Volquete 6' x 12'",
-        dompeur7x14: "Volquete 7' x 14'",
-        gooseneck24: "Gooseneck 8'6 x 24' inclinable",
-        gooseneck30ramp: "Gooseneck 8'6 x 30' con rampa",
-        perDay: "/día",
-        daysRented: "Días alquilados",
-        accessories: "Accesorios",
-        straps: "Correas",
-        dolly: "Plataforma rodante",
-        rentalIncome: "Ingresos por alquiler"
-    },
-    cn: {
-        estimateIncome: "估算您的租赁收入",
-        yourTrailer: "您的拖车",
-        selectTrailer: "选择拖车",
-        fermee5x8x60: "封闭式 5' x 8' x 60\"",
-        enclosed5x8x72: "封闭式 5' x 8' x 72\" 坡道",
-        enclosed5x10x72: "封闭式 5' x 10' x 72\"",
-        enclosed5x10x72ramp: "封闭式 5' x 10' x 72\" 坡道",
-        enclosed6x12x72ramp: "封闭式 6' x 12' x 72\" 坡道",
-        enclosed6x12dualAxle: "封闭式 6' x 12' 双轴",
-        enclosed7x14x78: "封闭式 7' x 14' x 78\"",
-        enclosed7x14x84ramp: "封闭式 7' x 14' x 84\" 坡道",
-        enclosed7x16x78ramp: "封闭式 7' x 16' x 78\" 坡道",
-        enclosed7x16x84ramp: "封闭式 7' x 16' x 84\" 坡道",
-        enclosed8x20x78ramp: "封闭式 8' x 20' x 78\" 坡道",
-        enclosed8x20x88ramp: "封闭式 8' x 20' x 88\" 坡道",
-        enclosed8x24x78ramp: "封闭式 8' x 24' x 78\" 坡道",
-        enclosed8x24x84ramp: "封闭式 8' x 24' x 84\" 坡道",
-        ouverte4x8: "开放 4' x 8'",
-        ouverte5x8: "开放 5' x 8'",
-        ouverte5x10ramp: "开放 5' x 10' 坡道",
-        ouverte5x10tandem: "开放 5' x 10' 双轮",
-        ouverte5x10plato: "开放 5' x 10' 平台提升",
-        ouverte6x12: "开放 6' x 12'",
-        ouverte6x12rampeTandem: "开放 6' x 12' 坡道双轮",
-        plateforme6x20: "平板 6' x 20'",
-        plateforme7x14: "平板 7' x 14'",
-        plateforme8x16: "平板 8' x 16'",
-        plateforme8x18: "平板 8' x 18'",
-        plateforme8x20: "平板 8' x 20'",
-        plateforme8x24: "平板 8'6 x 24'",
-        dompeur5x10: "翻斗 5' x 10'",
-        dompeur6x12: "翻斗 6' x 12'",
-        dompeur7x14: "翻斗 7' x 14'",
-        gooseneck24: "Gooseneck 8'6 x 24' 翻转",
-        gooseneck30ramp: "Gooseneck 8'6 x 30' 带坡道",
-        perDay: "/天",
-        daysRented: "租赁天数",
-        accessories: "配件",
-        straps: "绑带",
-        dolly: "手推车",
-        rentalIncome: "租赁收入"
-    }
-};
-
-
+/* ── Main component ── */
 const CalculatorPage = () => {
-    const [selectedTrailer, setSelectedTrailer] = useState('');
-    const [daysRented, setDaysRented] = useState(1);
-    const [strapsSelected, setStrapsSelected] = useState(false);
-    const [dollySelected, setDollySelected] = useState(false);
+  const [trailer, setTrailer] = useState(TRAILERS[0]);
+  const [days, setDays]       = useState(5);
 
-    const [trailerBaseValue, setTrailerBaseValue] = useState(0);
-    const [accessoriesCost, setAccessoriesCost] = useState(0);
-    const [rentalIncome, setRentalIncome] = useState(0);
+  const discount   = getDiscount(days);
+  const discountPct = getDiscountPct(days);
+  const gross      = trailer.rate * days;
+  const income     = Math.round(gross * discount);
+  const savings    = Math.round(gross - income);
+  const badge      = TIER_BADGE[discountPct];
 
-    const [translations, setTranslations] = useState(() => {
-        const storedLang = localStorage.getItem('lang');
-        return calculatorPageTranslations[storedLang] || calculatorPageTranslations.fr;
-    });
+  /* rentals that fit in a month at current duration */
+  const rentalsPerMonth = Math.max(1, Math.floor(30 / days));
+  const monthly         = income * rentalsPerMonth;
+  const annual          = monthly * 12;
 
-    // State and ref for custom select dropdown
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const dropdownRef = useRef(null);
+  /* bar chart data for selected trailer */
+  const chartData = useMemo(
+    () => CHART_DAYS.map((d) => ({
+      jours: d,
+      revenu: Math.round(trailer.rate * d * getDiscount(d)),
+      label: `${d}j`,
+    })),
+    [trailer.rate],
+  );
 
-    useEffect(() => {
-        const handleStorageChange = () => {
-            const storedLang = localStorage.getItem('lang');
-            setTranslations(calculatorPageTranslations[storedLang] || calculatorPageTranslations.fr);
-        };
+  /* slider thumb position for the discount threshold markers */
+  const sliderPct = ((days - 1) / 29) * 100;
 
-        window.addEventListener('storage', handleStorageChange);
-
-        handleStorageChange();
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, []);
-
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsDropdownOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    const trailerOptions = [
-        { id: "", name: "Select Trailer", dailyRate: 0, isDisabled: true, nameKey: "selectTrailer" },
-
-        { id: "fermee-5x8x60", name: "Fermée 5' x 8' x 60\"", dailyRate: 40, nameKey: "fermee5x8x60" },
-        { id: "fermee-5x8x72-rampe", name: "Fermée 5' x 8' x 72\" rampe", dailyRate: 45, nameKey: "enclosed5x8x72" },
-        { id: "fermee-5x10x72", name: "Fermée 5' x 10' x 72\"", dailyRate: 50, nameKey: "enclosed5x10x72" },
-        { id: "fermee-5x10x72-rampe", name: "Fermée 5' x 10' x 72\" rampe", dailyRate: 55, nameKey: "enclosed5x10x72ramp" },
-        { id: "fermee-6x12x72-rampe", name: "Fermée 6' x 12' x 72\" rampe", dailyRate: 70, nameKey: "enclosed6x12x72ramp" },
-        { id: "fermee-6x12-dual", name: "Fermée 6' x 12' essieu double", dailyRate: 80, nameKey: "enclosed6x12dualAxle" },
-        { id: "fermee-7x14x78", name: "Fermée 7' x 14' x 78\"", dailyRate: 85, nameKey: "enclosed7x14x78" },
-        { id: "fermee-7x14x84-rampe", name: "Fermée 7' x 14' x 84\" rampe", dailyRate: 90, nameKey: "enclosed7x14x84ramp" },
-        { id: "fermee-7x16x78-rampe", name: "Fermée 7' x 16' x 78\" rampe", dailyRate: 95, nameKey: "enclosed7x16x78ramp" },
-        { id: "fermee-7x16x84-rampe", name: "Fermée 7' x 16' x 84\" rampe", dailyRate: 100, nameKey: "enclosed7x16x84ramp" },
-        { id: "fermee-8x20x78-rampe", name: "Fermée 8' x 20' x 78\" rampe", dailyRate: 110, nameKey: "enclosed8x20x78ramp" },
-        { id: "fermee-8x20x88-rampe", name: "Fermée 8' x 20' x 88\" rampe", dailyRate: 115, nameKey: "enclosed8x20x88ramp" },
-        { id: "fermee-8x24x78-rampe", name: "Fermée 8' x 24' x 78\" rampe", dailyRate: 125, nameKey: "enclosed8x24x78ramp" },
-        { id: "fermee-8x24x84-rampe", name: "Fermée 8' x 24' x 84\" rampe", dailyRate: 130, nameKey: "enclosed8x24x84ramp" },
-
-        { id: "ouverte-4x8", name: "Ouverte 4' x 8'", dailyRate: 40, nameKey: "ouverte4x8" },
-        { id: "ouverte-5x8", name: "Ouverte 5' x 8'", dailyRate: 50, nameKey: "ouverte5x8" },
-        { id: "ouverte-5x10-rampe", name: "Ouverte 5' x 10' rampe", dailyRate: 55, nameKey: "ouverte5x10ramp" },
-        { id: "ouverte-5x10-tandem", name: "Ouverte 5' x 10' tandem", dailyRate: 60, nameKey: "ouverte5x10tandem" },
-        { id: "ouverte-5x10-plato", name: "Ouverte 5' x 10' plato-lift", dailyRate: 70, nameKey: "ouverte5x10plato" },
-        { id: "ouverte-6x12", name: "Ouverte 6' x 12'", dailyRate: 75, nameKey: "ouverte6x12" },
-        { id: "ouverte-6x12-rampe-tandem", name: "Ouverte 6' x 12' rampe tandem", dailyRate: 80, nameKey: "ouverte6x12rampeTandem" },
-
-        { id: "plateforme-6x20", name: "Plateforme 6' x 20'", dailyRate: 115, nameKey: "plateforme6x20" },
-        { id: "plateforme-7x14", name: "Plateforme 7' x 14'", dailyRate: 80, nameKey: "plateforme7x14" },
-        { id: "plateforme-8x16", name: "Plateforme 8' x 16'", dailyRate: 90, nameKey: "plateforme8x16" },
-        { id: "plateforme-8x18", name: "Plateforme 8' x 18'", dailyRate: 100, nameKey: "plateforme8x18" },
-        { id: "plateforme-8x20", name: "Plateforme 8' x 20'", dailyRate: 125, nameKey: "plateforme8x20" },
-        { id: "plateforme-8x24", name: "Plateforme 8'6 x 24'", dailyRate: 140, nameKey: "plateforme8x24" },
-
-        { id: "dompeur-5x10", name: "Dompeur 5' x 10'", dailyRate: 100, nameKey: "dompeur5x10" },
-        { id: "dompeur-6x12", name: "Dompeur 6' x 12'", dailyRate: 110, nameKey: "dompeur6x12" },
-        { id: "dompeur-7x14", name: "Dompeur 7' x 14'", dailyRate: 150, nameKey: "dompeur7x14" },
-
-        { id: "gooseneck-24", name: "Gooseneck 8'6 x 24' basculante", dailyRate: 215, nameKey: "gooseneck24" },
-        { id: "gooseneck-30-ramp", name: "Gooseneck 8'6 x 30' avec rampe", dailyRate: 230, nameKey: "gooseneck30ramp" },
-    ];
-
-
-
-    const ACCESSORY_STRAPS_COST = 10;
-    const ACCESSORY_DOLLY_COST = 15;
-
-    useEffect(() => {
-        const trailer = trailerOptions.find(t => t.id === selectedTrailer);
-        if (trailer) {
-            setTrailerBaseValue(trailer.dailyRate);
-        } else {
-            setTrailerBaseValue(0);
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 text-slate-900 flex flex-col">
+      <style>{`
+        .lorepa-slider {
+          -webkit-appearance: none;
+          appearance: none;
+          height: 24px;
+          cursor: pointer;
         }
-    }, [selectedTrailer, trailerOptions]);
+        .lorepa-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
+        .lorepa-slider::-moz-range-thumb { width: 0; height: 0; border: none; }
+        .lorepa-slider::-moz-range-track { background: transparent; }
+      `}</style>
+      <Navbar />
 
-    useEffect(() => {
-        let currentAccessoriesCost = 0;
-        if (strapsSelected) currentAccessoriesCost += ACCESSORY_STRAPS_COST;
-        if (dollySelected) currentAccessoriesCost += ACCESSORY_DOLLY_COST;
+      {/* ── Hero ── */}
+      <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 px-4 pt-14 pb-16 text-center text-white relative overflow-hidden">
+        <div className="absolute -top-20 -left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -right-16 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl pointer-events-none" />
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="inline-block px-4 py-1.5 bg-white/20 backdrop-blur rounded-full text-sm font-semibold mb-4">
+            💰 Calculateur de revenus
+          </span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-3 leading-tight">
+            Combien peut rapporter<br className="hidden sm:block" /> votre remorque&nbsp;?
+          </h1>
+          <p className="text-blue-100 text-base sm:text-lg max-w-xl mx-auto">
+            Sélectionnez votre type de remorque, ajustez la durée et visualisez vos revenus en temps réel.
+          </p>
+        </motion.div>
+      </section>
 
-        setAccessoriesCost(currentAccessoriesCost);
+      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-10 max-w-6xl mx-auto w-full">
+        <div className="grid lg:grid-cols-[1fr_360px] gap-8 items-start">
 
-        let discount = 1;
+          {/* ══ LEFT: Controls + Chart ══ */}
+          <div className="space-y-6">
 
-        if (daysRented >= 7) {
-            discount = 0.85;
-        } else if (daysRented >= 5) {
-            discount = 0.90;
-        } else if (daysRented >= 3) {
-            discount = 0.95;
-        }
-
-        const base = trailerBaseValue * daysRented;
-        const finalValue = base * discount + currentAccessoriesCost;
-
-        setRentalIncome(finalValue);
-    }, [trailerBaseValue, daysRented, strapsSelected, dollySelected]);
-
-
-    const handleSelectOption = (optionId) => {
-        setSelectedTrailer(optionId);
-        setIsDropdownOpen(false);
-    };
-
-    const selectedOptionText = selectedTrailer
-        ? translations[trailerOptions.find(t => t.id === selectedTrailer)?.nameKey] || translations.selectTrailer
-        : translations.selectTrailer;
-
-    return (
-        <div className='min-h-screen bg-[#F1F1F1] text-black flex flex-col'>
-            <Navbar />
-
+            {/* Trailer type cards */}
             <motion.div
-                className='mobile-px flex-1 pb-10'
-                initial='hidden'
-                animate='visible'
-                variants={fadeIn}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-2xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.07)]"
             >
-                <motion.h1
-                    className='text-2xl sm:text-3xl font-medium text-center mb-8 mt-10'
-                    variants={fadeInUp}
+              <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                Type de remorque
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                {TRAILERS.map((t) => {
+                  const active = trailer.id === t.id;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setTrailer(t)}
+                      className={`group flex flex-col items-center gap-1.5 py-4 px-2 rounded-xl border-2 transition-all duration-200 text-center
+                        ${active
+                          ? 'border-blue-500 bg-blue-50 shadow-[0_0_0_4px_rgba(59,130,246,0.12)]'
+                          : 'border-slate-200 hover:border-blue-300 hover:bg-blue-50/50'
+                        }`}
+                    >
+                      <t.Icon
+                        className={`w-6 h-6 transition-colors ${active ? 'text-blue-600' : 'text-slate-400 group-hover:text-blue-400'}`}
+                        strokeWidth={1.75}
+                      />
+                      <span className={`text-xs font-bold leading-tight ${active ? 'text-blue-700' : 'text-slate-700'}`}>
+                        {t.label}
+                      </span>
+                      <span className={`text-[11px] font-semibold ${active ? 'text-blue-500' : 'text-slate-400'}`}>
+                        {t.rate}&nbsp;$/jour
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={trailer.id}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-xs text-slate-400 mt-4 text-center"
                 >
-                    {translations.estimateIncome}
-                </motion.h1>
-
-                <motion.div
-                    className='grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-8 bg-white p-5 sm:p-6 rounded-xl shadow-sm'
-                    variants={fadeInUp}
-                >
-                    <div>
-                        <label htmlFor='trailer-select' className='block mb-2 text-sm font-medium text-gray-700'>
-                            {translations.yourTrailer}
-                        </label>
-                        <div className='relative' ref={dropdownRef}>
-                            <div
-                                className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg cursor-pointer flex justify-between items-center transition-all hover:bg-gray-100'
-                                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            >
-                                <span>{selectedOptionText}</span>
-                                <svg
-                                    className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
-                                    fill='none'
-                                    stroke='currentColor'
-                                    viewBox='0 0 24 24'
-                                    xmlns='http://www.w3.org/2000/svg'
-                                >
-                                    <path
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                        strokeWidth='2'
-                                        d='M19 9l-7 7-7-7'
-                                    ></path>
-                                </svg>
-                            </div>
-                            {isDropdownOpen && (
-                                <div className='absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto'>
-                                    {trailerOptions.map(option => (
-                                        <div
-                                            key={option.id}
-                                            className={`px-4 py-2 cursor-pointer hover:bg-gray-100 
-            ${option.isDisabled ? 'text-gray-400 cursor-not-allowed' : ''} 
-            ${selectedTrailer === option.id ? 'bg-blue-100' : ''}`}
-                                            onClick={() => !option.isDisabled && handleSelectOption(option.id)}
-                                        >
-                                            {translations[option.nameKey]} {option.dailyRate > 0 ? `($${option.dailyRate}${translations.perDay})` : ''}
-                                        </div>
-                                    ))}
-
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label htmlFor='days-rented-slider' className='block mb-2 text-sm font-medium text-gray-700'>
-                            {translations.daysRented}
-                        </label>
-                        <div className='flex items-center space-x-4'>
-                            <span className='text-gray-500 font-medium min-w-[2rem]'>{daysRented}</span>
-                            <input
-                                type='range'
-                                id='days-rented-slider'
-                                min='1'
-                                max='30'
-                                value={daysRented}
-                                onChange={(e) => setDaysRented(parseInt(e.target.value))}
-                                className='flex-grow h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#2563EB]'
-                            />
-                        </div>
-                    </div>
-
-                    <div className='col-span-1 md:col-span-2'>
-                        <label className='block mb-2 text-sm font-medium text-gray-700'>{translations.accessories}</label>
-                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-                            <label className='flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer transition-colors hover:bg-gray-100'>
-                                <input
-                                    type='checkbox'
-                                    className='form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500'
-                                    checked={strapsSelected}
-                                    onChange={(e) => setStrapsSelected(e.target.checked)}
-                                />
-                                <span className='ml-3 text-gray-700'>{translations.straps} (${ACCESSORY_STRAPS_COST})</span>
-                            </label>
-                            <label className='flex items-center p-3 bg-gray-50 rounded-lg cursor-pointer transition-colors hover:bg-gray-100'>
-                                <input
-                                    type='checkbox'
-                                    className='form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500'
-                                    checked={dollySelected}
-                                    onChange={(e) => setDollySelected(e.target.checked)}
-                                />
-                                <span className='ml-3 text-gray-700'>{translations.dolly} (${ACCESSORY_DOLLY_COST})</span>
-                            </label>
-                        </div>
-                    </div>
-                </motion.div>
-
-                <motion.div
-                    className='mt-6 space-y-4 bg-white p-5 sm:p-6 rounded-xl shadow-sm'
-                    variants={fadeInUp}
-                >
-                    <div className='flex justify-between items-center text-base sm:text-lg'>
-                        <span className='text-gray-600'>{translations.yourTrailer} <span className='text-xs sm:text-sm'>({translations.perDay} rate)</span></span>
-                        <span className='font-semibold'>${trailerBaseValue}.00</span>
-                    </div>
-                    <div className='flex justify-between items-center text-base sm:text-lg'>
-                        <span className='text-gray-600'>{translations.daysRented}</span>
-                        <span className='font-semibold'>{daysRented}</span>
-                    </div>
-                    <div className='flex justify-between items-center text-base sm:text-lg'>
-                        <span className='text-gray-600'>{translations.accessories}</span>
-                        <span className='font-semibold'>${accessoriesCost}.00</span>
-                    </div>
-                    <div className='flex justify-between items-center text-xl sm:text-2xl font-bold pt-4 border-t border-gray-100'>
-                        <span className='text-gray-800'>{translations.rentalIncome}</span>
-                        <span className='text-blue-600'>${rentalIncome}.00</span>
-                    </div>
-                </motion.div>
+                  {trailer.desc}
+                </motion.p>
+              </AnimatePresence>
             </motion.div>
 
+            {/* Days slider */}
             <motion.div
-                variants={fadeIn}
-                initial='hidden'
-                whileInView='visible'
-                viewport={{ once: true, amount: 0.2 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.18 }}
+              className="bg-white rounded-2xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.07)]"
             >
-                <Footer />
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  Durée de location
+                </h2>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={discountPct}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    transition={{ duration: 0.18 }}
+                    className={`text-xs font-bold px-3 py-1 rounded-full ${badge.bg} ${badge.text}`}
+                  >
+                    {badge.label} · {badge.sub}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+
+              <div className="flex items-center gap-5">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={days}
+                    initial={{ scale: 0.75, opacity: 0.5 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                    className="min-w-[4rem] text-center"
+                  >
+                    <span className="text-5xl font-black text-blue-600 leading-none">{days}</span>
+                    <p className="text-xs text-slate-400 mt-0.5">jour{days > 1 ? 's' : ''}</p>
+                  </motion.div>
+                </AnimatePresence>
+
+                <div className="flex-1">
+                  {/* Custom slider track */}
+                  <div className="relative flex items-center h-6">
+                    {/* Full track (grey) */}
+                    <div className="absolute w-full h-[6px] bg-slate-300 rounded-full" />
+                    {/* Filled track (blue) */}
+                    <div
+                      className="absolute h-[6px] bg-blue-600 rounded-full"
+                      style={{ width: `${sliderPct}%` }}
+                    />
+                    {/* Thumb */}
+                    <div
+                      className="absolute w-[22px] h-[22px] bg-blue-600 rounded-full border-[3px] border-white shadow-[0_2px_10px_rgba(37,99,235,0.5)] pointer-events-none"
+                      style={{ left: `calc(${sliderPct}% - 11px)` }}
+                    />
+                    {/* Native input — invisible, handles all interaction */}
+                    <input
+                      type="range"
+                      min="1"
+                      max="30"
+                      value={days}
+                      onChange={(e) => setDays(Number(e.target.value))}
+                      className="lorepa-slider absolute inset-0 w-full opacity-0 cursor-pointer"
+                    />
+                  </div>
+                  {/* All day markers 1–30 */}
+                  <div className="relative h-4 mt-2">
+                    {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
+                      const pct = ((day - 1) / 29) * 100;
+                      const color =
+                        day === 3 ? 'text-violet-400' :
+                        day === 5 ? 'text-blue-400'   :
+                        day === 7 ? 'text-emerald-500' :
+                        'text-slate-400';
+                      return (
+                        <span
+                          key={day}
+                          style={{ left: `${pct}%` }}
+                          className={`absolute -translate-x-1/2 text-[8px] font-semibold ${color} transition-opacity leading-none ${days >= day ? 'opacity-100' : 'opacity-30'}`}
+                        >
+                          {day}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Discount tier row */}
+              <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+                <div className={`rounded-xl py-2 px-1 border transition-all duration-200 ${discountPct === 5 ? 'border-violet-300 bg-violet-50' : 'border-slate-100 bg-slate-50 opacity-50'}`}>
+                  <p className={`text-sm font-black ${discountPct === 5 ? 'text-violet-600' : 'text-slate-400'}`}>–5&nbsp;%</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">3–4 jours</p>
+                </div>
+                <div className={`rounded-xl py-2 px-1 border transition-all duration-200 ${discountPct === 10 ? 'border-blue-300 bg-blue-50' : 'border-slate-100 bg-slate-50 opacity-50'}`}>
+                  <p className={`text-sm font-black ${discountPct === 10 ? 'text-blue-600' : 'text-slate-400'}`}>–10&nbsp;%</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">5–6 jours</p>
+                </div>
+                <div className={`rounded-xl py-2 px-1 border transition-all duration-200 ${discountPct === 15 ? 'border-emerald-300 bg-emerald-50' : 'border-slate-100 bg-slate-50 opacity-50'}`}>
+                  <p className={`text-sm font-black ${discountPct === 15 ? 'text-emerald-600' : 'text-slate-400'}`}>–15&nbsp;%</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">7+ jours</p>
+                </div>
+              </div>
             </motion.div>
+
+            {/* Bar chart */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.26 }}
+              className="bg-white rounded-2xl p-6 shadow-[0_2px_20px_rgba(0,0,0,0.07)]"
+            >
+              <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                Revenus selon la durée
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5 mb-5">
+                Remorque {trailer.label} · {trailer.rate}$/jour · rabais multi-jours inclus
+              </p>
+
+              <ResponsiveContainer width="100%" height={210}>
+                <BarChart data={chartData} barSize={22} margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis
+                    dataKey="label"
+                    tick={{ fontSize: 10, fill: '#94a3b8' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 10, fill: '#94a3b8' }}
+                    axisLine={false}
+                    tickLine={false}
+                    tickFormatter={(v) => `${v}$`}
+                    width={46}
+                  />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(241,245,249,0.7)', radius: 6 }} />
+                  <ReferenceLine x="3j" strokeDasharray="4 3" stroke="#8b5cf6" strokeWidth={1.5} />
+                  <ReferenceLine x="5j" strokeDasharray="4 3" stroke="#3b82f6" strokeWidth={1.5} />
+                  <ReferenceLine x="7j" strokeDasharray="4 3" stroke="#10b981" strokeWidth={1.5} />
+                  <Bar dataKey="revenu" radius={[6, 6, 0, 0]}>
+                    {chartData.map((entry) => (
+                      <Cell
+                        key={entry.jours}
+                        fill={getBarColor(entry.jours)}
+                        opacity={entry.jours === days ? 1 : 0.65}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+
+              <div className="flex flex-wrap gap-x-5 gap-y-1.5 mt-3">
+                {[
+                  { color: 'bg-slate-300',  label: '1–2 jours (taux normal)' },
+                  { color: 'bg-violet-400', label: '3–4 jours (–5 %)' },
+                  { color: 'bg-blue-400',   label: '5–6 jours (–10 %)' },
+                  { color: 'bg-emerald-400',label: '7+ jours (–15 %)' },
+                ].map((l) => (
+                  <span key={l.label} className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                    <span className={`w-2.5 h-2.5 rounded-sm inline-block ${l.color}`} />
+                    {l.label}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+
+          </div>
+
+          {/* ══ RIGHT: Results ══ */}
+          <motion.div
+            className="space-y-5 lg:sticky lg:top-6"
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15 }}
+          >
+            {/* Main result */}
+            <div className="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-7 text-white shadow-[0_8px_32px_rgba(37,99,235,0.35)]">
+              <p className="text-blue-200 text-xs font-semibold uppercase tracking-wide mb-2">
+                Revenu estimé
+              </p>
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={income}
+                  className="text-5xl font-black leading-none"
+                  initial={{ scale: 0.82, opacity: 0.5 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+                >
+                  {fmt(income)}&nbsp;$
+                </motion.p>
+              </AnimatePresence>
+              <p className="text-blue-200 text-sm mt-2">
+                {days}&nbsp;jour{days > 1 ? 's' : ''}&nbsp;·&nbsp;{trailer.label}
+              </p>
+
+              {savings > 0 && (
+                <motion.div
+                  key={savings}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-5 bg-white/15 rounded-xl px-4 py-3 flex items-center justify-between"
+                >
+                  <span className="text-sm text-blue-100">Économie accordée</span>
+                  <span className="font-bold text-white">–{fmt(savings)}&nbsp;$</span>
+                </motion.div>
+              )}
+
+              <div className="mt-3 bg-white/10 rounded-xl px-4 py-3 flex items-center justify-between">
+                <span className="text-sm text-blue-200">Prix sans rabais</span>
+                <span className={`text-sm font-medium ${savings > 0 ? 'line-through text-blue-300' : 'text-white'}`}>
+                  {fmt(gross)}&nbsp;$
+                </span>
+              </div>
+            </div>
+
+            {/* Breakdown */}
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_20px_rgba(0,0,0,0.07)] space-y-3">
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                Détails du calcul
+              </h3>
+
+              {[
+                { label: 'Tarif journalier', value: `${trailer.rate} $/jour` },
+                { label: 'Nombre de jours',  value: `${days} jour${days > 1 ? 's' : ''}` },
+                { label: 'Sous-total',        value: `${fmt(gross)} $` },
+              ].map((row) => (
+                <div key={row.label} className="flex justify-between text-sm">
+                  <span className="text-slate-500">{row.label}</span>
+                  <span className="font-semibold text-slate-800">{row.value}</span>
+                </div>
+              ))}
+
+              {discountPct > 0 && (
+                <div className="flex justify-between text-sm text-emerald-600 bg-emerald-50 -mx-1 px-3 py-2 rounded-lg">
+                  <span className="font-medium">Rabais multi-jours</span>
+                  <span className="font-bold">–{discountPct}&nbsp;%</span>
+                </div>
+              )}
+
+              <div className="border-t border-slate-100 pt-3 flex justify-between font-bold text-base">
+                <span className="text-slate-800">Total</span>
+                <span className="text-blue-600">{fmt(income)}&nbsp;$</span>
+              </div>
+            </div>
+
+            {/* Monthly projection */}
+            <div className="bg-white rounded-2xl p-5 shadow-[0_2px_20px_rgba(0,0,0,0.07)]">
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
+                Projection mensuelle
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-500">Locations / mois</span>
+                  <span className="font-semibold text-slate-800">~{rentalsPerMonth}&times;</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-500">Revenu mensuel est.</span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={monthly}
+                      initial={{ opacity: 0.5, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="font-bold text-blue-600"
+                    >
+                      {fmt(monthly)}&nbsp;$
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+                <div className="border-t border-slate-100 pt-3 flex justify-between">
+                  <span className="text-sm text-slate-500">Revenu annuel est.</span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={annual}
+                      initial={{ opacity: 0.5, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="font-black text-slate-800 text-base"
+                    >
+                      {fmt(annual)}&nbsp;$
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA */}
+            <a
+              href="/mettre-en-location"
+              className="block w-full text-center bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold text-base py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(37,99,235,0.42)] shadow-[0_4px_16px_rgba(37,99,235,0.32)]"
+            >
+              Inscrire ma remorque gratuitement&nbsp;→
+            </a>
+
+            <p className="text-center text-[10px] text-slate-400 leading-snug px-2">
+              Estimation basée sur les prix des locations réalisées par les propriétaires en 2026. Les résultats réels peuvent varier.
+            </p>
+          </motion.div>
+
         </div>
-    );
+      </main>
+
+      <Footer />
+    </div>
+  );
 };
 
 export default CalculatorPage;
