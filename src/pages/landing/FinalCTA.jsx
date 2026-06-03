@@ -90,7 +90,7 @@ const FinalCTA = () => (
             whileTap={{ scale: 0.97 }}
           >
             <Link
-              to="/mettre-en-location"
+              to="/register"
               className="inline-flex items-center justify-center gap-1.5 bg-white text-blue-600 font-bold rounded-full px-8 py-4 text-[0.95rem] shadow-[0_4px_20px_rgba(0,0,0,0.18)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.22)] hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap"
             >
               Commencer à gagner de l'argent →
