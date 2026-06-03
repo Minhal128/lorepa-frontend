@@ -56,10 +56,8 @@ const CalculatorPage = () => {
   const savings    = Math.round(gross - income);
   const badge      = TIER_BADGE[discountPct];
 
-  /* rentals that fit in a month at current duration */
-  const rentalsPerMonth = Math.max(1, Math.floor(30 / days));
-  const monthly         = income * rentalsPerMonth;
-  const annual          = monthly * 12;
+  const monthly = income;
+  const annual  = monthly * 12;
 
   /* bar chart data for selected trailer */
   const chartData = useMemo(
@@ -423,10 +421,6 @@ const CalculatorPage = () => {
                 Projection mensuelle
               </h3>
               <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-500">Locations / mois</span>
-                  <span className="font-semibold text-slate-800">~{rentalsPerMonth}&times;</span>
-                </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Revenu mensuel est.</span>
                   <motion.span
