@@ -194,18 +194,10 @@ const CalculatorPage = () => {
               </div>
 
               <div className="flex items-center gap-5">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={days}
-                    initial={{ scale: 0.75, opacity: 0.5 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                    className="min-w-[4rem] text-center"
-                  >
-                    <span className="text-5xl font-black text-blue-600 leading-none">{days}</span>
-                    <p className="text-xs text-slate-400 mt-0.5">jour{days > 1 ? 's' : ''}</p>
-                  </motion.div>
-                </AnimatePresence>
+                <div className="min-w-[5rem] text-center flex-shrink-0">
+                  <span className="text-5xl font-black text-blue-600 leading-none tabular-nums">{days}</span>
+                  <p className="text-xs text-slate-400 mt-0.5">jour{days > 1 ? 's' : ''}</p>
+                </div>
 
                 <div className="flex-1">
                   {/* Custom slider track */}
@@ -232,23 +224,38 @@ const CalculatorPage = () => {
                       className="lorepa-slider absolute inset-0 w-full opacity-0 cursor-pointer"
                     />
                   </div>
-                  {/* All day markers 1–30 */}
-                  <div className="relative h-4 mt-2">
+                  {/* Day markers: tick at every day, number at key days */}
+                  <div className="relative h-6 mt-2">
                     {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
-                      const pct = ((day - 1) / 29) * 100;
-                      const color =
-                        day === 3 ? 'text-violet-400' :
-                        day === 5 ? 'text-blue-400'   :
-                        day === 7 ? 'text-emerald-500' :
-                        'text-slate-400';
+                      const pct      = ((day - 1) / 29) * 100;
+                      const isEdgeL  = day === 1;
+                      const isEdgeR  = day === 30;
+                      const isThr    = [3, 5, 7].includes(day);
+                      const showNum  = [1, 3, 5, 7, 10, 15, 20, 25, 30].includes(day);
+                      const tickColor = day === 3 ? '#8b5cf6' : day === 5 ? '#3b82f6' : day === 7 ? '#10b981' : '#cbd5e1';
+                      const numColor  = day === 3 ? '#8b5cf6' : day === 5 ? '#3b82f6' : day === 7 ? '#10b981' : '#94a3b8';
+                      const active    = days >= day;
+
+                      const posStyle = isEdgeL
+                        ? { left: 0 }
+                        : isEdgeR
+                        ? { right: 0 }
+                        : { left: `${pct}%`, transform: 'translateX(-50%)' };
+
                       return (
-                        <span
+                        <div
                           key={day}
-                          style={{ left: `${pct}%` }}
-                          className={`absolute -translate-x-1/2 text-[8px] font-semibold ${color} transition-opacity leading-none ${days >= day ? 'opacity-100' : 'opacity-30'}`}
+                          style={{ position: 'absolute', display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: active ? 1 : 0.3, transition: 'opacity 0.15s', ...posStyle }}
                         >
-                          {day}
-                        </span>
+                          {/* tick */}
+                          <div style={{ width: isThr ? 2 : 1, height: isThr ? 6 : 4, borderRadius: 1, backgroundColor: tickColor }} />
+                          {/* number */}
+                          {showNum && (
+                            <span style={{ fontSize: 9, fontWeight: 700, color: numColor, lineHeight: 1, marginTop: 2 }}>
+                              {day}
+                            </span>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
