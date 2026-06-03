@@ -354,17 +354,15 @@ const CalculatorPage = () => {
               <p className="text-blue-200 text-xs font-semibold uppercase tracking-wide mb-2">
                 Revenu estimé
               </p>
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={income}
-                  className="text-5xl font-black leading-none"
-                  initial={{ scale: 0.82, opacity: 0.5 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-                >
-                  {fmt(income)}&nbsp;$
-                </motion.p>
-              </AnimatePresence>
+              <motion.p
+                key={income}
+                className="text-5xl font-black leading-none"
+                initial={{ scale: 0.92, opacity: 0.6 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              >
+                {fmt(income)}&nbsp;$
+              </motion.p>
               <p className="text-blue-200 text-sm mt-2">
                 {days}&nbsp;jour{days > 1 ? 's' : ''}&nbsp;·&nbsp;{trailer.label}
               </p>
@@ -431,29 +429,27 @@ const CalculatorPage = () => {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-500">Revenu mensuel est.</span>
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={monthly}
-                      initial={{ opacity: 0.5, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="font-bold text-blue-600"
-                    >
-                      {fmt(monthly)}&nbsp;$
-                    </motion.span>
-                  </AnimatePresence>
+                  <motion.span
+                    key={monthly}
+                    initial={{ opacity: 0.5, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.12 }}
+                    className="font-bold text-blue-600"
+                  >
+                    {fmt(monthly)}&nbsp;$
+                  </motion.span>
                 </div>
                 <div className="border-t border-slate-100 pt-3 flex justify-between">
                   <span className="text-sm text-slate-500">Revenu annuel est.</span>
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={annual}
-                      initial={{ opacity: 0.5, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="font-black text-slate-800 text-base"
-                    >
-                      {fmt(annual)}&nbsp;$
-                    </motion.span>
-                  </AnimatePresence>
+                  <motion.span
+                    key={annual}
+                    initial={{ opacity: 0.5, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.12 }}
+                    className="font-black text-slate-800 text-base"
+                  >
+                    {fmt(annual)}&nbsp;$
+                  </motion.span>
                 </div>
               </div>
             </div>
