@@ -64,7 +64,7 @@ const HeroSection = () => {
             >
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
                 <Link
-                  to="/mettre-en-location"
+                  to="/register"
                   className="flex sm:inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-blue-600 text-white rounded-full px-7 py-4 sm:px-8 sm:py-5 font-semibold text-base sm:text-lg hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(37,99,235,0.4)] transition-all duration-300 shadow-[0_8px_32px_rgba(37,99,235,0.3)]"
                 >
                   Inscrire ma remorque gratuitement →
