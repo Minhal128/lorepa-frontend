@@ -3,6 +3,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import config from "../config";
+import { trackPurchase } from "../utils/metaPixel";
 
 const PaymentSuccess = () => {
   const [params] = useSearchParams();
@@ -72,6 +73,10 @@ const PaymentSuccess = () => {
             const verifyRes = await axios.get(`${config.baseUrl}/stripe/verify-payment/${bookingId}?session_id=${sessionId}`);
             if (verifyRes.data.paid) {
               setStatus("success");
+              trackPurchase({
+                contentId: params.get("trailerId") || bookingId,
+                value: parseFloat(params.get("price") || 0),
+              });
               toast.success("Paiement réussi ! Votre réservation est confirmée.");
               setTimeout(() => navigate("/user/dashboard/reservation"), 1500);
               return true;

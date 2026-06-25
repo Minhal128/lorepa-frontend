@@ -16,6 +16,7 @@ import BookingModal from '../components/BookingModel';
 import { FiMap, FiList } from 'react-icons/fi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { isKycApproved } from '../helpers/kyc';
+import { trackSearch } from '../utils/metaPixel';
 
 // Fix for default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -374,6 +375,9 @@ const TrailersListing = () => {
 
       console.log('Final trailers count:', normalizedTrailers.length);
       setTrailers(normalizedTrailers);
+      if (cityFilter) {
+        trackSearch(cityFilter);
+      }
     } catch (err) {
       console.error('Error fetching trailers:', err);
       toast.error(translations.failedToFetch);

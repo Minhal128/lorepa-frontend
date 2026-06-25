@@ -1,7 +1,8 @@
 
 import './App.css';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import React, { Suspense, lazy, useEffect } from 'react';
+import { initPixel, trackPageView } from './utils/metaPixel';
 import { Toaster } from 'react-hot-toast';
 import LoaderGif from './assets/loader.gif';
 import LandingPage from './pages/LandingPage';
@@ -98,10 +99,18 @@ const PageLoader = () => (
   </div>
 );
 
+const RouteChangeTracker = () => {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView();
+  }, [location.pathname]);
+  return null;
+};
+
 function App() {
   useEffect(() => {
-    // Clear the reload flag after successful load
     window.localStorage.removeItem('page-has-been-reloaded');
+    initPixel();
   }, []);
 
   return (
@@ -110,6 +119,7 @@ function App() {
       <Toaster />
       <CookieConsent />
       <BrowserRouter>
+        <RouteChangeTracker />
         <Suspense fallback={<PageLoader />}>
 
           <Routes>

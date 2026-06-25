@@ -15,6 +15,7 @@ import { trailersListingTranslations } from '../translations/trailerListing';
 import toast from 'react-hot-toast';
 import BookingModal from '../components/BookingModel';
 import { isKycApproved } from '../helpers/kyc';
+import { trackViewContent } from '../utils/metaPixel';
 
 const reviews = [
   {
@@ -278,7 +279,12 @@ const SingleTrailer = () => {
       if (!id) return;
       try {
         const res = await axios.get(`${config.baseUrl}/trailer/single/${id}`);
-        setTrailer(res.data.data);
+        const trailerData = res.data.data;
+        setTrailer(trailerData);
+        trackViewContent({
+          contentId: trailerData._id,
+          value: parseFloat(trailerData.dailyRate || 0),
+        });
       } catch (err) {
         setError(translations.failedToFetch);
       } finally {
