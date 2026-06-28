@@ -688,24 +688,24 @@ const SingleTrailer = () => {
             </div> */}
         </motion.div>
 
+        {canRequestBooking && (
+          <div className="flex justify-center py-6">
+            <button
+              type="button"
+              className="mobile-btn-primary w-64 text-center"
+              onClick={async () => {
+                const canBook = await validateKycBeforeBooking();
+                if (canBook) setIsBookingModalOpen(true);
+              }}
+            >
+              {translations2.bookNow}
+            </button>
+          </div>
+        )}
+
         {/* FAQ Section */}
         <div className="py-8 sm:py-10 text-black">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 mb-6 text-center">{translations.faqTitle}</h2>
-
-          {canRequestBooking && (
-            <div className="flex justify-center">
-              <button
-                type="button"
-                className="mobile-btn-primary w-56 text-center mb-6 lg:hidden"
-                onClick={async () => {
-                  const canBook = await validateKycBeforeBooking();
-                  if (canBook) setIsBookingModalOpen(true);
-                }}
-              >
-                {translations2.bookNow}
-              </button>
-            </div>
-          )}
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6'>
             <div className='bg-[#F1F1F1] p-4 sm:p-5 rounded-xl'>
