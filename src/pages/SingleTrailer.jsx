@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import SEO from '../components/SEO';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { FaAngleDown, FaAngleUp, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
@@ -196,6 +196,7 @@ const SingleTrailer = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { id } = useParams();
   const nav = useNavigate();
+  const searchLocation = new URLSearchParams(useLocation().search).get('city') || '';
   const [randomReview, setRandomReview] = useState({});
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const touchStartXRef = useRef(null);
@@ -635,6 +636,12 @@ const SingleTrailer = () => {
                 <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1 text-xs">{translations.length}</label>
                 <div className="text-gray-800 text-sm font-medium break-words">{trailer.length || '-'}</div>
               </div>
+              {searchLocation && (
+                <div className="p-3 bg-gray-50 rounded-lg sm:col-span-2">
+                  <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1 text-xs">{translations.location}</label>
+                  <div className="text-gray-800 text-sm font-medium break-words">{searchLocation}</div>
+                </div>
+              )}
             </div>
           </div>
 

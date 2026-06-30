@@ -149,7 +149,7 @@ const TrailersListing = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const handleCardClick = (id) => nav(`/trailers/${id}`);
+  const handleCardClick = (id) => nav(`/trailers/${id}${cityFromQuery ? `?city=${encodeURIComponent(cityFromQuery)}` : ''}`);
 
   const getCurrentCardImageIndex = (trailerId, imageCount) => {
     if (imageCount <= 0) return 0;
