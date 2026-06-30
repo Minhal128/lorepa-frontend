@@ -636,12 +636,10 @@ const SingleTrailer = () => {
                 <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1 text-xs">{translations.length}</label>
                 <div className="text-gray-800 text-sm font-medium break-words">{trailer.length || '-'}</div>
               </div>
-              {searchLocation && (
-                <div className="p-3 bg-gray-50 rounded-lg sm:col-span-2">
-                  <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1 text-xs">{translations.location}</label>
-                  <div className="text-gray-800 text-sm font-medium break-words">{searchLocation}</div>
-                </div>
-              )}
+              <div className="p-3 bg-gray-50 rounded-lg sm:col-span-2">
+                <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1 text-xs">{translations.location}</label>
+                <div className="text-gray-800 text-sm font-medium break-words">{searchLocation || trailer.city || '-'}</div>
+              </div>
             </div>
           </div>
 
