@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { trackInitiateCheckout } from '../utils/metaPixel';
 
 const calculatePrice = (startDate, endDate, dailyRate) => {
     if (!startDate || !endDate || !dailyRate) return 0;
@@ -114,6 +115,7 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
             return;
         }
 
+        trackInitiateCheckout({ contentId: trailer._id, value: totalWithFee });
         setStep(2);
     };
 

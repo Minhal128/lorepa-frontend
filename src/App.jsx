@@ -1,7 +1,8 @@
 
 import './App.css';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import React, { Suspense, lazy, useState, useEffect } from 'react';
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { initPixel, trackPageView } from './utils/metaPixel';
 import { Toaster } from 'react-hot-toast';
 import LoaderGif from './assets/loader.gif';
 import LandingPage from './pages/LandingPage';
@@ -55,6 +56,9 @@ import CookieConsent from './components/CookieConsent';
 import UserProfilePage from './pages/User/Dashboard/UserProfilePage';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
+import LouerUneRemorquePage from './pages/LouerUneRemorquePage';
+import BecomeHostPage from './pages/BecomeHostPage';
+import OwnerLandingPage from './pages/landing/LandingPage';
 import ForgetPasswordPage from './pages/Auth/ForgetPasswordPage';
 import VerifyOtpPage from './pages/Auth/VerifyOtpPage';
 import ChangePasswordPage from './pages/Auth/ChangePasswordPage';
@@ -89,27 +93,24 @@ const BuyerLayout = lazyWithRetry(() => import('./components/buyer/Layout'));
 
 
 
-function SuspenseWithDelay({ children, fallback, delay = 0, minDisplayTime = 2000 }) {
-  const [isLoading, setIsLoading] = useState(true);
+const PageLoader = () => (
+  <div className="flex justify-center items-center w-screen h-screen">
+    <img src={LoaderGif} alt="Loading..." className="h-[6rem]" />
+  </div>
+);
 
+const RouteChangeTracker = () => {
+  const location = useLocation();
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), minDisplayTime);
-    return () => clearTimeout(timer);
-  }, [minDisplayTime]);
-
-  return isLoading ? (
-    <div className="flex justify-center items-center w-screen h-screen">
-      <img src={LoaderGif} alt="Loading..." className="h-[6rem]" />
-    </div>
-  ) : (
-    <Suspense fallback={fallback}>{children}</Suspense>
-  );
-}
+    trackPageView();
+  }, [location.pathname]);
+  return null;
+};
 
 function App() {
   useEffect(() => {
-    // Clear the reload flag after successful load
     window.localStorage.removeItem('page-has-been-reloaded');
+    initPixel();
   }, []);
 
   return (
@@ -118,7 +119,8 @@ function App() {
       <Toaster />
       <CookieConsent />
       <BrowserRouter>
-        <SuspenseWithDelay fallback={<div className="flex justify-center items-center w-screen h-screen"><img src={LoaderGif} alt="HopOn Dashboard- Loader" className="h-[6rem]" /></div>} minDisplayTime={2000}>
+        <RouteChangeTracker />
+        <Suspense fallback={<PageLoader />}>
 
           <Routes>
             <Route path='/user/login' element={<UserLogin />} />
@@ -194,12 +196,15 @@ function App() {
 
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel/>} />
+            <Route path="/louer-une-remorque" element={<LouerUneRemorquePage />} />
+            <Route path="/mettre-en-location" element={<BecomeHostPage />} />
+            <Route path="/proprietaire" element={<OwnerLandingPage />} />
 
 
 
 
           </Routes>
-        </SuspenseWithDelay>
+        </Suspense>
       </BrowserRouter>
     </>
   );

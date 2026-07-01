@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import SEO from '../components/SEO';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { FaAngleDown, FaAngleUp, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
@@ -14,6 +15,7 @@ import { trailersListingTranslations } from '../translations/trailerListing';
 import toast from 'react-hot-toast';
 import BookingModal from '../components/BookingModel';
 import { isKycApproved } from '../helpers/kyc';
+import { trackViewContent } from '../utils/metaPixel';
 
 const reviews = [
   {
@@ -194,6 +196,7 @@ const SingleTrailer = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { id } = useParams();
   const nav = useNavigate();
+  const searchLocation = new URLSearchParams(useLocation().search).get('city') || '';
   const [randomReview, setRandomReview] = useState({});
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const touchStartXRef = useRef(null);
@@ -277,7 +280,12 @@ const SingleTrailer = () => {
       if (!id) return;
       try {
         const res = await axios.get(`${config.baseUrl}/trailer/single/${id}`);
-        setTrailer(res.data.data);
+        const trailerData = res.data.data;
+        setTrailer(trailerData);
+        trackViewContent({
+          contentId: trailerData._id,
+          value: parseFloat(trailerData.dailyRate || 0),
+        });
       } catch (err) {
         setError(translations.failedToFetch);
       } finally {
@@ -411,8 +419,34 @@ const SingleTrailer = () => {
     );
   }
 
+  const trailerDescription = trailer?.description
+    ? trailer.description.slice(0, 155)
+    : 'Louez cette remorque au Québec via LOREPA, la plateforme de location entre particuliers.';
+
   return (
     <div className="min-h-screen bg-white flex flex-col font-inter overflow-x-hidden">
+      <SEO
+        title={trailer ? `${trailer.title} – ${trailer.category} à louer | LOREPA` : 'Remorque à louer | LOREPA'}
+        description={trailer ? `Louez ${trailer.title} pour ${trailer.dailyRate}$/jour. ${trailerDescription}` : 'Détails de la remorque disponible sur LOREPA.'}
+        canonical={`/trailers/${id}`}
+        image={trailerImages[0] || undefined}
+        type="product"
+        structuredData={trailer ? {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": trailer.title,
+          "description": trailer.description,
+          "image": trailerImages,
+          "category": trailer.category,
+          "offers": {
+            "@type": "Offer",
+            "price": trailer.dailyRate,
+            "priceCurrency": "CAD",
+            "availability": "https://schema.org/InStock",
+            "url": `https://lorepa.ca/trailers/${id}`
+          }
+        } : null}
+      />
       <Navbar />
 
       <main className="flex-1 mobile-px py-4 sm:py-6 lg:py-8">
@@ -587,6 +621,10 @@ const SingleTrailer = () => {
                 <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1 text-xs">{translations.length}</label>
                 <div className="text-gray-800 text-sm font-medium break-words">{trailer.length || '-'}</div>
               </div>
+              <div className="p-3 bg-gray-50 rounded-lg sm:col-span-2">
+                <label className="block text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-1 text-xs">{translations.location}</label>
+                <div className="text-gray-800 text-sm font-medium break-words">{searchLocation || trailer.city || '-'}</div>
+              </div>
             </div>
           </div>
 
@@ -640,69 +678,20 @@ const SingleTrailer = () => {
             </div> */}
         </motion.div>
 
-        {/* Action Buttons */}
-        <motion.div
-          className="mt-6 hidden sm:flex flex-col sm:flex-row justify-end gap-3"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-        >
-          {
-            (isLogin && role !== "owner") &&
+        {canRequestBooking && (
+          <div className="flex justify-center py-6">
             <button
-              className='mobile-btn-primary w-full sm:w-auto'
+              type="button"
+              className="mobile-btn-primary w-64 text-center"
               onClick={async () => {
                 const canBook = await validateKycBeforeBooking();
-                if (canBook) {
-                  setIsBookingModalOpen(true);
-                }
+                if (canBook) setIsBookingModalOpen(true);
               }}
             >
               {translations2.bookNow}
             </button>
-          }
-          {
-            !isLogin && (
-              <button
-                onClick={() => nav('/login')}
-                className="mobile-btn-primary w-full sm:w-auto"
-              >
-                {translations.signupsignin}
-              </button>
-            )
-          }
-        </motion.div>
-
-        {/* Secondary Action: Request Booking (visible above FAQ) */}
-        <motion.div
-          className="mt-4 flex justify-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.4 }}
-        >
-          {
-            (isLogin && role !== "owner") ? (
-              <button
-                className="mobile-btn-primary w-full sm:w-1/2"
-                onClick={async () => {
-                  const canBook = await validateKycBeforeBooking();
-                  if (canBook) setIsBookingModalOpen(true);
-                }}
-              >
-                {translations2.bookNow}
-              </button>
-            ) : (
-              !isLogin && (
-                <button
-                  onClick={() => nav('/login')}
-                  className="mobile-btn-primary w-full sm:w-1/2"
-                >
-                  {translations.signupsignin}
-                </button>
-              )
-            )
-          }
-        </motion.div>
+          </div>
+        )}
 
         {/* FAQ Section */}
         <div className="py-8 sm:py-10 text-black">

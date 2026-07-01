@@ -138,12 +138,12 @@ export const documentPageTranslations = {
             fileSizeExceeds: "La taille du fichier dépasse la limite de 10 Mo.",
             fillAllFields: "Veuillez remplir tous les champs requis",
             uploading: "Téléversement du document...",
-        // FAQ 27
-        faq27Title: "Avenant FAQ 27",
-        faq27DepositField: "Police d'assurance auto page FAQ 27",
             uploadSuccess: "Document téléversé avec succès !",
             uploadFailed: "Échec du téléversement",
         },
+        // FAQ 27
+        faq27Title: "Avenant FAQ 27",
+        faq27DepositField: "Police d'assurance auto page FAQ 27",
     },
     cn: {
         myDocuments: "我的文件",

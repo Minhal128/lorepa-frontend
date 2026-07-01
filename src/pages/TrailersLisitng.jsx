@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import SEO from '../components/SEO';
 import Footer from '../components/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -15,6 +16,7 @@ import BookingModal from '../components/BookingModel';
 import { FiMap, FiList } from 'react-icons/fi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { isKycApproved } from '../helpers/kyc';
+import { trackSearch } from '../utils/metaPixel';
 
 // Fix for default marker icon
 delete L.Icon.Default.prototype._getIconUrl;
@@ -147,7 +149,7 @@ const TrailersListing = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const handleCardClick = (id) => nav(`/trailers/${id}`);
+  const handleCardClick = (id) => nav(`/trailers/${id}${cityFromQuery ? `?city=${encodeURIComponent(cityFromQuery)}` : ''}`);
 
   const getCurrentCardImageIndex = (trailerId, imageCount) => {
     if (imageCount <= 0) return 0;
@@ -361,6 +363,9 @@ const TrailersListing = () => {
 
       console.log('Final trailers count:', normalizedTrailers.length);
       setTrailers(normalizedTrailers);
+      if (cityFilter) {
+        trackSearch(cityFilter);
+      }
     } catch (err) {
       console.error('Error fetching trailers:', err);
       toast.error(translations.failedToFetch);
@@ -407,6 +412,11 @@ const TrailersListing = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      <SEO
+        title="Remorques disponibles à louer au Québec | LOREPA"
+        description="Parcourez toutes les remorques disponibles à la location partout au Québec. Filtrez par ville, type et disponibilité. Réservez en quelques clics."
+        canonical="/trailers"
+      />
       <Navbar2 />
       <main className="flex-1 mobile-px py-4 sm:py-6 lg:py-8">
         {/* Mobile Map/List Toggle */}

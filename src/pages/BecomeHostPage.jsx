@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import VerificationModal from '../components/VerificationModel';
@@ -467,6 +468,11 @@ const BecomeHostPage = () => {
 
     return (
         <div className='min-h-screen bg-gray-100 flex flex-col font-inter'>
+            <Helmet>
+                <title>Mettre sa remorque en location au Québec | Lorepa.ca</title>
+                <meta name="description" content="Mets ta remorque inutilisée en location sur Lorepa.ca. Fixe ton prix, tes disponibilités. Rejoins des centaines de propriétaires qui génèrent des revenus au Québec." />
+                <link rel="canonical" href="https://lorepa.ca/mettre-en-location" />
+            </Helmet>
             <Navbar />
             <motion.div
                 initial="hidden"
@@ -592,7 +598,10 @@ const BecomeHostPage = () => {
                                 </button>
                             ) : (
                                 <button
-                                    onClick={handleSubmit}
+                                    onClick={() => {
+                                        window.gtag?.('event', 'conversion', { send_to: 'AW-CONVERSION_ID/CONVERSION_LABEL' });
+                                        handleSubmit();
+                                    }}
                                     disabled={!isStepCompleted(currentStep)}
                                     className={`mobile-btn w-full ${isStepCompleted(currentStep) ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
                                 >

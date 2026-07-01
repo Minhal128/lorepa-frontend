@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Block private/dashboard areas from indexing
+Disallow: /admin/
+Disallow: /user/dashboard/
+Disallow: /seller/dashboard/
+Disallow: /payment-success
+Disallow: /payment-cancel
+Disallow: /verify
+Disallow: /verify-otp
+Disallow: /change-password
+
+Sitemap: https://lorepa.ca/sitemap.xml

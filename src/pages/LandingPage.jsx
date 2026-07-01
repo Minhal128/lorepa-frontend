@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import SEO from "../components/SEO";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Img from "../assets/landing/img.png";
@@ -415,6 +416,20 @@ const LandingPage = () => {
 
     return (
         <div className="w-screen min-h-screen bg-[#fff] flex flex-col overflow-x-hidden">
+            <SEO
+                title="LOREPA – Location de remorques entre particuliers au Québec"
+                description="Trouvez et réservez une remorque entre particuliers au Québec. Centaines d'annonces, réservation simple et sécurisée. Louez ou mettez votre remorque en location dès aujourd'hui."
+                canonical="/"
+                structuredData={{
+                    "@context": "https://schema.org",
+                    "@type": "Service",
+                    "name": "LOREPA – Location de remorques",
+                    "url": "https://lorepa.ca",
+                    "description": "Plateforme de location de remorques entre particuliers au Québec",
+                    "areaServed": { "@type": "Province", "name": "Québec" },
+                    "serviceType": "Location de remorques"
+                }}
+            />
             <motion.div variants={fadeInDown} initial="hidden" animate="visible">
                 {/* Assuming Navbar also needs to know the current language */}
                 <Navbar currentLanguage={translationsData} />

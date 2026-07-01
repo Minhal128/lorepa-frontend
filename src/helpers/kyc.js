@@ -45,7 +45,22 @@ export const isKycApproved = (account) => {
     account.accountVerificationStatus,
   ];
 
-  return statusFields
-    .map((status) => normalizeString(status))
-    .some((status) => APPROVED_STATUS_VALUES.has(status));
+  if (statusFields.map(normalizeString).some((s) => APPROVED_STATUS_VALUES.has(s))) {
+    return true;
+  }
+
+  // Renters: all 4 required documents uploaded = KYC complete
+  if (account.role === "renter" || !account.role) {
+    const renterDocs = [
+      account.licenseFrontImage,
+      account.licenseBackImage,
+      account.carInsurancePolicyImage,
+      account.faq27Image,
+    ];
+    if (renterDocs.every((doc) => typeof doc === "string" && doc.trim().length > 0)) {
+      return true;
+    }
+  }
+
+  return false;
 };
