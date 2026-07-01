@@ -215,7 +215,7 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
                 <DocumentUploadBlock t={t} side={t.back} file={userData.licenseBackImage || userData.licenseBackImageUrl} onFileSelect={e => setUserData({ ...userData, licenseBackImage: e.target.files[0], licenseBackImageUrl: URL.createObjectURL(e.target.files[0]) })} />
             </div>
             {
-                localStorage.getItem("role") === "owner" ?
+                localStorage.getItem("role") === "owner" ? (
                     <div>
                         <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.trailerDocuments}</h3>
 
@@ -224,7 +224,6 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
                             <DocumentUploadBlock t={t} side={t?.trailerRegistrationImage} file={userData.trailerRegistrationImage || userData.trailerRegistrationImageURL} onFileSelect={e => setUserData({ ...userData, trailerRegistrationImage: e.target.files[0], trailerRegistrationImageURL: URL.createObjectURL(e.target.files[0]) })} />
                         </div>
                     </div>
-                </div>
             ) : (
                 <div>
                     <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.insurance}</h3>

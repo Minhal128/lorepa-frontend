@@ -185,8 +185,8 @@ const ReviewCard = ({ name, rating, timeAgo, reviewText, avatar }) => (
 );
 
 const SingleTrailer = () => {
-  const isLogin = localStorage.getItem("userId");
   const role = localStorage.getItem("role");
+  const canRequestBooking = role !== "owner";
 
   const [trailer, setTrailer] = useState(null);
   const [loading, setLoading] = useState(true);
