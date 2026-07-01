@@ -1,0 +1,4 @@
+.Bouncy .card {
+  cursor: pointer;
+  will-change: transform;
+}

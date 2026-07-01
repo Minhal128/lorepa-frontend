@@ -3,11 +3,8 @@ import { motion } from "framer-motion";
 import SEO from "../components/SEO";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import Img from "../assets/landing/img.png";
 import Host1 from "../assets/landing/rent_trailer_img.png";
 import Host2 from "../assets/landing/become_host_img.png";
-import Web from "../assets/landing/web.png";
-import Mobile from "../assets/landing/mobile.jpg";
 
 import {
     FaAngleDown,
@@ -15,13 +12,19 @@ import {
     FaAngleLeft,
     FaAngleRight,
     FaSearch,
-    FaLongArrowAltRight,
+    FaShieldAlt,
+    FaTools,
+    FaStar,
+    FaMapMarkerAlt,
 } from "react-icons/fa";
+import { GiSteeringWheel } from "react-icons/gi";
 import axios from "axios";
 import config from "../config";
 import { Link, useNavigate } from "react-router-dom";
 import { blurIn, fadeIn, fadeInDown, fadeInUp, flipIn, scaleIn, zoomBounce } from "../../animation";
 import AccordionItem from "./AccordionItem";
+import BounceCards from "./BounceCards";
+import RollingGallery from "./RollingGallery";
 
 const translations = {
     en: {
@@ -49,6 +52,21 @@ const translations = {
         carHauler: "Browse Trailers",
         faq: "Frequently asked questions",
         faqDesc: "Everything you need to know about Lorepa.",
+        heroLabel: "Trailer Rental, Reinvented",
+        heroHeadingLine1: "Find the Trailer You Want,",
+        heroHeadingHighlight: "Wherever",
+        heroHeadingLine2: "You Want!",
+        heroFeature1: "Transport Made Easy",
+        heroFeature1Desc: "The Trailer You Can Trust.",
+        heroFeature2: "Built for the Job",
+        heroFeature2Desc: "Ready for Every Trip.",
+        heroFeature3: "Ready When You Are",
+        heroFeature3Desc: "The Safe Choice for Transport.",
+        heroPeopleLabel: "People",
+        heroPeopleDesc: "The point of using Lorepa is that it has a more-or-less normal distribution of letters, with Lorem Ipsum.",
+        heroTrustedByPrefix: "Trusted by",
+        heroHappyCustomers: "happy customers",
+        heroReviewsLabel: "Reviews",
         seeAllFaq: "See all FAQ",
         searching: "Searching...",
         noResults: "No results found",
@@ -96,6 +114,21 @@ const translations = {
         "carHauler": "Explorar Remolques",
         faq: "Preguntas frecuentes",
         faqDesc: "Todo lo que necesitas saber sobre Lorepa.",
+        heroLabel: "Alquiler de Remolques, Reinventado",
+        heroHeadingLine1: "Encuentra el Remolque que Quieres,",
+        heroHeadingHighlight: "Donde",
+        heroHeadingLine2: "Sea que lo Necesites!",
+        heroFeature1: "Transporte Fácil",
+        heroFeature1Desc: "El remolque en el que puedes confiar.",
+        heroFeature2: "Hecho para el Trabajo",
+        heroFeature2Desc: "Listo para cada viaje.",
+        heroFeature3: "Listo Cuando Tú Lo Estés",
+        heroFeature3Desc: "La opción segura para transportar.",
+        heroPeopleLabel: "Personas",
+        heroPeopleDesc: "El objetivo de usar Lorepa es que tiene una distribución de letras más o menos normal, con Lorem Ipsum.",
+        heroTrustedByPrefix: "Confiado por",
+        heroHappyCustomers: "clientes satisfechos",
+        heroReviewsLabel: "Reseñas",
         seeAllFaq: "Ver todas las FAQ",
         searching: "Buscando...",
         noResults: "No se encontraron resultados",
@@ -143,6 +176,21 @@ const translations = {
         carHauler: "浏览拖车",
         faq: "常见问题",
         faqDesc: "Lorepa 的相关常见问题与解答。",
+        heroLabel: "拖车租赁，全新体验",
+        heroHeadingLine1: "找到您想要的拖车，",
+        heroHeadingHighlight: "随时随地",
+        heroHeadingLine2: "满足您的需求！",
+        heroFeature1: "轻松运输",
+        heroFeature1Desc: "值得信赖的拖车。",
+        heroFeature2: "为工作而生",
+        heroFeature2Desc: "随时胜任每一程。",
+        heroFeature3: "随时待命",
+        heroFeature3Desc: "运输的安心之选。",
+        heroPeopleLabel: "用户",
+        heroPeopleDesc: "使用 Lorepa 的意义在于它具有大致正常的字母分布，采用 Lorem Ipsum。",
+        heroTrustedByPrefix: "深受",
+        heroHappyCustomers: "满意客户的信赖",
+        heroReviewsLabel: "条评价",
         seeAllFaq: "查看所有 FAQ",
         searching: "搜索中...",
         noResults: "未找到结果",
@@ -190,6 +238,21 @@ const translations = {
         carHauler: "Parcourir les remorques",
         faq: "Questions fréquemment posées",
         faqDesc: "Tout ce que vous devez savoir sur Lorepa.",
+        heroLabel: "Location de Remorques, Réinventée",
+        heroHeadingLine1: "Trouvez la Remorque que Vous Voulez,",
+        heroHeadingHighlight: "Où",
+        heroHeadingLine2: "que Vous Voulez !",
+        heroFeature1: "Le transport en toute simplicité",
+        heroFeature1Desc: "La remorque, en toute confiance.",
+        heroFeature2: "Conçue pour le travail",
+        heroFeature2Desc: "Prête pour chaque trajet.",
+        heroFeature3: "Prête quand vous l'êtes",
+        heroFeature3Desc: "Le choix sûr pour transporter.",
+        heroPeopleLabel: "Personnes",
+        heroPeopleDesc: "L'intérêt d'utiliser Lorepa est qu'il présente une distribution de lettres plus ou moins normale, avec du Lorem Ipsum.",
+        heroTrustedByPrefix: "Approuvé par",
+        heroHappyCustomers: "clients satisfaits",
+        heroReviewsLabel: "avis",
         seeAllFaq: "Voir toutes les FAQ",
         searching: "Recherche en cours...",
         noResults: "Aucun résultat trouvé",
@@ -435,73 +498,128 @@ const LandingPage = () => {
                 <Navbar currentLanguage={translationsData} />
             </motion.div>
 
-            <div style={{ backgroundImage: `url(${Web})` }} className="relative min-h-[110vh] w-screen bg-cover hidden md:block">
-                <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="w-full flex justify-center items-center flex-col">
-                    <AnimatedText text={translationsData?.trailerRental} variant={fadeInUp} className="text-white text-xl md:text-6xl mt-[3rem]" />
-                    <AnimatedText text={translationsData?.rentAnywhere} variant={fadeIn} className="text-white text-sm mt-2 font-medium" />
-                    <motion.div variants={blurIn} initial="hidden" animate="visible" className="bg-white md:bg-opacity-100 bg-opacity-80 rounded-md p-3 sm:w-[80%] w-[90%] mx-20 my-10 md:flex justify-center items-center flex-wrap">
-                        <div className="flex-1 border border-[#9DA0A6] mt-1 mr-3 py-1 px-6 rounded-[2rem] relative" ref={wrapperRef}>
-                            <h1 className="text-sm">{translationsData?.where}</h1>
-                            <input
-                                value={location}
-                                onChange={handleLocationChange}
-                                type="text"
-                                autoComplete="off"
-                                placeholder={translationsData?.placeholder}
-                                className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] flex-1 text-sm w-full"
-                            />
-                            {showSuggestions && (
-                                <ul className="absolute z-50 top-[4rem] left-0 right-0 bg-white shadow-lg border border-gray-100 rounded-md mt-1 max-h-60 overflow-y-auto">
-                                    {isLoadingSuggestions ? (
-                                        <li className="p-3 text-sm text-gray-400 text-center">{translationsData?.searching}</li>
-                                    ) : suggestions.length > 0 ? (
-                                        suggestions.map((item, index) => (
-                                            <li key={item.place_id || index} onMouseDown={() => handleSelect(item)} className="p-2 hover:bg-blue-50 cursor-pointer text-sm flex items-start gap-2">
-                                                <span className="text-gray-400 mt-0.5">&#x2315;</span>
-                                                <span>
-                                                    <span className="font-medium text-gray-800">{item.structured_formatting?.main_text || item.description.split(',')[0]}</span>
-                                                    {item.structured_formatting?.secondary_text && (
-                                                        <span className="text-gray-400">, {item.structured_formatting.secondary_text}</span>
-                                                    )}
-                                                </span>
-                                            </li>
-                                        ))
-                                    ) : (
-                                        <li className="p-3 text-sm text-gray-400 text-center">{translationsData?.noResults}</li>
-                                    )}
-                                </ul>
-                            )}
-                        </div>
+            <div className="hidden md:block p-2">
+                <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative min-h-[100vh] w-full bg-cover bg-center rounded-[2.5rem] ring-4 ring-blue-100 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-blue-50/70 via-blue-50/10 to-transparent" />
 
-                        {/* From Date & Time */}
-                        <div className="flex-1 border border-[#9DA0A6] mt-1 mr-3 py-1 px-6 rounded-[2rem]">
-                            <h1 className="text-sm">{translationsData?.from}</h1>
-                            <div className="flex justify-between items-center gap-x-3">
-                                <input type="date" className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] text-sm" value={fromDate} onChange={e => setFromDate(e.target.value)} />
-                                <input type="time" className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] text-sm" value={fromTime} onChange={e => setFromTime(e.target.value)} />
+                    <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="relative z-10 w-full flex justify-center items-center flex-col pt-16">
+                        <span className="text-blue-600 text-xs font-bold tracking-[0.25em] uppercase">{translationsData.heroLabel}</span>
+                        <h1 className="font-display text-[#0A0F18] text-4xl lg:text-5xl font-extrabold text-center mt-3 leading-tight">
+                            {translationsData.heroHeadingLine1}<br />
+                            <span className="text-blue-600">{translationsData.heroHeadingHighlight}</span> {translationsData.heroHeadingLine2}
+                        </h1>
+
+                        <motion.div variants={blurIn} initial="hidden" animate="visible" className="bg-white/25 backdrop-blur-xl border border-white/50 rounded-2xl shadow-xl p-3 sm:w-[80%] w-[90%] mx-20 mt-8 md:flex justify-center items-center flex-wrap">
+                            <div className="flex-1 border border-[#9DA0A6] mt-1 mr-3 py-1 px-6 rounded-[2rem] relative" ref={wrapperRef}>
+                                <h1 className="text-sm flex items-center gap-1"><FaMapMarkerAlt className="text-blue-600" />{translationsData?.where}</h1>
+                                <input
+                                    value={location}
+                                    onChange={handleLocationChange}
+                                    type="text"
+                                    autoComplete="off"
+                                    placeholder={translationsData?.placeholder}
+                                    className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] flex-1 text-sm w-full"
+                                />
+                                {showSuggestions && (
+                                    <ul className="absolute z-50 top-[4rem] left-0 right-0 bg-white shadow-lg border border-gray-100 rounded-md mt-1 max-h-60 overflow-y-auto">
+                                        {isLoadingSuggestions ? (
+                                            <li className="p-3 text-sm text-gray-400 text-center">{translationsData?.searching}</li>
+                                        ) : suggestions.length > 0 ? (
+                                            suggestions.map((item, index) => (
+                                                <li key={item.place_id || index} onMouseDown={() => handleSelect(item)} className="p-2 hover:bg-blue-50 cursor-pointer text-sm flex items-start gap-2">
+                                                    <span className="text-gray-400 mt-0.5">&#x2315;</span>
+                                                    <span>
+                                                        <span className="font-medium text-gray-800">{item.structured_formatting?.main_text || item.description.split(',')[0]}</span>
+                                                        {item.structured_formatting?.secondary_text && (
+                                                            <span className="text-gray-400">, {item.structured_formatting.secondary_text}</span>
+                                                        )}
+                                                    </span>
+                                                </li>
+                                            ))
+                                        ) : (
+                                            <li className="p-3 text-sm text-gray-400 text-center">{translationsData?.noResults}</li>
+                                        )}
+                                    </ul>
+                                )}
                             </div>
-                        </div>
 
-                        {/* Until Date & Time */}
-                        <div className="flex-1 border border-[#9DA0A6] mt-1 mr-3 py-1 px-6 rounded-[2rem]">
-                            <h1 className="text-sm">{translationsData?.until}</h1>
-                            <div className="flex justify-between items-center gap-x-3">
-                                <input type="date" className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] text-sm" value={untilDate} onChange={e => setUntilDate(e.target.value)} />
-                                <input type="time" className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] text-sm" value={untilTime} onChange={e => setUntilTime(e.target.value)} />
+                            {/* From Date & Time */}
+                            <div className="flex-1 border border-[#9DA0A6] mt-1 mr-3 py-1 px-6 rounded-[2rem]">
+                                <h1 className="text-sm">{translationsData?.from}</h1>
+                                <div className="flex justify-between items-center gap-x-3">
+                                    <input type="date" className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] text-sm" value={fromDate} onChange={e => setFromDate(e.target.value)} />
+                                    <input type="time" className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] text-sm" value={fromTime} onChange={e => setFromTime(e.target.value)} />
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Search Button */}
-                        <div className="md:w-[3rem] md:flex-none flex-1 md:mt-0 mt-2">
-                            <Link to={buildSearchUrl()} className="w-[3rem] h-[3rem] bg-[#2563EB] rounded-full flex justify-center items-center text-white">
-                                <FaSearch />
-                            </Link>
-                        </div>
+                            {/* Until Date & Time */}
+                            <div className="flex-1 border border-[#9DA0A6] mt-1 mr-3 py-1 px-6 rounded-[2rem]">
+                                <h1 className="text-sm">{translationsData?.until}</h1>
+                                <div className="flex justify-between items-center gap-x-3">
+                                    <input type="date" className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] text-sm" value={untilDate} onChange={e => setUntilDate(e.target.value)} />
+                                    <input type="time" className="border-none bg-transparent outline-none placeholder:text-[#9DA0A6] text-sm" value={untilTime} onChange={e => setUntilTime(e.target.value)} />
+                                </div>
+                            </div>
+
+                            {/* Search Button */}
+                            <div className="md:w-[3rem] md:flex-none flex-1 md:mt-0 mt-2">
+                                <Link to={buildSearchUrl()} className="w-[3rem] h-[3rem] bg-[#2563EB] rounded-full flex justify-center items-center text-white">
+                                    <FaSearch />
+                                </Link>
+                            </div>
+                        </motion.div>
                     </motion.div>
-                </motion.div>
+
+                    {/* Left feature cards */}
+                    <div className="absolute left-6 top-[52%] hidden lg:flex flex-col gap-3 z-10 w-64">
+                        {[
+                            { icon: FaShieldAlt, title: translationsData.heroFeature1, desc: translationsData.heroFeature1Desc },
+                            { icon: FaTools, title: translationsData.heroFeature2, desc: translationsData.heroFeature2Desc },
+                            { icon: GiSteeringWheel, title: translationsData.heroFeature3, desc: translationsData.heroFeature3Desc },
+                        ].map(({ icon: Icon, title, desc }, i) => (
+                            <div key={i} className="bg-white/25 backdrop-blur-xl border border-white/50 rounded-xl shadow-xl p-3 flex items-start gap-3">
+                                <div className="bg-blue-600 text-white rounded-full p-2 shrink-0">
+                                    <Icon />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-sm text-[#0A0F18]">{title}</p>
+                                    <p className="text-xs text-gray-500">{desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Right avatar card */}
+                    <div className="absolute right-6 top-[52%] hidden lg:block bg-white/25 backdrop-blur-xl border border-white/50 rounded-xl shadow-xl p-4 w-64 z-10">
+                        <div className="flex -space-x-2 mb-2">
+                            {trustedImageUrls.slice(0, 3).map((src, i) => (
+                                <img key={i} src={src} alt="" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+                            ))}
+                        </div>
+                        <p className="font-bold text-[#0A0F18]">100+ {translationsData.heroPeopleLabel}</p>
+                        <p className="text-xs text-gray-500 mt-1">{translationsData.heroPeopleDesc}</p>
+                    </div>
+
+                    {/* Bottom trust bar */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden lg:flex bg-white/25 backdrop-blur-xl border border-white/50 rounded-full shadow-xl px-6 py-2 items-center gap-4 z-10 whitespace-nowrap">
+                        <div className="flex -space-x-2">
+                            {trustedImageUrls.slice(0, 3).map((src, i) => (
+                                <img key={i} src={src} alt="" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
+                            ))}
+                        </div>
+                        <span className="text-sm text-[#0A0F18]">{translationsData.heroTrustedByPrefix} <span className="font-bold">12.5K+</span> {translationsData.heroHappyCustomers}</span>
+                        <span className="w-px h-4 bg-gray-300" />
+                        <span className="flex items-center gap-1 text-sm text-[#0A0F18]">
+                            <span className="flex text-yellow-400">
+                                {Array.from({ length: 5 }).map((_, i) => <FaStar key={i} />)}
+                            </span>
+                            <span className="font-bold">4.9</span> (2.3K {translationsData.heroReviewsLabel})
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            <div style={{ backgroundImage: `url(${Mobile})` }} className="relative w-screen bg-cover bg-no-repeat md:hidden block">
+            <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative w-screen bg-cover bg-center bg-no-repeat md:hidden block">
                 <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="w-full flex justify-center items-center flex-col">
                     <AnimatedText text={translationsData?.trailerRental} variant={fadeInUp} className="text-white text-xl md:text-6xl mt-[3rem]" />
                     <AnimatedText text={translationsData?.rentAnywhere} variant={fadeIn} className="text-white text-sm mt-2 font-medium" />
@@ -565,16 +683,6 @@ const LandingPage = () => {
                 </motion.div>
             </div>
 
-            <motion.div variants={fadeIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col my-8 sm:my-10 mobile-px">
-                <AnimatedText text={translationsData.newWay} variant={flipIn} className="text-2xl sm:text-3xl lg:text-[40px] font-medium text-black text-center" />
-                <AnimatedText
-                    text={translationsData.discover}
-                    variant={fadeInUp}
-                    className="text-xs sm:text-sm text-black mt-2 text-center max-w-lg"
-                />
-                <motion.img variants={scaleIn} src={Img} alt="" className="mt-6 max-w-full h-auto" />
-            </motion.div>
-
             <div className="bg-[#2563EB] mobile-px py-8 sm:py-10">
                 <AnimatedText
                     text={translationsData.needTrailer}
@@ -614,32 +722,36 @@ const LandingPage = () => {
                 </div>
             </div>
 
-            <motion.div variants={flipIn} whileInView="visible" className="flex justify-center items-center flex-col p-3">
-                <AnimatedText text={translationsData.popularLocations} variant={scaleIn} className="text-2xl text-black font-semibold mt-10" />
-                <div className="flex overflow-x-auto gap-10 mt-6 w-[100%] px-4">
-                    {locations.map((loc, i) => {
-                        const locationImage = loc.image || popularLocationImages[i % popularLocationImages.length];
+            <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="flex justify-center items-center flex-col bg-[#E9EFFD] py-14 px-3 sm:px-4">
+                <AnimatedText text={translationsData.trustedBy} variant={fadeInDown} className="text-[44px] sm:text-[56px] text-black font-medium leading-tight" />
+                <AnimatedText text={`${translationsData.leadingPlatform} ${translationsData.dynamicCommunity}`} variant={fadeInUp} className="text-xs sm:text-sm text-black mt-2 text-center max-w-[52rem]" />
 
-                        return (
-                            <Link to={`/trailers?city=${loc.title}`} key={i}>
-                                <img
-                                    src={locationImage}
-                                    alt={loc.title}
-                                    className="max-w-[15rem] min-w-[15rem] min-h-[10rem] max-h-[10rem] rounded-md object-cover bg-gray-100"
-                                    onError={(e) => { 
-                                        e.target.onerror = null; 
-                                        e.target.src = "/1.png";
-                                    }}
-                                />
-                                <div className="flex justify-between items-center">
-                                    <p className="text-lg font-medium mt-2 text-black">{loc.title}</p>
-                                    <FaLongArrowAltRight className="text-blue-700" />
-                                </div>
-                            </Link>
-                        );
-                    })}
+                <div className="flex items-center justify-center mt-4">
+                    {trustedImageUrls.map((img, i) => (
+                        <img
+                            key={`${img}-${i}`}
+                            src={img}
+                            alt={`Trusted host ${i + 1}`}
+                            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E9EFFD] shadow-sm -ml-2 first:ml-0"
+                            onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = trustedAvatarImages[i % trustedAvatarImages.length];
+                            }}
+                        />
+                    ))}
                 </div>
 
+                <AnimatedText text={translationsData.thankYou} variant={blurIn} className="text-lg font-semibold text-black mt-8 text-center" />
+            </motion.div>
+
+            <motion.div variants={flipIn} whileInView="visible" className="flex justify-center items-center flex-col p-3">
+                <AnimatedText text={translationsData.popularLocations} variant={scaleIn} className="text-2xl text-black font-semibold mt-10" />
+                <BounceCards
+                    images={locations.slice(0, 5).map((loc, i) => loc.image || popularLocationImages[i % popularLocationImages.length])}
+                    labels={locations.slice(0, 5).map((loc) => loc.title)}
+                    containerWidth={400}
+                    containerHeight={280}
+                />
             </motion.div>
 
             <motion.div
@@ -649,13 +761,13 @@ const LandingPage = () => {
                 viewport={{ once: true, amount: 0.3 }}
                 className="flex justify-center items-center flex-col bg-[#0A0F18] p-3 text-white"
             >
-                <div className="flex justify-between items-center mt-10 w-full flex-wrap">
+                <div className="flex flex-col items-center mt-10 w-full">
                     <AnimatedText
                         text={translationsData.carHauler}
                         variant={fadeInUp}
-                        className="text-2xl font-semibold mt-2"
+                        className="text-3xl sm:text-5xl font-extrabold uppercase tracking-wide bg-gradient-to-r from-blue-400 via-white to-blue-400 bg-clip-text text-transparent"
                     />
-                    <div className="flex justify-between items-center gap-x-3 mt-2">
+                    <div className="flex items-center gap-x-3 mt-4">
                         {[FaAngleLeft, FaAngleRight].map((Icon, i) => (
                             <div
                                 key={i}
@@ -666,26 +778,9 @@ const LandingPage = () => {
                         ))}
                     </div>
                 </div>
-                <Link to={"/trailers"} className="flex overflow-x-auto gap-5 mt-6 w-[100%] px-4">
-                    {trailers.map((item, i) => {
-                        const trailerImage = item.image || browseTrailerImages[i % browseTrailerImages.length];
-
-                        return (
-                            <div key={i} className="relative cursor-pointer">
-                                <img 
-                                    src={trailerImage} 
-                                    alt={item.title} 
-                                    className="rounded-md max-w-[22rem] min-w-[22rem] min-h-[16rem] max-h-[16rem] object-cover bg-gray-100" 
-                                    onError={(e) => { 
-                                        e.target.onerror = null; 
-                                        e.target.src = "/12.png";
-                                    }} 
-                                />
-                                <p className="absolute bottom-5 left-5 text-white font-semibold drop-shadow-md">{item.title}</p>
-                            </div>
-                        );
-                    })}
-                </Link>
+                <RollingGallery
+                    images={trailers.map((item, i) => item.image || browseTrailerImages[i % browseTrailerImages.length])}
+                />
             </motion.div>
 
             <div className="mobile-px py-6 sm:py-8 text-black">

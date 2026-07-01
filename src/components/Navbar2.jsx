@@ -7,6 +7,7 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { RxHamburgerMenu, RxCross2 } from "react-icons/rx";
 import { CiSearch } from "react-icons/ci";
 import Logo from "../assets/logo.svg";
+import FootballJuggleBall from "./FootballJuggleBall";
 import { IoCallOutline, IoKey } from "react-icons/io5";
 import { BiTransfer } from 'react-icons/bi';
 import { FiSearch } from 'react-icons/fi';
@@ -176,7 +177,8 @@ const Navbar2 = () => {
                 <div className="mobile-px">
                     <div className="flex items-center justify-between h-14 sm:h-16">
                         {/* Logo */}
-                        <div className="flex-shrink-0 flex items-center">
+                        <div className="relative flex-shrink-0 flex items-center">
+                            <FootballJuggleBall />
                             <Link to={"/"} className="text-xl">
                                 <img src={Logo} alt="Lorepa" className='h-16 sm:h-20 md:h-28' />
                             </Link>
