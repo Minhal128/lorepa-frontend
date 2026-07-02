@@ -38,16 +38,17 @@ const translations = {
         discover: "Discover the premier platform for trailer sharing between individuals in Quebec.",
         needTrailer: "Whether You Need a Trailer",
         shareOne: "or Have One to Share",
+        referralFreeLine: "First referral free for trailer owners",
         rentTrailerTitle: "Rent a Trailer",
         rentTrailerDescription: "Find the perfect trailer for your needs, wherever you are in Quebec. Browse, book, and go!",
         rentTrailerButton: "Rent a trailer",
         becomeHostTitle: "Become a host",
         becomeHostDescription: "List your trailer and start earning by helping others move, travel, and explore. It's easy and secure",
         becomeHostButton: "Become a host",
-        trustedBy: "Trusted by 1000 +",
+        trustedBy: "Trusted by 100 +",
         leadingPlatform: "Our company is the leading sharing platform where you can book any type of trailer from private individuals,",
         dynamicCommunity: "whatever the occasion, with a dynamic community of trusted hosts.",
-        thankYou: "You are one of 1000 + people who trust us completely, Thank you!",
+        thankYou: "You are one of 100 + people who trust us completely, Thank you!",
         popularLocations: "Popular Locations",
         carHauler: "Browse Trailers",
         faq: "Frequently asked questions",
@@ -100,16 +101,17 @@ const translations = {
         discover: "Descubre la plataforma líder para compartir remolques entre particulares en Quebec.",
         needTrailer: "Ya sea que necesites un remolque",
         shareOne: "o tengas uno para compartir",
+        referralFreeLine: "Primera referencia gratis para propietarios de remolques",
         rentTrailerTitle: "Alquilar un remolque",
         rentTrailerDescription: "Encuentra el remolque perfecto para tus necesidades, dondequiera que estés en Quebec. ¡Busca, reserva y listo!",
         rentTrailerButton: "Alquilar un remolque",
         becomeHostTitle: "Conviértete en anfitrión",
         becomeHostDescription: "Publica tu remolque y comienza a ganar ayudando a otros a mudarse, viajar y explorar. Es fácil y seguro.",
         becomeHostButton: "Conviértete en anfitrión",
-        trustedBy: "Confiado por más de 1000 +",
+        trustedBy: "Confiado por más de 100 +",
         leadingPlatform: "Nuestra empresa es la plataforma líder para compartir donde puedes reservar cualquier tipo de remolque a particulares,",
         dynamicCommunity: "cualquiera sea la ocasión, con una comunidad dinámica de anfitriones confiables.",
-        thankYou: "¡Eres una de las más de 1000 personas que confían completamente en nosotros, gracias!",
+        thankYou: "¡Eres una de las más de 100 personas que confían completamente en nosotros, gracias!",
         popularLocations: "Lugares populares",
         "carHauler": "Explorar Remolques",
         faq: "Preguntas frecuentes",
@@ -162,16 +164,17 @@ const translations = {
         discover: "探索魁北克领先的个人拖车共享平台。",
         needTrailer: "无论您是否需要拖车",
         shareOne: "或愿意共享一个",
+        referralFreeLine: "拖车车主首次推荐免费",
         rentTrailerTitle: "租一辆拖车",
         rentTrailerDescription: "在魁北克找到满足您需求的完美拖车，无论您身在何处。浏览、预订，然后出发！",
         rentTrailerButton: "租一辆拖车",
         becomeHostTitle: "成为房东",
         becomeHostDescription: "列出您的拖车，通过帮助他人搬家、旅行和探索来开始赚钱。这既简单又安全。",
         becomeHostButton: "成为房东",
-        trustedBy: "1000+ 信任用户",
+        trustedBy: "100+ 信任用户",
         leadingPlatform: "我们公司是领先的共享平台，您可以从个人手中预订各种类型的拖车，",
         dynamicCommunity: "无论场合如何，拥有值得信赖的动态社区主机。",
-        thankYou: "感谢您成为 1000+ 完全信任我们的人之一！",
+        thankYou: "感谢您成为 100+ 完全信任我们的人之一！",
         popularLocations: "热门地点",
         carHauler: "浏览拖车",
         faq: "常见问题",
@@ -224,16 +227,17 @@ const translations = {
         discover: "Découvrez la plateforme leader de partage de remorques entre particuliers au Québec.",
         needTrailer: "Que vous ayez besoin d'une remorque",
         shareOne: "ou que vous en ayez une à partager",
+        referralFreeLine: "Premier parrainage gratuit pour les propriétaires de remorques",
         rentTrailerTitle: "Louer une remorque",
         rentTrailerDescription: "Trouvez la remorque parfaite pour vos besoins, où que vous soyez au Québec. Parcourez, réservez et partez !",
         rentTrailerButton: "Louer une remorque",
         becomeHostTitle: "Devenir hôte",
         becomeHostDescription: "Listez votre remorque et commencez à gagner de l'argent en aidant les autres à déménager, voyager et explorer. C'est facile et sécurisé.",
         becomeHostButton: "Devenir hôte",
-        trustedBy: "Fiable par plus de 1000 +",
+        trustedBy: "Fiable par plus de 100 +",
         leadingPlatform: "Notre entreprise est la principale plateforme de partage où vous pouvez réserver tout type de remorque auprès de particuliers,",
         dynamicCommunity: "quelle que soit l'occasion, avec une communauté dynamique d'hôtes de confiance.",
-        thankYou: "Vous êtes l'une des 1000+ personnes qui nous font entièrement confiance, merci !",
+        thankYou: "Vous êtes l'une des 100+ personnes qui nous font entièrement confiance, merci !",
         popularLocations: "Lieux populaires",
         carHauler: "Parcourir les remorques",
         faq: "Questions fréquemment posées",
@@ -499,7 +503,7 @@ const LandingPage = () => {
             </motion.div>
 
             <div className="hidden md:block p-2">
-                <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative min-h-[100vh] w-full bg-cover bg-center rounded-[2.5rem] ring-4 ring-blue-100 overflow-hidden">
+                <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative min-h-[100vh] w-full bg-contain bg-center bg-no-repeat rounded-[2.5rem] ring-4 ring-blue-100 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-b from-blue-50/70 via-blue-50/10 to-transparent" />
 
                     <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="relative z-10 w-full flex justify-center items-center flex-col pt-16">
@@ -607,19 +611,19 @@ const LandingPage = () => {
                                 <img key={i} src={src} alt="" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
                             ))}
                         </div>
-                        <span className="text-sm text-[#0A0F18]">{translationsData.heroTrustedByPrefix} <span className="font-bold">12.5K+</span> {translationsData.heroHappyCustomers}</span>
+                        <span className="text-sm text-[#0A0F18]">{translationsData.heroTrustedByPrefix} <span className="font-bold">50+</span> {translationsData.heroHappyCustomers}</span>
                         <span className="w-px h-4 bg-gray-300" />
                         <span className="flex items-center gap-1 text-sm text-[#0A0F18]">
                             <span className="flex text-yellow-400">
                                 {Array.from({ length: 5 }).map((_, i) => <FaStar key={i} />)}
                             </span>
-                            <span className="font-bold">4.9</span> (2.3K {translationsData.heroReviewsLabel})
+                            <span className="font-bold">4.9</span> (50 {translationsData.heroReviewsLabel})
                         </span>
                     </div>
                 </div>
             </div>
 
-            <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative w-screen bg-cover bg-center bg-no-repeat md:hidden block">
+            <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative w-screen bg-contain bg-top bg-no-repeat bg-blue-50 md:hidden block">
                 <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="w-full flex justify-center items-center flex-col">
                     <AnimatedText text={translationsData?.trailerRental} variant={fadeInUp} className="text-white text-xl md:text-6xl mt-[3rem]" />
                     <AnimatedText text={translationsData?.rentAnywhere} variant={fadeIn} className="text-white text-sm mt-2 font-medium" />
@@ -692,7 +696,12 @@ const LandingPage = () => {
                 <AnimatedText
                     text={translationsData.shareOne}
                     variant={fadeInDown}
-                    className="text-xl sm:text-2xl lg:text-[40px] text-white font-semibold mb-6 sm:mb-10 text-center"
+                    className="text-xl sm:text-2xl lg:text-[40px] text-white font-semibold text-center"
+                />
+                <AnimatedText
+                    text={translationsData.referralFreeLine}
+                    variant={fadeInUp}
+                    className="text-sm sm:text-base text-white/90 font-medium mt-2 mb-6 sm:mb-10 text-center"
                 />
                 <div className="flex justify-center items-center flex-wrap gap-4 sm:gap-6 pb-8 sm:pb-10">
                     {/* Rent a Trailer Card */}

@@ -4,7 +4,6 @@ import { CiCalculator1, CiGlobe } from "react-icons/ci";
 import { FaRegUserCircle } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Logo from "../assets/logo.svg";
-import FootballJuggleBall from "./FootballJuggleBall";
 import { IoCallOutline, IoKey } from "react-icons/io5";
 import { BiTransfer } from 'react-icons/bi';
 
@@ -53,7 +52,6 @@ const Navbar = () => {
       <div className="px-4 sm:px-6 lg:px-8 bg-white">
         <div className="flex items-center justify-between h-28">
           <div className="relative flex-shrink-0 flex items-center gap-x-2">
-            <FootballJuggleBall />
             <Link to={"/"} className="text-xl">
               <img
                 src={Logo}
