@@ -575,7 +575,7 @@ const LandingPage = () => {
                     </motion.div>
 
                     {/* Left feature cards */}
-                    <div className="absolute left-6 top-[52%] hidden lg:flex flex-col gap-3 z-10 w-64">
+                    <div className="absolute left-6 top-[52%] hidden md:flex flex-col gap-3 z-10 w-64">
                         {[
                             { icon: FaShieldAlt, title: translationsData.heroFeature1, desc: translationsData.heroFeature1Desc },
                             { icon: FaTools, title: translationsData.heroFeature2, desc: translationsData.heroFeature2Desc },
@@ -594,7 +594,7 @@ const LandingPage = () => {
                     </div>
 
                     {/* Right avatar card */}
-                    <div className="absolute right-6 top-[52%] hidden lg:block bg-white/25 backdrop-blur-xl border border-white/50 rounded-xl shadow-xl p-4 w-64 z-10">
+                    <div className="absolute right-6 top-[52%] hidden md:block bg-white/25 backdrop-blur-xl border border-white/50 rounded-xl shadow-xl p-4 w-64 z-10">
                         <div className="flex -space-x-2 mb-2">
                             {trustedImageUrls.slice(0, 3).map((src, i) => (
                                 <img key={i} src={src} alt="" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
@@ -605,7 +605,7 @@ const LandingPage = () => {
                     </div>
 
                     {/* Bottom trust bar */}
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden lg:flex bg-white/25 backdrop-blur-xl border border-white/50 rounded-full shadow-xl px-6 py-2 items-center gap-4 z-10 whitespace-nowrap">
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex bg-white/25 backdrop-blur-xl border border-white/50 rounded-full shadow-xl px-6 py-2 items-center gap-4 z-10 whitespace-nowrap">
                         <div className="flex -space-x-2">
                             {trustedImageUrls.slice(0, 3).map((src, i) => (
                                 <img key={i} src={src} alt="" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
@@ -623,7 +623,7 @@ const LandingPage = () => {
                 </div>
             </div>
 
-            <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative w-screen bg-contain bg-top bg-no-repeat bg-blue-50 md:hidden block">
+            <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative min-h-[100vh] w-full bg-contain bg-center bg-no-repeat md:hidden block">
                 <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="w-full flex justify-center items-center flex-col">
                     <AnimatedText text={translationsData?.trailerRental} variant={fadeInUp} className="text-white text-xl md:text-6xl mt-[3rem]" />
                     <AnimatedText text={translationsData?.rentAnywhere} variant={fadeIn} className="text-white text-sm mt-2 font-medium" />
