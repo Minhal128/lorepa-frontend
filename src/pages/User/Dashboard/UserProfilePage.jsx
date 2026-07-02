@@ -193,7 +193,6 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
             if (userData.carInsurancePolicyImage instanceof File) formData.append("carInsurancePolicyImage", userData.carInsurancePolicyImage);
             if (userData.faq27Image instanceof File) formData.append("faq27Image", userData.faq27Image);
-            if (userData.trailerInsurancePolicyImage instanceof File) formData.append("trailerInsurancePolicyImage", userData.trailerInsurancePolicyImage);
             if (userData.trailerRegistrationImage instanceof File) formData.append("trailerRegistrationImage", userData.trailerRegistrationImage);
 
             const res = await axios.put(`${config.baseUrl}/account/update/${localStorage.getItem("userId")}`, formData, {
@@ -219,8 +218,7 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
                     <div>
                         <h3 className='text-lg sm:text-xl font-bold text-gray-900 mb-4'>{t.trailerDocuments}</h3>
 
-                        <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 text-center'>
-                            <DocumentUploadBlock t={t} side={t?.trailerInsurancePolicyImage} file={userData.trailerInsurancePolicyImage || userData.trailerInsurancePolicyImageURL} onFileSelect={e => setUserData({ ...userData, trailerInsurancePolicyImage: e.target.files[0], trailerInsurancePolicyImageURL: URL.createObjectURL(e.target.files[0]) })} />
+                        <div className='mb-8'>
                             <DocumentUploadBlock t={t} side={t?.trailerRegistrationImage} file={userData.trailerRegistrationImage || userData.trailerRegistrationImageURL} onFileSelect={e => setUserData({ ...userData, trailerRegistrationImage: e.target.files[0], trailerRegistrationImageURL: URL.createObjectURL(e.target.files[0]) })} />
                         </div>
                     </div>
