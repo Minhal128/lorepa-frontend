@@ -102,6 +102,10 @@ const loginTranslations = {
   }
 };
 
+const getDashboardPath = (role) => (
+  role === 'owner' ? "/seller/dashboard/home" : "/user/dashboard/home"
+);
+
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -138,8 +142,7 @@ const LoginPage = () => {
       if (navigateTo) {
         nav(navigateTo);
       } else {
-        if (role === 'owner') nav("/seller/dashboard/home");
-        else nav("/user/dashboard/home");
+        nav(getDashboardPath(role));
       }
     } else if (params.get('error') === 'google_failed') {
       toast.error(translations.googleAuthFailed);
@@ -155,10 +158,11 @@ const LoginPage = () => {
         localStorage.setItem('role', res.data.data.role);
         toast.success(translations.loginSuccess);
         setTimeout(() => {
-          if (localStorage.getItem("naviagte")) {
-            nav(localStorage.getItem("naviagte"));
+          const navigateTo = localStorage.getItem("naviagte");
+          if (navigateTo) {
+            nav(navigateTo);
           } else {
-            nav("/");
+            nav(getDashboardPath(res.data.data.role));
           }
         }, 2000);
       } else {
@@ -183,8 +187,9 @@ const LoginPage = () => {
     try {
       const res = await axios.post(`${config.baseUrl}/account/login`, { email: fbEmail, password: fbPassword });
       localStorage.setItem('userId', res.data.data._id);
+      localStorage.setItem('role', res.data.data.role);
       toast.success(translations.loginSuccess);
-      nav("/");
+      nav(getDashboardPath(res.data.data.role));
     } catch (err) {
       toast.error(err.response?.data?.msg || translations.loginFailed);
     }
