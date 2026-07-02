@@ -36,9 +36,7 @@ const translations = {
         until: "Until",
         newWay: "The new way to rent a trailer 24/7!",
         discover: "Discover the premier platform for trailer sharing between individuals in Quebec.",
-        needTrailer: "Whether You Need a Trailer",
-        shareOne: "or Have One to Share",
-        referralFreeLine: "First referral free for trailer owners",
+        referralFreeLine: "First referral free for trailer owners!",
         rentTrailerTitle: "Rent a Trailer",
         rentTrailerDescription: "Find the perfect trailer for your needs, wherever you are in Quebec. Browse, book, and go!",
         rentTrailerButton: "Rent a trailer",
@@ -99,9 +97,7 @@ const translations = {
         until: "Hasta",
         newWay: "¡La nueva forma de alquilar un remolque 24/7!",
         discover: "Descubre la plataforma líder para compartir remolques entre particulares en Quebec.",
-        needTrailer: "Ya sea que necesites un remolque",
-        shareOne: "o tengas uno para compartir",
-        referralFreeLine: "Primera referencia gratis para propietarios de remolques",
+        referralFreeLine: "¡Propietario, tu primera referencia de alquiler de remolque es gratis!",
         rentTrailerTitle: "Alquilar un remolque",
         rentTrailerDescription: "Encuentra el remolque perfecto para tus necesidades, dondequiera que estés en Quebec. ¡Busca, reserva y listo!",
         rentTrailerButton: "Alquilar un remolque",
@@ -162,9 +158,7 @@ const translations = {
         until: "直到",
         newWay: "全天候租拖车的新方式！",
         discover: "探索魁北克领先的个人拖车共享平台。",
-        needTrailer: "无论您是否需要拖车",
-        shareOne: "或愿意共享一个",
-        referralFreeLine: "拖车车主首次推荐免费",
+        referralFreeLine: "车主：您的首次拖车租赁推荐是免费的！",
         rentTrailerTitle: "租一辆拖车",
         rentTrailerDescription: "在魁北克找到满足您需求的完美拖车，无论您身在何处。浏览、预订，然后出发！",
         rentTrailerButton: "租一辆拖车",
@@ -225,9 +219,7 @@ const translations = {
         until: "Jusqu'à",
         newWay: "La nouvelle façon de louer une remorque 24h/24 et 7j/7 !",
         discover: "Découvrez la plateforme leader de partage de remorques entre particuliers au Québec.",
-        needTrailer: "Que vous ayez besoin d'une remorque",
-        shareOne: "ou que vous en ayez une à partager",
-        referralFreeLine: "Premier parrainage gratuit pour les propriétaires de remorques",
+        referralFreeLine: "Propriétaire votre première référence de location de remorque est gratuite !",
         rentTrailerTitle: "Louer une remorque",
         rentTrailerDescription: "Trouvez la remorque parfaite pour vos besoins, où que vous soyez au Québec. Parcourez, réservez et partez !",
         rentTrailerButton: "Louer une remorque",
@@ -623,7 +615,7 @@ const LandingPage = () => {
                 </div>
             </div>
 
-            <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative w-full bg-cover bg-center bg-no-repeat md:hidden block">
+            <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative w-full bg-contain bg-center bg-no-repeat md:hidden block">
                 <div className="absolute inset-0 bg-gradient-to-b from-blue-50/70 via-blue-50/10 to-transparent" />
                 <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="relative w-full flex justify-center items-center flex-col">
                     <span className="text-blue-600 text-xs font-bold tracking-[0.25em] uppercase mt-[3rem]">{translationsData.heroLabel}</span>
@@ -688,54 +680,14 @@ const LandingPage = () => {
                             <button onClick={() => nav(buildSearchUrl())} className="w-full h-[3rem] bg-[#2563EB] rounded-md text-white">Search</button>
                         </div>
                     </motion.div>
-
-                    {/* Feature cards */}
-                    <div className="w-[90%] flex flex-col gap-3 pb-8">
-                        {[
-                            { icon: FaShieldAlt, title: translationsData.heroFeature1, desc: translationsData.heroFeature1Desc },
-                            { icon: FaTools, title: translationsData.heroFeature2, desc: translationsData.heroFeature2Desc },
-                            { icon: GiSteeringWheel, title: translationsData.heroFeature3, desc: translationsData.heroFeature3Desc },
-                        ].map(({ icon: Icon, title, desc }, i) => (
-                            <div key={i} className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-xl shadow-xl p-3 flex items-start gap-3">
-                                <div className="bg-blue-600 text-white rounded-full p-2 shrink-0">
-                                    <Icon />
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-sm text-[#0A0F18]">{title}</p>
-                                    <p className="text-xs text-gray-500">{desc}</p>
-                                </div>
-                            </div>
-                        ))}
-
-                        {/* Avatar card */}
-                        <div className="bg-white/80 backdrop-blur-xl border border-white/50 rounded-xl shadow-xl p-4">
-                            <div className="flex -space-x-2 mb-2">
-                                {trustedImageUrls.slice(0, 3).map((src, i) => (
-                                    <img key={i} src={src} alt="" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
-                                ))}
-                            </div>
-                            <p className="font-bold text-[#0A0F18]">100+ {translationsData.heroPeopleLabel}</p>
-                            <p className="text-xs text-gray-500 mt-1">{translationsData.heroPeopleDesc}</p>
-                        </div>
-                    </div>
                 </motion.div>
             </div>
 
             <div className="bg-[#2563EB] mobile-px py-8 sm:py-10">
                 <AnimatedText
-                    text={translationsData.needTrailer}
-                    variant={fadeInDown}
-                    className="text-xl sm:text-2xl lg:text-[40px] text-white font-semibold mt-6 sm:mt-10 text-center"
-                />
-                <AnimatedText
-                    text={translationsData.shareOne}
-                    variant={fadeInDown}
-                    className="text-xl sm:text-2xl lg:text-[40px] text-white font-semibold text-center"
-                />
-                <AnimatedText
                     text={translationsData.referralFreeLine}
-                    variant={fadeInUp}
-                    className="text-sm sm:text-base text-white/90 font-medium mt-2 mb-6 sm:mb-10 text-center"
+                    variant={fadeInDown}
+                    className="text-xl sm:text-2xl lg:text-[40px] text-white font-semibold mt-6 sm:mt-10 mb-6 sm:mb-10 text-center"
                 />
                 <div className="flex justify-center items-center flex-wrap gap-4 sm:gap-6 pb-8 sm:pb-10">
                     {/* Rent a Trailer Card */}
