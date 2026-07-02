@@ -707,7 +707,7 @@ const LandingPage = () => {
                         <div className="py-7 sm:py-10">
                             <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.becomeHostTitle}</h2>
                             <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.becomeHostDescription}</p>
-                            <Link to="/become-host">
+                            <Link to="/register">
                                 <button className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent">{translationsData.becomeHostButton || translationsData.becomeHostTitle}</button>
                             </Link>
                         </div>

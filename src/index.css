@@ -397,15 +397,3 @@
 .leaflet-popup-close-button:hover {
   color: #333 !important;
 }
-
-@keyframes ball-juggle {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  8% { transform: translateY(-16px) rotate(120deg); }
-  16% { transform: translateY(0) rotate(200deg); }
-  22% { transform: translateY(-7px) rotate(260deg); }
-  28% { transform: translateY(0) rotate(300deg); }
-}
-
-.animate-ball-juggle {
-  animation: ball-juggle 5s ease-in-out infinite;
-}
