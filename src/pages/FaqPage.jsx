@@ -706,7 +706,7 @@ const FaqPage = () => {
     const [activeTab, setActiveTab] = useState('Guests');
 
     // State for current language and corresponding translations
-    const [currentLang, setCurrentLang] = useState(() => localStorage.getItem('lang') || 'en');
+    const [currentLang, setCurrentLang] = useState(() => localStorage.getItem('lang') || 'fr');
     const [translations, setTranslations] = useState(faqPageTranslations[currentLang]);
     const [currentFaqContent, setCurrentFaqContent] = useState(faqContent[currentLang]);
 

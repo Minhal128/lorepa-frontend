@@ -295,6 +295,7 @@ const LandingPage = () => {
     const [trailers, setTrailers] = useState([]);
     const [fallbackFaqContent, setFallbackFaqContent] = useState({ renters: [], owners: [], global: [] });
     const [adminFaqContent, setAdminFaqContent] = useState({ renters: [], owners: [] });
+    const [currentLang, setCurrentLang] = useState(() => localStorage.getItem('lang') || 'fr');
     const [translationsData, setTranslationsData] = useState(() => {
         const storedLang = localStorage.getItem('lang');
         return translations[storedLang] || translations.fr;
@@ -333,6 +334,7 @@ const LandingPage = () => {
             const data = translations[storedLang] || translations.fr;
             setTranslationsData(data);
             setFallbackFaqContent(data.faqContent);
+            setCurrentLang(storedLang || 'fr');
         };
 
         window.addEventListener('storage', handleStorageChange);
@@ -374,9 +376,12 @@ const LandingPage = () => {
         fetchContent();
     }, []);
 
+    // ponytail: admin-authored FAQ content (faq.model.js) has no language field, so it's English-only.
+    // Only let it override the localized static content when the site is displayed in English.
+    const useAdminFaqContent = currentLang === 'en';
     const mergedFaqContent = {
-        renters: adminFaqContent.renters.length > 0 ? adminFaqContent.renters : (fallbackFaqContent.renters || []),
-        owners: adminFaqContent.owners.length > 0 ? adminFaqContent.owners : (fallbackFaqContent.owners || []),
+        renters: useAdminFaqContent && adminFaqContent.renters.length > 0 ? adminFaqContent.renters : (fallbackFaqContent.renters || []),
+        owners: useAdminFaqContent && adminFaqContent.owners.length > 0 ? adminFaqContent.owners : (fallbackFaqContent.owners || []),
     };
     const fetchSuggestions = async (inputText) => {
         const normalizedInput = (inputText || "").trim();
@@ -618,7 +623,7 @@ const LandingPage = () => {
             <div style={{ backgroundImage: `url(/HERO.png)` }} className="relative w-full bg-contain bg-center bg-no-repeat md:hidden block">
                 <div className="absolute inset-0 bg-gradient-to-b from-blue-50/70 via-blue-50/10 to-transparent" />
                 <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="relative w-full flex justify-center items-center flex-col">
-                    <span className="text-blue-600 text-xs font-bold tracking-[0.25em] uppercase mt-[3rem]">{translationsData.heroLabel}</span>
+                    <span className="text-blue-600 text-xs font-bold tracking-[0.25em] uppercase mt-2">{translationsData.heroLabel}</span>
                     <h1 className="font-display text-[#0A0F18] text-2xl font-extrabold text-center mt-2 leading-tight px-6">
                         {translationsData.heroHeadingLine1}<br />
                         <span className="text-blue-600">{translationsData.heroHeadingHighlight}</span> {translationsData.heroHeadingLine2}
