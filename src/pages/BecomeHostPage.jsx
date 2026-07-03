@@ -521,60 +521,68 @@ const BecomeHostPage = () => {
                     <motion.p variants={fadeInUp} className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">{currentStepData.description}</motion.p>
 
                     <motion.div variants={fadeInUp} className="grid grid-cols-1 gap-4 sm:gap-6">
-                        {currentStepData.fields.map(field => (
-                            <div key={field.id} className="mb-2 sm:mb-4">
-                                <label htmlFor={field.id} className="block text-gray-700 text-sm font-medium mb-2">{field.label}</label>
-                                {field.type === 'file' ? (
-                                    <div
-                                        className="flex flex-col items-center justify-center w-full py-8 sm:py-10 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 active:bg-gray-200 transition-colors"
-                                        onClick={() => handleFileClick(field.id)}
-                                    >
+                        {currentStepData.fields.map(field => {
+                            const isRequired = Array.isArray(currentStepData.required) && currentStepData.required.includes(field.id);
+                            return (
+                                <div key={field.id} className="mb-2 sm:mb-4">
+                                    <label htmlFor={field.id} className="block text-gray-700 text-sm font-medium mb-2">
+                                        {field.label}{isRequired && <span className="text-red-500 ml-1">*</span>}
+                                    </label>
+                                    {field.type === 'file' ? (
+                                        <div
+                                            className="flex flex-col items-center justify-center w-full py-8 sm:py-10 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                                            onClick={() => handleFileClick(field.id)}
+                                        >
+                                            <input
+                                                id={field.id}
+                                                type="file"
+                                                className="hidden"
+                                                onChange={handleChange}
+                                                ref={fileInputRefs[field.id]}
+                                                accept={field.fileType === 'image' ? 'image/*' : '.pdf,.jpg,.png'}
+                                                required={isRequired}
+                                            />
+                                            {formData[field.id] ? (
+                                                <div className="flex flex-col items-center px-4">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 sm:w-12 sm:h-12 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-8.63"></path><path d="M22 4L12 14.01l-3-3"></path></svg>
+                                                    <p className="mt-2 text-sm text-gray-600 font-semibold text-center line-clamp-2">{formData[field.id].name}</p>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    {field.icon}
+                                                    <p className="mt-2 text-sm text-gray-600 text-center px-4">
+                                                        <span className="font-semibold text-blue-600">{translations.clickToUpload}</span> {translations.orDragAndDrop}
+                                                    </p>
+                                                </>
+                                            )}
+                                            <p className="text-xs text-gray-500 mt-2">{field.placeholder}</p>
+                                        </div>
+                                    ) : field.type === 'select' ? (
+                                        <select
+                                            id={field.id}
+                                            value={formData[field.id] || ''}
+                                            onChange={handleChange}
+                                            className="mobile-select"
+                                            required={isRequired}
+                                        >
+                                            {field.options.map((opt, i) => (
+                                                <option key={i} value={opt.value} disabled={opt.value === ''}>{opt.label}</option>
+                                            ))}
+                                        </select>
+                                    ) : (
                                         <input
                                             id={field.id}
-                                            type="file"
-                                            className="hidden"
+                                            type={field.type}
+                                            placeholder={field.placeholder}
+                                            value={formData[field.id] || ''}
                                             onChange={handleChange}
-                                            ref={fileInputRefs[field.id]}
-                                            accept={field.fileType === 'image' ? 'image/*' : '.pdf,.jpg,.png'}
+                                            className="mobile-input"
+                                            required={isRequired}
                                         />
-                                        {formData[field.id] ? (
-                                            <div className="flex flex-col items-center px-4">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 sm:w-12 sm:h-12 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-8.63"></path><path d="M22 4L12 14.01l-3-3"></path></svg>
-                                                <p className="mt-2 text-sm text-gray-600 font-semibold text-center line-clamp-2">{formData[field.id].name}</p>
-                                            </div>
-                                        ) : (
-                                            <>
-                                                {field.icon}
-                                                <p className="mt-2 text-sm text-gray-600 text-center px-4">
-                                                    <span className="font-semibold text-blue-600">{translations.clickToUpload}</span> {translations.orDragAndDrop}
-                                                </p>
-                                            </>
-                                        )}
-                                        <p className="text-xs text-gray-500 mt-2">{field.placeholder}</p>
-                                    </div>
-                                ) : field.type === 'select' ? (
-                                    <select
-                                        id={field.id}
-                                        value={formData[field.id] || ''}
-                                        onChange={handleChange}
-                                        className="mobile-select"
-                                    >
-                                        {field.options.map((opt, i) => (
-                                            <option key={i} value={opt.value} disabled={opt.value === ''}>{opt.label}</option>
-                                        ))}
-                                    </select>
-                                ) : (
-                                    <input
-                                        id={field.id}
-                                        type={field.type}
-                                        placeholder={field.placeholder}
-                                        value={formData[field.id] || ''}
-                                        onChange={handleChange}
-                                        className="mobile-input"
-                                    />
-                                )}
-                            </div>
-                        ))}
+                                    )}
+                                </div>
+                            );
+                        })}
                     </motion.div>
 
                     {/* Navigation Buttons */}

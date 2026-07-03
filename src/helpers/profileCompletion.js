@@ -10,9 +10,7 @@ export const isProfileComplete = (account, role) => {
   const normalizedRole = String(role || '').trim().toLowerCase();
   const isOwnerRole = ['owner', 'host', 'seller', 'buyer'].includes(normalizedRole);
 
-  // Only enforce truly required profile fields.
-  // country/state/address/street are labeled optional in UI and should not block profile completion.
-  const requiredProfileFields = ['name', 'email', 'phone'];
+  const requiredProfileFields = ['name', 'email', 'phone', 'country', 'state', 'address'];
   const hasRequiredProfile = requiredProfileFields.every((field) => hasValue(account[field]));
 
   const hasLicenseDocs = hasValue(account.licenseFrontImage) && hasValue(account.licenseBackImage);

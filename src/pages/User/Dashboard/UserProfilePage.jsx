@@ -7,19 +7,32 @@ import toast from 'react-hot-toast';
 import { profileTranslations } from '../../Seller/Dashboard/translation/profileTranslations';
 import { isKycApproved } from '../../../helpers/kyc';
 
-const InputField = ({ label, value, placeholder, type = 'text', onChange, readOnly = false }) => (
+const InputField = ({ label, value, placeholder, type = 'text', onChange, readOnly = false, required = false }) => (
     <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+            {label}
+            {required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
+        </label>
         <input
             type={type}
             value={value}
             onChange={onChange}
             placeholder={placeholder}
             readOnly={readOnly}
+            required={required}
+            aria-required={required}
             className={`w-full px-4 py-3 border rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ${readOnly ? 'bg-gray-50 text-gray-500 border-gray-200 cursor-not-allowed' : 'border-gray-300'}`}
         />
     </div>
 );
+
+const REQUIRED_PERSONAL_FIELDS = ['name', 'email', 'phone', 'country', 'state', 'address'];
+
+const hasValue = (value) => {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'string') return value.trim().length > 0;
+    return true;
+};
 
 
 const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
@@ -27,6 +40,12 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
     const profileInputRef = useRef(null);
 
     const handleSave = async () => {
+        const hasRequiredFields = REQUIRED_PERSONAL_FIELDS.every((field) => hasValue(userData?.[field]));
+        if (!hasRequiredFields) {
+            toast.error(t.requiredProfileFieldsMissing);
+            return;
+        }
+
         try {
             setLoading(true);
             const formData = new FormData();
@@ -80,12 +99,12 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             <h3 className='text-xl font-bold text-gray-900 mb-6'>{t.personalInfo}</h3>
 
             <form>
-                <InputField label={t.fullName} value={userData?.name || ""} onChange={e => setUserData({ ...userData, name: e.target.value })} />
-                <InputField label={t.email} value={userData?.email || ""} readOnly />
-                <InputField label={t.phone} value={userData?.phone || ""} onChange={e => setUserData({ ...userData, phone: e.target.value })} />
-                <InputField label={t.country} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} />
-                <InputField label={t.state} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} />
-                <InputField label={t.address} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} />
+                <InputField label={t.fullName} value={userData?.name || ""} onChange={e => setUserData({ ...userData, name: e.target.value })} required />
+                <InputField label={t.email} value={userData?.email || ""} readOnly required />
+                <InputField label={t.phone} value={userData?.phone || ""} onChange={e => setUserData({ ...userData, phone: e.target.value })} required />
+                <InputField label={t.country} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} required />
+                <InputField label={t.state} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} required />
+                <InputField label={t.address} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} required />
                 <InputField label={t.street} value={userData?.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
 
                 <div className="flex justify-end mt-6">

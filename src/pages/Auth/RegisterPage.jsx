@@ -240,27 +240,27 @@ const RegisterPage = () => {
 
         <motion.form onSubmit={handleRegister} className='space-y-4' variants={stagger}>
           <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.fullName}</label>
+            <label className='mobile-form-label'>{translations.fullName}<span className="text-red-500 ml-1">*</span></label>
             <input type='text' required value={name} onChange={(e) => setName(e.target.value)}
               className='mobile-input' />
           </motion.div>
           <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.phone}</label>
+            <label className='mobile-form-label'>{translations.phone}<span className="text-red-500 ml-1">*</span></label>
             <input type='tel' required value={phone} onChange={(e) => setPhone(e.target.value)}
               className='mobile-input' />
           </motion.div>
           <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.email}</label>
+            <label className='mobile-form-label'>{translations.email}<span className="text-red-500 ml-1">*</span></label>
             <input type='email' required value={email} disabled={!!localStorage.getItem("socialEmail")}
               onChange={(e) => setEmail(e.target.value)} className='mobile-input' />
           </motion.div>
           <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.password}</label>
+            <label className='mobile-form-label'>{translations.password}<span className="text-red-500 ml-1">*</span></label>
             <input type='password' required value={password} disabled={!!localStorage.getItem("socialPassword")}
               onChange={(e) => setPassword(e.target.value)} className='mobile-input' />
           </motion.div>
           <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.role}</label>
+            <label className='mobile-form-label'>{translations.role}<span className="text-red-500 ml-1">*</span></label>
             <div className='relative'>
               <select required value={role} onChange={(e) => setRole(e.target.value)}
                 className='mobile-select pr-12'>
