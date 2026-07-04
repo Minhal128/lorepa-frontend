@@ -10,7 +10,7 @@ export const isProfileComplete = (account, role) => {
   const normalizedRole = String(role || '').trim().toLowerCase();
   const isOwnerRole = ['owner', 'host', 'seller', 'buyer'].includes(normalizedRole);
 
-  const requiredProfileFields = ['name', 'email', 'phone', 'country', 'state', 'address'];
+  const requiredProfileFields = ['name', 'email', 'phone', 'country', 'state', 'postalCode', 'address'];
   const hasRequiredProfile = requiredProfileFields.every((field) => hasValue(account[field]));
 
   const hasLicenseDocs = hasValue(account.licenseFrontImage) && hasValue(account.licenseBackImage);
