@@ -26,7 +26,7 @@ const InputField = ({ label, value, placeholder, type = 'text', onChange, readOn
     </div>
 );
 
-const REQUIRED_PERSONAL_FIELDS = ['name', 'email', 'phone', 'country', 'state', 'postalCode', 'address'];
+const REQUIRED_PERSONAL_FIELDS = ['name', 'email', 'phone', 'country', 'state', 'city', 'postalCode', 'address'];
 
 const hasValue = (value) => {
     if (value === null || value === undefined) return false;
@@ -52,6 +52,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             formData.append("name", userData.name);
             formData.append("phone", userData.phone);
             formData.append("address", userData.address || "");
+            formData.append("city", userData.city || "");
             formData.append("postalCode", userData.postalCode || "");
             formData.append("state", userData.state || "");
             formData.append("country", userData.country || "");
@@ -105,6 +106,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
                 <InputField label={t.phone} value={userData?.phone || ""} onChange={e => setUserData({ ...userData, phone: e.target.value })} required />
                 <InputField label={t.country} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} required />
                 <InputField label={t.state} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} required />
+                <InputField label={t.city} value={userData?.city || ""} onChange={e => setUserData({ ...userData, city: e.target.value })} required />
                 <InputField label={t.postalCode} value={userData?.postalCode || ""} onChange={e => setUserData({ ...userData, postalCode: e.target.value })} required />
                 <InputField label={t.address} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} required />
                 <InputField label={t.street} value={userData?.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
