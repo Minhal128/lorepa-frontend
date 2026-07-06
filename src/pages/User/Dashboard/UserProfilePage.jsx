@@ -52,9 +52,9 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             formData.append("name", userData.name);
             formData.append("phone", userData.phone);
             formData.append("address", userData.address || "");
-            formData.append("city", userData.city || "");
             formData.append("postalCode", userData.postalCode || "");
             formData.append("state", userData.state || "");
+            formData.append("city", userData.city || "");
             formData.append("country", userData.country || "");
             formData.append("street", userData.street || "");
             if (userData.profilePicture instanceof File) formData.append("profilePicture", userData.profilePicture);
@@ -65,8 +65,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             toast.success(res.data.msg);
-            if (res.data?.data) setUserData(res.data.data);
-            else if (onSaveSuccess) onSaveSuccess();
+            if (onSaveSuccess) onSaveSuccess();
         } catch (error) {
             toast.error(error.response?.data?.msg || t.failedToUpdateProfile);
         } finally {
@@ -105,12 +104,12 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
                 <InputField label={t.fullName} value={userData?.name || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, name: v })); }} required />
                 <InputField label={t.email} value={userData?.email || ""} readOnly required />
                 <InputField label={t.phone} value={userData?.phone || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, phone: v })); }} required />
-                <InputField label={t.country} value={userData?.country || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, country: v })); }} required />
-                <InputField label={t.state} value={userData?.state || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, state: v })); }} required />
-                <InputField label={t.city} value={userData?.city || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, city: v })); }} required />
-                <InputField label={t.postalCode} value={userData?.postalCode || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, postalCode: v })); }} required />
-                <InputField label={t.address} value={userData?.address || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, address: v })); }} required />
-                <InputField label={t.street} value={userData?.street || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, street: v })); }} />
+                <InputField label={t.country} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} required />
+                <InputField label={t.state} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} required />
+                <InputField label={t.city} value={userData?.city || ""} onChange={e => setUserData({ ...userData, city: e.target.value })} required />
+                <InputField label={t.postalCode} value={userData?.postalCode || ""} onChange={e => setUserData({ ...userData, postalCode: e.target.value })} required />
+                <InputField label={t.address} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} required />
+                <InputField label={t.street} value={userData?.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
 
                 <div className="flex justify-end mt-6">
                     <button type="button" disabled={loading} onClick={handleSave} className="w-full sm:w-auto px-6 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150 shadow-md">
