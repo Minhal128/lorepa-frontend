@@ -65,7 +65,8 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             toast.success(res.data.msg);
-            if (onSaveSuccess) onSaveSuccess();
+            if (res.data?.data) setUserData(res.data.data);
+            else if (onSaveSuccess) onSaveSuccess();
         } catch (error) {
             toast.error(error.response?.data?.msg || t.failedToUpdateProfile);
         } finally {
@@ -212,6 +213,14 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
         try {
             setLoading(true);
             const formData = new FormData();
+            formData.append("name", userData.name || "");
+            formData.append("phone", userData.phone || "");
+            formData.append("address", userData.address || "");
+            formData.append("city", userData.city || "");
+            formData.append("postalCode", userData.postalCode || "");
+            formData.append("state", userData.state || "");
+            formData.append("country", userData.country || "");
+            formData.append("street", userData.street || "");
             if (userData.licenseFrontImage instanceof File) formData.append("licenseFrontImage", userData.licenseFrontImage);
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
             if (userData.carInsurancePolicyImage instanceof File) formData.append("carInsurancePolicyImage", userData.carInsurancePolicyImage);
