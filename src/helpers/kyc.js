@@ -49,17 +49,16 @@ export const isKycApproved = (account) => {
     return true;
   }
 
-  // Renters: all 4 required documents uploaded = KYC complete
-  if (account.role === "renter" || !account.role) {
-    const renterDocs = [
-      account.licenseFrontImage,
-      account.licenseBackImage,
-      account.carInsurancePolicyImage,
-      account.faq27Image,
-    ];
-    if (renterDocs.every((doc) => typeof doc === "string" && doc.trim().length > 0)) {
-      return true;
-    }
+  // All required documents uploaded = KYC complete, regardless of role
+  const isOwnerRole = ["owner", "host", "seller", "buyer"].includes(
+    normalizeString(account.role)
+  );
+  const requiredDocs = isOwnerRole
+    ? [account.licenseFrontImage, account.licenseBackImage, account.trailerRegistrationImage]
+    : [account.licenseFrontImage, account.licenseBackImage, account.carInsurancePolicyImage, account.faq27Image];
+
+  if (requiredDocs.every((doc) => typeof doc === "string" && doc.trim().length > 0)) {
+    return true;
   }
 
   return false;
