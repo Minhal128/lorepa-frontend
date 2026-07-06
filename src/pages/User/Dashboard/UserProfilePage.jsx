@@ -32,7 +32,8 @@ const profileCityKey = (userId) => `profile_city_${userId}`;
 
 const resolveCity = (data, fallback = '') => {
     const userId = localStorage.getItem("userId");
-    return data?.city || fallback || (userId ? localStorage.getItem(profileCityKey(userId)) : '') || '';
+    const stored = userId ? localStorage.getItem(profileCityKey(userId)) : '';
+    return data?.city || data?.street || fallback || stored || '';
 };
 
 const hasValue = (value) => {
@@ -63,7 +64,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             formData.append("state", userData.state || "");
             formData.append("city", userData.city || "");
             formData.append("country", userData.country || "");
-            formData.append("street", userData.street || "");
+            formData.append("street", userData.street || userData.city || "");
             if (userData.profilePicture instanceof File) formData.append("profilePicture", userData.profilePicture);
             if (userData.licenseFrontImage instanceof File) formData.append("licenseFrontImage", userData.licenseFrontImage);
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
@@ -72,9 +73,16 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             toast.success(res.data.msg);
+
+            const savedCity = (userData.city || "").trim();
             const userId = localStorage.getItem("userId");
-            if (userId && userData.city) localStorage.setItem(profileCityKey(userId), userData.city);
-            if (onSaveSuccess) onSaveSuccess();
+            if (userId && savedCity) localStorage.setItem(profileCityKey(userId), savedCity);
+
+            setUserData((prev) => ({
+                ...(res.data?.data || prev),
+                city: savedCity || resolveCity(res.data?.data, prev?.city),
+                state: userData.state ?? res.data?.data?.state ?? prev.state,
+            }));
         } catch (error) {
             toast.error(error.response?.data?.msg || t.failedToUpdateProfile);
         } finally {
@@ -115,7 +123,7 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
                 <InputField label={t.phone} value={userData?.phone || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, phone: v })); }} required />
                 <InputField label={t.country} value={userData?.country || ""} onChange={e => setUserData({ ...userData, country: e.target.value })} required />
                 <InputField label={t.state} value={userData?.state || ""} onChange={e => setUserData({ ...userData, state: e.target.value })} required />
-                <InputField label={t.city} value={userData?.city || ""} onChange={e => setUserData({ ...userData, city: e.target.value })} required />
+                <InputField label={t.city} value={userData?.city || ""} onChange={e => { const v = e.target.value; setUserData(prev => ({ ...prev, city: v })); }} required />
                 <InputField label={t.postalCode} value={userData?.postalCode || ""} onChange={e => setUserData({ ...userData, postalCode: e.target.value })} required />
                 <InputField label={t.address} value={userData?.address || ""} onChange={e => setUserData({ ...userData, address: e.target.value })} required />
                 <InputField label={t.street} value={userData?.street || ""} onChange={e => setUserData({ ...userData, street: e.target.value })} />
@@ -228,7 +236,7 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
             formData.append("postalCode", userData.postalCode || "");
             formData.append("state", userData.state || "");
             formData.append("country", userData.country || "");
-            formData.append("street", userData.street || "");
+            formData.append("street", userData.street || userData.city || "");
             if (userData.licenseFrontImage instanceof File) formData.append("licenseFrontImage", userData.licenseFrontImage);
             if (userData.licenseBackImage instanceof File) formData.append("licenseBackImage", userData.licenseBackImage);
             if (userData.carInsurancePolicyImage instanceof File) formData.append("carInsurancePolicyImage", userData.carInsurancePolicyImage);
