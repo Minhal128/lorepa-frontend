@@ -28,6 +28,13 @@ const InputField = ({ label, value, placeholder, type = 'text', onChange, readOn
 
 const REQUIRED_PERSONAL_FIELDS = ['name', 'email', 'phone', 'country', 'state', 'city', 'postalCode', 'address'];
 
+const profileCityKey = (userId) => `profile_city_${userId}`;
+
+const resolveCity = (data, fallback = '') => {
+    const userId = localStorage.getItem("userId");
+    return data?.city || fallback || (userId ? localStorage.getItem(profileCityKey(userId)) : '') || '';
+};
+
 const hasValue = (value) => {
     if (value === null || value === undefined) return false;
     if (typeof value === 'string') return value.trim().length > 0;
@@ -65,6 +72,8 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             toast.success(res.data.msg);
+            const userId = localStorage.getItem("userId");
+            if (userId && userData.city) localStorage.setItem(profileCityKey(userId), userData.city);
             if (onSaveSuccess) onSaveSuccess();
         } catch (error) {
             toast.error(error.response?.data?.msg || t.failedToUpdateProfile);
@@ -302,8 +311,14 @@ const UserProfilePage = () => {
     const fetchUserProfile = async () => {
         try {
             const res = await axios.get(`${config.baseUrl}/account/single/${localStorage.getItem("userId")}`);
-            setUserData(res.data.data || {});
-            setKycStatus(isKycApproved(res.data.data) ? "Verified" : "Not Verified");
+            const data = res.data.data || {};
+            setUserData((prev) => {
+                const city = resolveCity(data, prev?.city);
+                const userId = localStorage.getItem("userId");
+                if (userId && city) localStorage.setItem(profileCityKey(userId), city);
+                return { ...data, city };
+            });
+            setKycStatus(isKycApproved(data) ? "Verified" : "Not Verified");
         } catch (error) {
             toast.error(t.failedToFetchProfile);
         }
