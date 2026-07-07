@@ -20,7 +20,6 @@ const AdminSettingsPage = () => {
     const [faqs, setFaqs] = useState({ guest: [], host: [] }); // Changed to 'guest', 'host'
     const [securityDeposits, setSecurityDeposits] = useState([]);
     const [ownerCategories, setOwnerCategories] = useState([]);
-    const [citiesList, setCitiesList] = useState([]);
     const [trailerTitleStatus, setTrailerTitleStatus] = useState([]);
     const [hitchTypes, setHitchTypes] = useState([]);
     const [ballSizes, setBallSizes] = useState([]);
@@ -35,7 +34,6 @@ const AdminSettingsPage = () => {
     const [isFaqModalOpen, setIsFaqModalOpen] = useState(false);
     const [isSecurityDepositModalOpen, setIsSecurityDepositModalOpen] = useState(false);
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-    const [isCityModalOpen, setIsCityModalOpen] = useState(false);
     const [isTrailerStatusModalOpen, setIsTrailerStatusModalOpen] = useState(false);
     const [isHitchTypeModalOpen, setIsHitchTypeModalOpen] = useState(false);
     const [isBallSizeModalOpen, setIsBallSizeModalOpen] = useState(false);
@@ -52,7 +50,6 @@ const AdminSettingsPage = () => {
     const [newSecurityDepositTitle, setNewSecurityDepositTitle] = useState('');
     const [newSecurityDepositAmount, setNewSecurityDepositAmount] = useState('');
     const [newCategoryTitle, setNewCategoryTitle] = useState('');
-    const [newCityTitle, setNewCityTitle] = useState('');
     const [newTrailerStatusTitle, setNewTrailerStatusTitle] = useState('');
     const [newHitchTypeTitle, setNewHitchTypeTitle] = useState('');
     const [newBallSizeTitle, setNewBallSizeTitle] = useState('');
@@ -138,9 +135,6 @@ const AdminSettingsPage = () => {
                 break;
             case 'Category':
                 fetchData('categories', setOwnerCategories);
-                break;
-            case 'City':
-                fetchData('cities', setCitiesList);
                 break;
             case 'Trailer title status':
                 fetchData('trailer-statuses', setTrailerTitleStatus);
@@ -301,27 +295,6 @@ const AdminSettingsPage = () => {
             fetchData('categories', setOwnerCategories);
         } catch (err) {
             console.error('Error creating category:', err);
-            toast.error(t.failedToAdd);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleCreateCity = async (e) => {
-        e.preventDefault();
-        if (!newCityTitle) {
-            toast.error(t.pleaseEnterTitle);
-            return;
-        }
-        setLoading(true);
-        try {
-            await axios.post(`${API_BASE_URL}/content/cities`, { title: newCityTitle });
-            toast.success(t.addedSuccessfully);
-            setIsCityModalOpen(false);
-            setNewCityTitle('');
-            fetchData('cities', setCitiesList);
-        } catch (err) {
-            console.error('Error creating city:', err);
             toast.error(t.failedToAdd);
         } finally {
             setLoading(false);
@@ -500,8 +473,6 @@ const AdminSettingsPage = () => {
             setNewSecurityDepositAmount(item.amount);
         } else if (activeSetting === 'Category') {
             setNewCategoryTitle(item.title);
-        } else if (activeSetting === 'City') {
-            setNewCityTitle(item.title);
         } else if (activeSetting === 'Trailer title status') {
             setNewTrailerStatusTitle(item.title);
         } else if (activeSetting === 'Hitch type') {
@@ -543,21 +514,6 @@ const AdminSettingsPage = () => {
             { title: newCategoryTitle },
             () => fetchData('categories', setOwnerCategories),
             () => setIsCategoryModalOpen(false)
-        );
-    };
-
-    const handleUpdateCity = async (e) => {
-        e.preventDefault();
-        if (!newCityTitle || !editingItem?._id) {
-            toast.error(t.invalidDataUpdate);
-            return;
-        }
-        handleUpdate(
-            'cities',
-            editingItem._id,
-            { title: newCityTitle },
-            () => fetchData('cities', setCitiesList),
-            () => setIsCityModalOpen(false)
         );
     };
 
@@ -1126,71 +1082,6 @@ const AdminSettingsPage = () => {
                         )}
                     </div>
                 );
-            case 'City':
-                return (
-                    <div>
-                        <div className='flex justify-between items-center mb-6 flex-wrap'>
-                            <h2 className='text-2xl font-semibold text-gray-800'>{t.city}</h2>
-                            <button
-                                onClick={() => { setEditingItem(null); setIsCityModalOpen(true); setNewCityTitle(''); }}
-                                className='px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 text-sm font-medium'>
-                                {t.addNew}
-                            </button>
-                        </div>
-                        <div className='space-y-4'>
-                            {citiesList.map((item) => (
-                                <div key={item._id} className='flex items-center justify-between p-4 border border-gray-200 rounded-md bg-white'>
-                                    <h3 className='text-lg font-semibold text-gray-900'>{item.title}</h3>
-                                    <div className='flex space-x-3 text-sm'>
-                                        <button
-                                            onClick={() => handleEditClick(item, setIsCityModalOpen)}
-                                            className='text-blue-600 hover:text-blue-800 font-medium'>{t.edit}</button>
-                                        <button
-                                            onClick={() => handleDelete('cities', item._id, () => fetchData('cities', setCitiesList))}
-                                            className='text-red-600 hover:text-red-800 font-medium'>{t.delete}</button>
-                                    </div>
-                                </div>
-                            ))}
-                            {citiesList.length === 0 && !loading && <p className='text-gray-600'>{t.noItemsFound}</p>}
-                        </div>
-
-                        {isCityModalOpen && (
-                            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-                                <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                                    <h3 className="text-xl font-semibold mb-4">{editingItem ? t.edit + ' ' + t.city : t.add + ' ' + t.city}</h3>
-                                    <form onSubmit={editingItem ? handleUpdateCity : handleCreateCity}>
-                                        <div className="mb-4">
-                                            <label htmlFor="cityTitle" className="block text-gray-700 text-sm font-bold mb-2">{t.title}:</label>
-                                            <input
-                                                type="text"
-                                                id="cityTitle"
-                                                value={newCityTitle}
-                                                onChange={(e) => setNewCityTitle(e.target.value)}
-                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                required
-                                            />
-                                        </div>
-                                        <div className="flex justify-end">
-                                            <button
-                                                type="button"
-                                                onClick={() => { setIsCityModalOpen(false); setEditingItem(null); }}
-                                                className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
-                                            >
-                                                {t.cancel}
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                                            >
-                                                {editingItem ? t.update : t.add}
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                );
             case 'Trailer title status':
                 return (
                     <div>
@@ -1424,7 +1315,6 @@ const AdminSettingsPage = () => {
                     {[
                         { key: 'Security Deposit', label: t.securityDeposit },
                         { key: 'Category', label: t.category },
-                        { key: 'City', label: t.city },
                         { key: 'Trailer title status', label: t.trailerTitleStatus },
                         { key: 'Hitch type', label: t.hitchType },
                         { key: 'Ball size', label: t.ballSize }

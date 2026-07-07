@@ -28,13 +28,7 @@ const InputField = ({ label, value, placeholder, type = 'text', onChange, readOn
 
 const REQUIRED_PERSONAL_FIELDS = ['name', 'email', 'phone', 'country', 'state', 'city', 'postalCode', 'address'];
 
-const profileCityKey = (userId) => `profile_city_${userId}`;
-
-const resolveCity = (data, fallback = '') => {
-    const userId = localStorage.getItem("userId");
-    const stored = userId ? localStorage.getItem(profileCityKey(userId)) : '';
-    return data?.city || data?.street || fallback || stored || '';
-};
+const resolveCity = (data, fallback = '') => data?.city || data?.street || fallback || '';
 
 const hasValue = (value) => {
     if (value === null || value === undefined) return false;
@@ -74,13 +68,9 @@ const PersonalInfoForm = ({ userData, setUserData, onSaveSuccess, t }) => {
             });
             toast.success(res.data.msg);
 
-            const savedCity = (userData.city || "").trim();
-            const userId = localStorage.getItem("userId");
-            if (userId && savedCity) localStorage.setItem(profileCityKey(userId), savedCity);
-
             setUserData((prev) => ({
                 ...(res.data?.data || prev),
-                city: savedCity || resolveCity(res.data?.data, prev?.city),
+                city: resolveCity(res.data?.data, userData.city),
                 state: userData.state ?? res.data?.data?.state ?? prev.state,
             }));
         } catch (error) {
@@ -320,12 +310,7 @@ const UserProfilePage = () => {
         try {
             const res = await axios.get(`${config.baseUrl}/account/single/${localStorage.getItem("userId")}`);
             const data = res.data.data || {};
-            setUserData((prev) => {
-                const city = resolveCity(data, prev?.city);
-                const userId = localStorage.getItem("userId");
-                if (userId && city) localStorage.setItem(profileCityKey(userId), city);
-                return { ...data, city };
-            });
+            setUserData((prev) => ({ ...data, city: resolveCity(data, prev?.city) }));
             setKycStatus(isKycApproved(data) ? "Verified" : "Not Verified");
         } catch (error) {
             toast.error(t.failedToFetchProfile);
