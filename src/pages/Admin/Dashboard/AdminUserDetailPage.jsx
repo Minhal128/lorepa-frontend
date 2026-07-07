@@ -72,6 +72,7 @@ const AdminUserDetailPage = () => {
   const locationInfo = [
     { label: "Country", value: user.country },
     { label: "Province / State", value: user.state },
+    { label: "City", value: user.city },
     { label: "Postal Code", value: user.postalCode },
     { label: "Address", value: user.address, full: true },
     { label: "Street", value: user.street, full: true },
