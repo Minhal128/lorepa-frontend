@@ -46,6 +46,8 @@ const translations = {
         addressPlaceholder: 'Street Address',
         city: 'City',
         cityPlaceholder: 'City',
+        selectCity: 'Select City',
+        cityOther: 'Custom City',
         state: 'State/Province',
         statePlaceholder: 'State/Province',
         zip: 'Zip/Postal Code',
@@ -120,6 +122,8 @@ const translations = {
         addressPlaceholder: 'Dirección de la calle',
         city: 'Ciudad',
         cityPlaceholder: 'Ciudad',
+        selectCity: 'Seleccionar Ciudad',
+        cityOther: 'Ciudad Personalizada',
         state: 'Estado/Provincia',
         statePlaceholder: 'Estado/Provincia',
         zip: 'Código Postal',
@@ -194,6 +198,8 @@ const translations = {
         addressPlaceholder: '街道地址',
         city: '城市',
         cityPlaceholder: '城市',
+        selectCity: '选择城市',
+        cityOther: '自定义城市',
         state: '州/省',
         statePlaceholder: '州/省',
         zip: '邮政编码',
@@ -268,6 +274,8 @@ const translations = {
         addressPlaceholder: 'Adresse de la rue',
         city: 'Ville',
         cityPlaceholder: 'Ville',
+        selectCity: 'Sélectionner une ville',
+        cityOther: 'Ville personnalisée',
         state: 'État/Province',
         statePlaceholder: 'État/Province',
         zip: 'Code postal',
@@ -325,6 +333,7 @@ const ListTrailer = () => {
         length: '',
         address: '',
         city: '',
+        cityOther: '',
         state: '',
         country: '',
         zip: '',
@@ -342,6 +351,14 @@ const ListTrailer = () => {
         const storedLang = localStorage.getItem('lang');
         return translations[storedLang] || translations.fr;
     });
+
+    const [cities, setCities] = useState([]);
+
+    useEffect(() => {
+        axios.get(`${config.baseUrl}/content/cities`)
+            .then((res) => setCities(res.data?.data || []))
+            .catch(() => setCities([]));
+    }, []);
 
     useEffect(() => {
         const handleStorageChange = () => {
@@ -384,7 +401,8 @@ const ListTrailer = () => {
             description: lang.locationAddressDescription,
             fields: [
                 { id: 'address', label: lang.address, type: 'text', placeholder: lang.addressPlaceholder },
-                { id: 'city', label: lang.city, type: 'text', placeholder: lang.cityPlaceholder },
+                { id: 'city', label: lang.city, type: 'select', options: [lang.selectCity || lang.city, ...cities.map((c) => c.title), 'Other'] },
+                ...(formData.city === 'Other' ? [{ id: 'cityOther', label: lang.cityOther || lang.city, type: 'text', placeholder: lang.cityPlaceholder }] : []),
                 { id: 'state', label: lang.state, type: 'text', placeholder: lang.statePlaceholder },
                 { id: 'country', label: lang.country || 'Country', type: 'text', placeholder: lang.countryPlaceholder || 'Country' },
                 { id: 'zip', label: lang.zip, type: 'text', placeholder: lang.zipPlaceholder },
@@ -457,6 +475,11 @@ const ListTrailer = () => {
             data.append("userId", userId);
 
             Object.entries(formData).forEach(([key, value]) => {
+                if (key === 'cityOther') return;
+                if (key === 'city' && value === 'Other') {
+                    data.append('city', formData.cityOther || '');
+                    return;
+                }
                 data.append(key, value);
             });
 
