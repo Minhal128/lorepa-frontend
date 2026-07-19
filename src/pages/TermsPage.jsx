@@ -428,7 +428,7 @@ const termsTranslations = {
                         <p>For any questions regarding these Terms, please contact us:</p>
                         <p>Email: contact@lorepa.com</p>
                         <p>Phone: +1 438 282 6718</p>
-                        <p>Address: 3910 Rue de Bellechasse, Montréal, Québec, H1X 1J4</p>
+                        <p>Address: 551, Av Jeanne D'arc, Montréal, Québec, H1W 3T2</p>
                     </div>
                 ),
             },
@@ -848,7 +848,7 @@ const termsTranslations = {
                         <p>Para cualquier pregunta sobre estos Términos, contáctenos:</p>
                         <p>Correo electrónico: contact@lorepa.com</p>
                         <p>Teléfono: +1 438 282 6718</p>
-                        <p>Dirección: 3910 Rue de Bellechasse, Montréal, Québec, H1X 1J4</p>
+                        <p>Dirección: 551, Av Jeanne D'arc, Montréal, Québec, H1W 3T2</p>
                     </div>
                 ),
             },
@@ -1268,7 +1268,7 @@ const termsTranslations = {
                         <p>对于这些条款的任何问题，请联系我们：</p>
                         <p>电子邮件: contact@lorepa.com</p>
                         <p>电话: +1 438 282 6718</p>
-                        <p>地址: 3910 Rue de Bellechasse, Montréal, Québec, H1X 1J4</p>
+                        <p>地址: 551, Av Jeanne D'arc, Montréal, Québec, H1W 3T2</p>
                     </div>
                 ),
             },
@@ -1688,7 +1688,7 @@ const termsTranslations = {
                         <p>Pour toute question concernant les présentes Conditions, veuillez nous contacter :</p>
                         <p>Courriel : contact@lorepa.com</p>
                         <p>Téléphone : +1 438 282 6718</p>
-                        <p>Adresse : 3910 Rue de Bellechasse, Montréal, Québec, H1X 1J4</p>
+                        <p>Adresse : 551, Av Jeanne D'arc, Montréal, Québec, H1W 3T2</p>
                     </div>
                 ),
             },
