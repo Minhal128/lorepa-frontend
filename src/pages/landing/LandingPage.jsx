@@ -8,10 +8,10 @@ const OwnerLandingPage = () => {
   return (
     <div className="min-h-screen bg-white font-sans">
       <Helmet>
-        <title>Louer sa remorque au Québec — Jusqu'à 300 $/mois | Lorepa.ca</title>
+        <title>Louer sa remorque au Québec — Plus de 800 $/mois | Lorepa.ca</title>
         <meta
           name="description"
-          content="Mets ta remorque inutilisée en location sur Lorepa.ca. Gagne jusqu'à 300 $/mois. Inscription gratuite, tu gardes le contrôle, assurance incluse."
+          content="Mets ta remorque inutilisée en location sur Lorepa.ca. Gagne plus de 800 $/mois. Inscription gratuite, tu gardes le contrôle, assurance incluse."
         />
         <link rel="canonical" href="https://lorepa.ca/proprietaire" />
       </Helmet>

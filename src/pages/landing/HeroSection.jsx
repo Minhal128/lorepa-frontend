@@ -39,8 +39,8 @@ const HeroSection = () => {
             >
               Ta remorque inutilisée{' '}
               peut te rapporter{' '}
-              jusqu'à{' '}
-              <span className="text-blue-600 whitespace-nowrap">300 $/mois</span>
+              plus de{' '}
+              <span className="text-blue-600 whitespace-nowrap">800 $/mois</span>
             </motion.h1>
 
             {/* Subheadline */}
