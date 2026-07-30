@@ -81,8 +81,11 @@ const CalculatorPage = () => {
           height: 24px;
           cursor: pointer;
         }
-        .lorepa-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; }
-        .lorepa-slider::-moz-range-thumb { width: 0; height: 0; border: none; }
+        /* iOS Safari only starts a drag when the touch lands on the thumb — a 0×0
+           thumb has no hit area, so the slider looked frozen. Real size, invisible
+           because the input itself is opacity-0. */
+        .lorepa-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; }
+        .lorepa-slider::-moz-range-thumb { width: 22px; height: 22px; border: none; }
         .lorepa-slider::-moz-range-track { background: transparent; }
       `}</style>
       <Navbar />
@@ -219,7 +222,9 @@ const CalculatorPage = () => {
                       max="30"
                       value={days}
                       onChange={(e) => setDays(Number(e.target.value))}
-                      className="lorepa-slider absolute inset-0 w-full opacity-0 cursor-pointer"
+                      // overhangs 11px (half a thumb) each side so the native thumb centre
+                      // still travels the full 0–100% the painted track/ticks are drawn on
+                      className="lorepa-slider absolute inset-y-0 -left-[11px] -right-[11px] opacity-0 cursor-pointer"
                     />
                   </div>
                   {/* Day markers: tick at every day, number at key days */}
