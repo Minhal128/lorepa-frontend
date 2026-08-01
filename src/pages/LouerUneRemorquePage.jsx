@@ -586,7 +586,7 @@ export default function LouerUneRemorquePage() {
                 onMouseLeave={(e) =>
                   (e.currentTarget.style.background = "#2563EB")
                 }
-                onClick={() => window.gtag?.('event', 'conversion', { send_to: 'AW-CONVERSION_ID/CONVERSION_LABEL' })}
+                onClick={() => window.gtag?.('event', 'conversion', { send_to: 'AW-18220478445/CONVERSION_LABEL' })}
               >
                 Trouver une remorque près de moi
                 <FiArrowRight className="w-5 h-5" />
@@ -986,7 +986,7 @@ export default function LouerUneRemorquePage() {
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#EFF6FF")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "#ffffff")}
-                  onClick={() => window.gtag?.('event', 'conversion', { send_to: 'AW-CONVERSION_ID/CONVERSION_LABEL' })}
+                  onClick={() => window.gtag?.('event', 'conversion', { send_to: 'AW-18220478445/CONVERSION_LABEL' })}
                 >
                   Voir les remorques disponibles
                   <FiArrowRight className="w-5 h-5" />
