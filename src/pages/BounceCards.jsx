@@ -15,16 +15,15 @@ export default function BounceCards({
   animationStagger = 0.06,
   easeType = "elastic.out(1, 0.8)",
   transformStyles = [
-    "rotate(10deg) translate(-170px)",
-    "rotate(5deg) translate(-85px)",
+    "rotate(10deg) translate(-260px)",
+    "rotate(5deg) translate(-130px)",
     "rotate(-3deg)",
-    "rotate(-10deg) translate(85px)",
-    "rotate(2deg) translate(170px)",
+    "rotate(-10deg) translate(130px)",
+    "rotate(2deg) translate(260px)",
   ],
   enableHover = true,
 }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [hoveredIdx, setHoveredIdx] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -142,14 +141,8 @@ export default function BounceCards({
           key={idx}
           className={`Bouncy card card-${idx} mt-18 absolute w-[200px] aspect-square cursor-pointer`}
           style={{ transform: transformStyles[idx] || "none" }}
-          onMouseEnter={() => {
-            pushSiblings(idx);
-            setHoveredIdx(idx);
-          }}
-          onMouseLeave={() => {
-            resetSiblings();
-            setHoveredIdx(null);
-          }}
+          onMouseEnter={() => pushSiblings(idx)}
+          onMouseLeave={resetSiblings}
           onClick={() => labels[idx] && navigate(`/trailers?city=${labels[idx]}`)}
         >
           <div
@@ -163,11 +156,7 @@ export default function BounceCards({
             />
           </div>
           {labels[idx] && (
-            <div
-              className={`absolute left-1/2 -bottom-9 -translate-x-1/2 whitespace-nowrap bg-white text-gray-900 text-sm font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 transition-all duration-300 ${
-                hoveredIdx === idx ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1 pointer-events-none"
-              }`}
-            >
+            <div className="absolute bottom-3 left-2 whitespace-nowrap bg-white text-gray-900 text-xs font-semibold px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5">
               <CanadaFlag className="w-4 h-3 rounded-[1px] shrink-0" />
               {labels[idx]}
             </div>
