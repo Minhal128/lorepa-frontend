@@ -12,10 +12,10 @@ import { BiTransfer } from 'react-icons/bi';
 import { FiSearch } from 'react-icons/fi';
 
 const navBar2Translations = {
-    en: { where: "Where", from: "From", until: "Until", login: "Login", signup: "Signup", logout: "Logout", becomeAHost: "Become a host", whoAreWe: "Who are we", contactUs: "Contact us", calculator: "Calculator", montrealPlaceholder: "Montreal", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Dashboard", search: "Search" },
-    es: { where: "¿Dónde?", from: "Desde", until: "Hasta", login: "Iniciar sesión", signup: "Registrarse", logout: "Cerrar sesión", becomeAHost: "Conviértete en anfitrión", whoAreWe: "¿Quiénes somos?", contactUs: "Contáctanos", calculator: "Calculadora", montrealPlaceholder: "Montreal", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Panel de Control", search: "Buscar" },
-    cn: { where: "地点", from: "从", until: "到", login: "登录", signup: "注册", logout: "注销", becomeAHost: "成为房东", whoAreWe: "我们是谁", contactUs: "联系我们", calculator: "计算器", montrealPlaceholder: "蒙特利尔", turoVsLorepa: "Turo 对比 Lorepa", dashboard: "仪表板", search: "搜索" },
-    fr: { where: "Où", from: "Du", until: "Jusqu'à", login: "Se connecter", signup: "S'inscrire", logout: "Se déconnecter", becomeAHost: "Devenir hôte", whoAreWe: "Qui sommes-nous", contactUs: "Nous contacter", calculator: "Calculatrice", montrealPlaceholder: "Montréal", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Tableau de Bord", search: "Rechercher" }
+    en: { where: "Where", from: "From", until: "Until", login: "Login", signup: "Signup", logout: "Logout", becomeAHost: "Become a host", whoAreWe: "Who are we", contactUs: "Contact us", calculator: "How much can you earn?", montrealPlaceholder: "Montreal", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Dashboard", search: "Search" },
+    es: { where: "¿Dónde?", from: "Desde", until: "Hasta", login: "Iniciar sesión", signup: "Registrarse", logout: "Cerrar sesión", becomeAHost: "Conviértete en anfitrión", whoAreWe: "¿Quiénes somos?", contactUs: "Contáctanos", calculator: "¿Cuánto se gana?", montrealPlaceholder: "Montreal", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Panel de Control", search: "Buscar" },
+    cn: { where: "地点", from: "从", until: "到", login: "登录", signup: "注册", logout: "注销", becomeAHost: "成为房东", whoAreWe: "我们是谁", contactUs: "联系我们", calculator: "能赚多少？", montrealPlaceholder: "蒙特利尔", turoVsLorepa: "Turo 对比 Lorepa", dashboard: "仪表板", search: "搜索" },
+    fr: { where: "Où", from: "Du", until: "Jusqu'à", login: "Se connecter", signup: "S'inscrire", logout: "Se déconnecter", becomeAHost: "Devenir hôte", whoAreWe: "Qui sommes-nous", contactUs: "Nous contacter", calculator: "Ça rapporte combien ?", montrealPlaceholder: "Montréal", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Tableau de Bord", search: "Rechercher" }
 };
 
 const useQuery = () => new URLSearchParams(useLocation().search);

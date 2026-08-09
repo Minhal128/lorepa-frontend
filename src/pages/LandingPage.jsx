@@ -40,13 +40,13 @@ const translations = {
         rentTrailerTitle: "Rent a Trailer",
         rentTrailerDescription: "Find the perfect trailer for your needs, wherever you are in Quebec. Browse, book, and go!",
         rentTrailerButton: "Rent a trailer",
-        becomeHostTitle: "Become a host",
-        becomeHostDescription: "List your trailer and start earning by helping others move, travel, and explore. It's easy and secure",
-        becomeHostButton: "Become a host",
-        trustedBy: "Trusted by 100 +",
-        leadingPlatform: "Our company is the leading sharing platform where you can book any type of trailer from private individuals,",
-        dynamicCommunity: "whatever the occasion, with a dynamic community of trusted hosts.",
-        thankYou: "You are one of 100 + people who trust us completely, Thank you!",
+        becomeHostTitle: "Trailer owner",
+        becomeHostDescription: "Join hundreds of Quebec owners who make their trailer pay off between neighbours. You set your price, you choose your availability. Lorepa takes care of the rest.",
+        becomeHostButton: "Join the community",
+        trustedBy: "They trusted us. Your turn.",
+        leadingPlatform: "Owners who make their trailer pay off. Renters who find exactly what they need.",
+        dynamicCommunity: "Neighbours helping each other all across Quebec.",
+        thankYou: "More than 100 active members — and this is only the beginning!",
         popularLocations: "Popular Locations",
         carHauler: "Browse Trailers",
         faq: "Frequently asked questions",
@@ -61,11 +61,10 @@ const translations = {
         heroFeature2Desc: "Ready for Every Trip.",
         heroFeature3: "Ready When You Are",
         heroFeature3Desc: "The Safe Choice for Transport.",
-        heroPeopleLabel: "Clients",
+        heroPeopleLabel: "+100 active members",
         heroPeopleDesc: "Avec Lorepa, louer une remorque n’a jamais été aussi simple et pratique.",
-        heroTrustedByPrefix: "Trusted by",
-        heroHappyCustomers: "happy customers",
-        heroReviewsLabel: "Reviews",
+        heroTrustedSentence: "Quebecers have trusted us",
+        heroRatingLabel: "Rated excellent",
         seeAllFaq: "See all FAQ",
         searching: "Searching...",
         noResults: "No results found",
@@ -101,13 +100,13 @@ const translations = {
         rentTrailerTitle: "Alquilar un remolque",
         rentTrailerDescription: "Encuentra el remolque perfecto para tus necesidades, dondequiera que estés en Quebec. ¡Busca, reserva y listo!",
         rentTrailerButton: "Alquilar un remolque",
-        becomeHostTitle: "Conviértete en anfitrión",
-        becomeHostDescription: "Publica tu remolque y comienza a ganar ayudando a otros a mudarse, viajar y explorar. Es fácil y seguro.",
-        becomeHostButton: "Conviértete en anfitrión",
-        trustedBy: "Confiado por más de 100 +",
-        leadingPlatform: "Nuestra empresa es la plataforma líder para compartir donde puedes reservar cualquier tipo de remolque a particulares,",
-        dynamicCommunity: "cualquiera sea la ocasión, con una comunidad dinámica de anfitriones confiables.",
-        thankYou: "¡Eres una de las más de 100 personas que confían completamente en nosotros, gracias!",
+        becomeHostTitle: "Propietario de remolque",
+        becomeHostDescription: "Únete a cientos de propietarios quebequenses que rentabilizan su remolque entre vecinos. Tú fijas tu precio, tú eliges tu disponibilidad. Lorepa se encarga del resto.",
+        becomeHostButton: "Únete a la comunidad",
+        trustedBy: "Ellos ya confiaron en nosotros. Te toca.",
+        leadingPlatform: "Propietarios que rentabilizan su remolque. Inquilinos que encuentran lo que necesitan.",
+        dynamicCommunity: "Vecinos que se ayudan en todo Quebec.",
+        thankYou: "¡Más de 100 miembros activos, y esto apenas comienza!",
         popularLocations: "Lugares populares",
         "carHauler": "Explorar Remolques",
         faq: "Preguntas frecuentes",
@@ -122,11 +121,10 @@ const translations = {
         heroFeature2Desc: "Listo para cada viaje.",
         heroFeature3: "Listo Cuando Tú Lo Estés",
         heroFeature3Desc: "La opción segura para transportar.",
-        heroPeopleLabel: "Clients",
+        heroPeopleLabel: "+100 miembros activos",
         heroPeopleDesc: "Avec Lorepa, louer une remorque n’a jamais été aussi simple et pratique.",
-        heroTrustedByPrefix: "Confiado por",
-        heroHappyCustomers: "clientes satisfechos",
-        heroReviewsLabel: "Reseñas",
+        heroTrustedSentence: "quebequenses han confiado en nosotros",
+        heroRatingLabel: "Calificado excelente",
         seeAllFaq: "Ver todas las FAQ",
         searching: "Buscando...",
         noResults: "No se encontraron resultados",
@@ -162,13 +160,13 @@ const translations = {
         rentTrailerTitle: "租一辆拖车",
         rentTrailerDescription: "在魁北克找到满足您需求的完美拖车，无论您身在何处。浏览、预订，然后出发！",
         rentTrailerButton: "租一辆拖车",
-        becomeHostTitle: "成为房东",
-        becomeHostDescription: "列出您的拖车，通过帮助他人搬家、旅行和探索来开始赚钱。这既简单又安全。",
-        becomeHostButton: "成为房东",
-        trustedBy: "100+ 信任用户",
-        leadingPlatform: "我们公司是领先的共享平台，您可以从个人手中预订各种类型的拖车，",
-        dynamicCommunity: "无论场合如何，拥有值得信赖的动态社区主机。",
-        thankYou: "感谢您成为 100+ 完全信任我们的人之一！",
+        becomeHostTitle: "拖车车主",
+        becomeHostDescription: "加入数百位魁北克车主，在邻里之间让闲置拖车创造收益。你定价格，你选择可租用时间，其余交给 Lorepa。",
+        becomeHostButton: "加入社区",
+        trustedBy: "他们已经信任我们，轮到你了。",
+        leadingPlatform: "车主让拖车创造收益，租客找到所需的一切。",
+        dynamicCommunity: "邻里在魁北克各地互帮互助。",
+        thankYou: "超过 100 位活跃会员——而这只是开始！",
         popularLocations: "热门地点",
         carHauler: "浏览拖车",
         faq: "常见问题",
@@ -183,11 +181,10 @@ const translations = {
         heroFeature2Desc: "随时胜任每一程。",
         heroFeature3: "随时待命",
         heroFeature3Desc: "运输的安心之选。",
-        heroPeopleLabel: "Clients",
+        heroPeopleLabel: "+100 位活跃会员",
         heroPeopleDesc: "Avec Lorepa, louer une remorque n’a jamais été aussi simple et pratique.",
-        heroTrustedByPrefix: "深受",
-        heroHappyCustomers: "满意客户的信赖",
-        heroReviewsLabel: "条评价",
+        heroTrustedSentence: "位魁北克人信任我们",
+        heroRatingLabel: "评价极佳",
         seeAllFaq: "查看所有 FAQ",
         searching: "搜索中...",
         noResults: "未找到结果",
@@ -223,13 +220,13 @@ const translations = {
         rentTrailerTitle: "Louer une remorque",
         rentTrailerDescription: "Trouvez la remorque parfaite pour vos besoins, où que vous soyez au Québec. Parcourez, réservez et partez !",
         rentTrailerButton: "Louer une remorque",
-        becomeHostTitle: "Devenir hôte",
-        becomeHostDescription: "Listez votre remorque et commencez à gagner de l'argent en aidant les autres à déménager, voyager et explorer. C'est facile et sécurisé.",
-        becomeHostButton: "Devenir hôte",
-        trustedBy: "Fiable par plus de 100 +",
-        leadingPlatform: "Notre entreprise est la principale plateforme de partage où vous pouvez réserver tout type de remorque auprès de particuliers,",
-        dynamicCommunity: "quelle que soit l'occasion, avec une communauté dynamique d'hôtes de confiance.",
-        thankYou: "Vous êtes l'une des 100+ personnes qui nous font entièrement confiance, merci !",
+        becomeHostTitle: "Propriétaire de remorque",
+        becomeHostDescription: "Rejoint des centaines de propriétaires québécois qui rentabilisent leur remorque entre voisins. Tu fixes ton prix, tu choisis tes disponibilités. Lorepa s'occupe du reste.",
+        becomeHostButton: "Rejoindre la communauté",
+        trustedBy: "Ils nous ont fait confiance. À ton tour.",
+        leadingPlatform: "Des propriétaires qui rentabilisent leur remorque. Des locataires qui trouvent ce dont ils ont besoin.",
+        dynamicCommunity: "Des voisins qui s'entraident partout au Québec.",
+        thankYou: "Plus de 100 membres actifs — et ça ne fait que commencer !",
         popularLocations: "Lieux populaires",
         carHauler: "Parcourir les remorques",
         faq: "Questions fréquemment posées",
@@ -244,11 +241,10 @@ const translations = {
         heroFeature2Desc: "Prête pour chaque trajet.",
         heroFeature3: "Prête quand vous l'êtes",
         heroFeature3Desc: "Le choix sûr pour transporter.",
-        heroPeopleLabel: "Clients",
+        heroPeopleLabel: "+100 membres actifs",
         heroPeopleDesc: "Avec Lorepa, louer une remorque n’a jamais été aussi simple et pratique.",
-        heroTrustedByPrefix: "Approuvé par",
-        heroHappyCustomers: "clients satisfaits",
-        heroReviewsLabel: "avis",
+        heroTrustedSentence: "Québécois nous ont fait confiance",
+        heroRatingLabel: "Noté excellent",
         seeAllFaq: "Voir toutes les FAQ",
         searching: "Recherche en cours...",
         noResults: "Aucun résultat trouvé",
@@ -597,7 +593,7 @@ const LandingPage = () => {
                                 <img key={i} src={src} alt="" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
                             ))}
                         </div>
-                        <p className="font-bold text-[#0A0F18]">100+ {translationsData.heroPeopleLabel}</p>
+                        <p className="font-bold text-[#0A0F18]">{translationsData.heroPeopleLabel}</p>
                         <p className="text-xs text-gray-500 mt-1">{translationsData.heroPeopleDesc}</p>
                     </div>
 
@@ -608,13 +604,13 @@ const LandingPage = () => {
                                 <img key={i} src={src} alt="" className="w-7 h-7 rounded-full border-2 border-white object-cover" />
                             ))}
                         </div>
-                        <span className="text-sm text-[#0A0F18]">{translationsData.heroTrustedByPrefix} <span className="font-bold">50+</span> {translationsData.heroHappyCustomers}</span>
+                        <span className="text-sm text-[#0A0F18]"><span className="font-bold">100</span> {translationsData.heroTrustedSentence}</span>
                         <span className="w-px h-4 bg-gray-300" />
                         <span className="flex items-center gap-1 text-sm text-[#0A0F18]">
                             <span className="flex text-yellow-400">
                                 {Array.from({ length: 5 }).map((_, i) => <FaStar key={i} />)}
                             </span>
-                            <span className="font-bold">4.9</span> (50 {translationsData.heroReviewsLabel})
+                            <span className="font-bold">5.0</span> ({translationsData.heroRatingLabel})
                         </span>
                     </div>
                 </div>

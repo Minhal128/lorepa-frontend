@@ -8,10 +8,10 @@ import { IoCallOutline, IoKey } from "react-icons/io5";
 import { BiTransfer } from 'react-icons/bi';
 
 const navBarTransaltions = {
-  en: { login: "Login", signup: "Signup", logout: "Logout", whoAreWe: "Who are we", contactUs: "Contact us", calculator: "Calculator", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Dashboard" },
-  es: { login: "Iniciar sesión", signup: "Registrarse", logout: "Cerrar sesión", whoAreWe: "¿Quiénes somos?", contactUs: "Contáctanos", calculator: "Calculadora", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Panel de Control" },
-  cn: { login: "登录", signup: "注册", logout: "注销", whoAreWe: "我们是谁", contactUs: "联系我们", calculator: "计算器", turoVsLorepa: "Turo 对比 Lorepa", dashboard: "仪表板" },
-  fr: { login: "Se connecter", signup: "S'inscrire", logout: "Se déconnecter", whoAreWe: "Qui sommes-nous", contactUs: "Nous contacter", calculator: "Calculatrice", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Tableau de Bord" }
+  en: { login: "Login", signup: "Signup", logout: "Logout", whoAreWe: "Who are we", contactUs: "Contact us", calculator: "How much can you earn?", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Dashboard" },
+  es: { login: "Iniciar sesión", signup: "Registrarse", logout: "Cerrar sesión", whoAreWe: "¿Quiénes somos?", contactUs: "Contáctanos", calculator: "¿Cuánto se gana?", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Panel de Control" },
+  cn: { login: "登录", signup: "注册", logout: "注销", whoAreWe: "我们是谁", contactUs: "联系我们", calculator: "能赚多少？", turoVsLorepa: "Turo 对比 Lorepa", dashboard: "仪表板" },
+  fr: { login: "Se connecter", signup: "S'inscrire", logout: "Se déconnecter", whoAreWe: "Qui sommes-nous", contactUs: "Nous contacter", calculator: "Ça rapporte combien ?", turoVsLorepa: "Turo vs. Lorepa", dashboard: "Tableau de Bord" }
 };
 
 const Navbar = () => {
