@@ -1,9 +1,9 @@
 import fs from "fs";
 
 const checks = [
-  ["src/pages/LandingPage.jsx", ["Locataire", "Propriétaire", "clause FAQ 27", "8% de frais de service", "Interac"]],
-  ["src/pages/FaqPage.jsx", ['guestsTab: "Locataire"', 'hostsTab: "Propriétaire"', "clause FAQ 27", "**8%** de frais de service"]],
-  ["src/pages/singleTrailerTranslations.js", ['guests: "Locataire"', 'hosts: "Propriétaire"', "clause FAQ 27", "8% de frais de service"]],
+  ["src/pages/LandingPage.jsx", ["Locataire", "Propriétaire", "clause FAQ 27", "Votre première location est offerte", "vous gagnez 92$ net", "Interac"]],
+  ["src/pages/FaqPage.jsx", ['guestsTab: "Locataire"', 'hostsTab: "Propriétaire"', "clause FAQ 27", "Votre première location est offerte", "**8%** de frais de service"]],
+  ["src/pages/singleTrailerTranslations.js", ['guests: "Locataire"', 'hosts: "Propriétaire"', "Votre première location est offerte", "vous gagnez 92$ net"]],
 ];
 
 let ok = true;
@@ -22,8 +22,8 @@ if (/guests: "Invités"/.test(landing) || /hosts: "Hôtes"/.test(landing)) {
   console.error("OLD Invités/Hôtes still in LandingPage");
   ok = false;
 }
-if (landing.includes("Vous conservez 85%")) {
-  console.error("OLD 85% French still in LandingPage");
+if (landing.includes("Tu gardes 100%") || landing.includes("tu gardes 100%")) {
+  console.error("OLD tutoiement earnings copy still in LandingPage");
   ok = false;
 }
 

@@ -440,7 +440,7 @@ export const singleTrailerTranslations = {
     faqOwner1Q: "Comment puis-je lister ma remorque ?",
     faqOwner1A: "Vous pouvez lister votre remorque en vous inscrivant, en remplissant les détails clés (description, disponibilité, prix), en téléchargeant des photos et en fournissant les documents requis (immatriculation, assurance).",
     faqOwner2Q: "Combien puis-je gagner avec Lorepa ?",
-    faqOwner2A: "Ta première location est offerte — tu gardes 100% du montant. À partir de la deuxième, Lorepa retient 8% de frais de service. Par exemple, pour une location à 100$, tu reçois 92$ net. Le paiement est déposé sur ton compte bancaire par Interac le lundi suivant la fin de ta location.",
+    faqOwner2A: "Votre première location est offerte — vous conservez 100% du montant. À partir de la deuxième, Lorepa retient 8% de frais de service. Par exemple, pour une location à 100$, vous gagnez 92$ net. Le paiement est déposé sur votre compte bancaire par Interac le lundi suivant la fin de ta location.",
     faqOwner3Q: "Puis-je annuler une réservation ?",
     faqOwner3A: "Oui, mais les propriétaires ne sont autorisés qu'à 2 annulations gratuites tous les 6 mois. Après cela, une pénalité de 100 $ CA s'applique si l'annulation est conforme à la politique. L'abus d'annulations est sujet à examen du compte.",
     faqOwner4Q: "Que se passe-t-il si ma remorque est rendue en retard ou endommagée ?",

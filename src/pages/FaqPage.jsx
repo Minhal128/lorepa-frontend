@@ -613,7 +613,7 @@ const faqContent = {
             },
             {
                 "question": "Combien puis-je gagner avec Lorepa ?",
-                "answer": "Ta première location est offerte — tu gardes **100%** du montant. À partir de la deuxième, Lorepa retient **8%** de frais de service. Par exemple, pour une location à **100$**, tu reçois **92$** net. Le paiement est déposé sur ton compte bancaire par **Interac** le **lundi** suivant la fin de ta location."
+                "answer": "Votre première location est offerte — vous conservez **100%** du montant. À partir de la deuxième, Lorepa retient **8%** de frais de service. Par exemple, pour une location à **100$**, vous gagnez **92$** net. Le paiement est déposé sur votre compte bancaire par **Interac** le **lundi** suivant la fin de ta location."
             },
             {
                 "question": "Puis-je annuler une réservation ?",
