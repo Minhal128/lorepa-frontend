@@ -690,29 +690,29 @@ const LandingPage = () => {
                     variant={fadeInDown}
                     className="text-xl sm:text-2xl lg:text-[40px] text-white font-semibold mt-6 sm:mt-10 mb-6 sm:mb-10 text-center"
                 />
-                <div className="flex justify-center items-center flex-wrap gap-4 sm:gap-6 pb-8 sm:pb-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 max-w-5xl lg:max-w-6xl mx-auto pb-8 sm:pb-10">
                     {/* Rent a Trailer Card */}
-                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg w-full max-w-sm sm:max-w-md lg:max-w-lg overflow-hidden px-4 sm:px-5">
-                        <div className="py-7 sm:py-10">
-                            <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.rentTrailerTitle}</h2>
+                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg overflow-hidden px-4 sm:px-6 flex flex-col h-full">
+                        <div className="pt-8 sm:pt-12 pb-7 sm:pb-10 flex-1">
+                            <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4 leading-tight">{translationsData.rentTrailerTitle}</h2>
                             <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.rentTrailerDescription}</p>
                             <Link to="/trailers">
                                 <button className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent">{translationsData.rentTrailerButton}</button>
                             </Link>
                         </div>
-                        <img src={Host1} alt="Rent a Trailer" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
+                        <img src={Host1} alt="Rent a Trailer" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover mt-auto" />
                     </motion.div>
 
                     {/* Become a Host Card */}
-                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg w-full max-w-sm sm:max-w-md lg:max-w-lg overflow-hidden px-4 sm:px-5">
-                        <div className="py-7 sm:py-10">
-                            <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4">{translationsData.becomeHostTitle}</h2>
+                    <motion.div variants={flipIn} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} className="bg-white rounded-xl shadow-lg overflow-hidden px-4 sm:px-6 flex flex-col h-full">
+                        <div className="pt-8 sm:pt-12 pb-7 sm:pb-10 flex-1">
+                            <h2 className="text-xl sm:text-[46px] font-[300] mb-1 sm:mb-4 leading-tight">{translationsData.becomeHostTitle}</h2>
                             <p className="text-gray-700 mb-4 sm:text-base text-sm">{translationsData.becomeHostDescription}</p>
                             <Link to="/register">
                                 <button className="border border-[#000] text-[#000] px-4 py-2 rounded-lg bg-transparent">{translationsData.becomeHostButton || translationsData.becomeHostTitle}</button>
                             </Link>
                         </div>
-                        <img src={Host2} alt="Become a Host" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover" />
+                        <img src={Host2} alt="Become a Host" className="w-full h-[20rem] rounded-tl-lg rounded-tr-lg object-cover mt-auto" />
                     </motion.div>
 
                 </div>
