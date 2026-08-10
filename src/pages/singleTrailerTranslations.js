@@ -414,7 +414,7 @@ export const singleTrailerTranslations = {
     faqRenter2Q: "Comment fonctionne le processus de location ?",
     faqRenter2A: "Vous parcourez les remorques disponibles, envoyez une demande au propriétaire et, une fois approuvée, confirmez votre réservation. Un contrat de location et des photos d'inspection sont générés automatiquement.",
     faqRenter3Q: "L'assurance est-elle incluse dans ma location ?",
-    faqRenter3A: "Pour louer une remorque sur Lorepa, tu dois disposer de la clause FAQ 27 sur ta police d'assurance automobile. Contacte tes assurance pour vérifier avant ta réservation. Sans cette protection, tu ne pourras pas louer.",
+    faqRenter3A: "Pour louer une remorque sur Lorepa, vous devez disposer de la clause FAQ 27 sur ta police d'assurance automobile. Contactez vos assurances pour vérifier avant d'effectuer une réservation. Sans cette protection, vous ne pourrez pas louer.",
     faqRenter4Q: "Puis-je annuler ma réservation ?",
     faqRenter4A: "Oui, vous pouvez annuler selon les termes décrits dans notre politique d'annulation. Les remboursements peuvent varier en fonction du moment où l'annulation est effectuée par rapport à la date de début.",
     faqRenter5Q: "Que se passe-t-il si je rends la remorque en retard ?",
