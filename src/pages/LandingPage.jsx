@@ -68,19 +68,19 @@ const translations = {
         seeAllFaq: "See all FAQ",
         searching: "Searching...",
         noResults: "No results found",
-        guests: "Guests",
-        hosts: "Hosts",
+        guests: "Renter",
+        hosts: "Owner",
         faqContent: {
             renters: [
                 { question: "What do I need to rent a trailer on Lorepa?", answer: "To rent a trailer, you must be at least 21 years old, hold a valid driver’s license, and provide proof of insurance. You will also need a verified Lorepa account." },
                 { question: "How does the rental process work?", answer: "You browse available trailers, send a request to the owner, and once approved, confirm your booking. A rental contract and inspection photos are generated automatically." },
-                { question: "Is insurance included in my rental?", answer: "No. You are required to provide valid auto insurance that covers towing. Additional optional protection may be offered during checkout." },
+                { question: "Is insurance included in my rental?", answer: "To rent a trailer on Lorepa, you must have FAQ clause 27 on your auto insurance policy. Contact your insurer to verify before your reservation. Without this protection, you will not be able to rent." },
                 { question: "Can I cancel my booking?", answer: "Yes, you can cancel under the terms described in our cancellation policy. Refunds may vary depending on when the cancellation is made relative to the start date." },
                 { question: "What happens if I return the trailer late?", answer: "Late returns may incur a flat penalty fee, as outlined in the Terms of Use. Always notify the owner in case of delay to avoid disputes." },
             ],
             owners: [
                 { question: "How do I list my trailer?", answer: "You can list your trailer by signing up, filling in key details (description, availability, pricing), uploading photos, and providing required documents (registration, insurance)." },
-                { question: "How much can I earn with Lorepa?", answer: "You keep 85% of the rental price. The remaining 15% covers Lorepa’s service fee. Payouts are processed automatically via Stripe within 3–5 business days after the rental ends." },
+                { question: "How much can I earn with Lorepa?", answer: "Your first rental is free — you keep 100% of the amount. From the second rental onward, Lorepa retains an 8% service fee. For example, on a $100 rental, you receive $92 net. Payment is deposited to your bank account via Interac on the Monday following the end of your rental." },
                 { question: "Can I cancel a reservation?", answer: "Yes, but owners are allowed only 2 free cancellations every 6 months. After that, a $100 CAD penalty applies if the cancellation is within policy. Abuse of cancellations is subject to account review." },
                 { question: "What if my trailer is returned late or damaged?", answer: "You can report any issue via the platform within 24 hours. Lorepa can assist with deducting penalties or damage costs from the renter’s deposit." },
                 { question: "Do I need special insurance as an owner?", answer: "You must maintain valid trailer insurance. Lorepa does not provide direct coverage to owners. However, optional protection programs may be introduced in future." },
@@ -248,19 +248,19 @@ const translations = {
         seeAllFaq: "Voir toutes les FAQ",
         searching: "Recherche en cours...",
         noResults: "Aucun résultat trouvé",
-        guests: "Invités",
-        hosts: "Hôtes",
+        guests: "Locataire",
+        hosts: "Propriétaire",
         faqContent: {
             renters: [
                 { question: "De quoi ai-je besoin pour louer une remorque sur Lorepa ?", answer: "Pour louer une remorque, vous devez avoir au moins 21 ans, détenir un permis de conduire valide et fournir une preuve d'assurance. Vous aurez également besoin d'un compte Lorepa vérifié." },
                 { question: "Comment fonctionne le processus de location ?", answer: "Vous parcourez les remorques disponibles, envoyez une demande au propriétaire et, une fois approuvée, confirmez votre réservation. Un contrat de location et des photos d'inspection sont générés automatiquement." },
-                { question: "L'assurance est-elle incluse dans ma location ?", answer: "Non. Vous êtes tenu de fournir une assurance automobile valide qui couvre le remorquage. Une protection optionnelle supplémentaire peut être offerte lors du paiement." },
+                { question: "L'assurance est-elle incluse dans ma location ?", answer: "Pour louer une remorque sur Lorepa, tu dois disposer de la clause FAQ 27 sur ta police d'assurance automobile. Contacte tes assurance pour vérifier avant ta réservation. Sans cette protection, tu ne pourras pas louer." },
                 { question: "Puis-je annuler ma réservation ?", answer: "Oui, vous pouvez annuler selon les termes décrits dans notre politique d'annulation. Les remboursements peuvent varier en fonction du moment de l'annulation par rapport à la date de début." },
                 { question: "Que se passe-t-il si je retourne la remorque en retard ?", answer: "Les retours tardifs peuvent entraîner des frais de pénalité fixes, comme indiqué dans les Conditions d'utilisation. Avertissez toujours le propriétaire en cas de retard pour éviter les litiges." }
             ],
             owners: [
                 { question: "Comment lister ma remorque ?", answer: "Vous pouvez lister votre remorque en vous inscrivant, en remplissant les détails clés (description, disponibilité, prix), en téléchargeant des photos et en fournissant les documents requis (immatriculation, assurance)." },
-                { question: "Combien puis-je gagner avec Lorepa ?", answer: "Vous conservez 85% du prix de la location. Les 15% restants couvrent les frais de service de Lorepa. Les paiements sont traités automatiquement via Stripe dans les 3 à 5 jours ouvrables après la fin de la location." },
+                { question: "Combien puis-je gagner avec Lorepa ?", answer: "Ta première location est offerte — tu gardes 100% du montant. À partir de la deuxième, Lorepa retient 8% de frais de service. Par exemple, pour une location à 100$, tu reçois 92$ net. Le paiement est déposé sur ton compte bancaire par Interac le lundi suivant la fin de ta location." },
                 { question: "Puis-je annuler une réservation ?", answer: "Oui, mais les propriétaires ne sont autorisés qu'à 2 annulations gratuites tous les 6 mois. Après cela, une pénalité de 100 $ CA s'applique si l'annulation est conforme à la politique. L'abus d'annulations est soumis à un examen du compte." },
                 { question: "Que se passe-t-il si ma remorque est retournée en retard ou endommagée ?", answer: "Vous pouvez signaler tout problème via la plateforme dans les 24 heures. Lorepa peut vous aider à déduire les pénalités ou les coûts de dommages du dépôt du locataire." },
                 { question: "Ai-je besoin d'une assurance spéciale en tant que propriétaire ?", answer: "Vous devez maintenir une assurance remorque valide. Lorepa ne fournit pas de couverture directe aux propriétaires. Cependant, des programmes de protection optionnels pourraient être introduits à l'avenir." }

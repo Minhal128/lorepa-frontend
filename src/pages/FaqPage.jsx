@@ -19,8 +19,8 @@ const fadeInUp = {
 const faqPageTranslations = {
     en: {
         faqTitle: "FAQ",
-        guestsTab: "Guests",
-        hostsTab: "Hosts",
+        guestsTab: "Renter",
+        hostsTab: "Owner",
         noAnswer: "Didn't find any answer to your question?",
         contactUsButton: "Contact us"
     },
@@ -40,8 +40,8 @@ const faqPageTranslations = {
     },
     fr: {
         faqTitle: "FAQ",
-        guestsTab: "Invités",
-        hostsTab: "Hôtes",
+        guestsTab: "Locataire",
+        hostsTab: "Propriétaire",
         noAnswer: "Vous n'avez pas trouvé de réponse à votre question ?",
         contactUsButton: "Contactez-nous"
     }
@@ -211,7 +211,7 @@ const faqContent = {
             },
             {
                 "question": "Does Lorepa provide insurance for rental?",
-                "answer": "Yes. Lorepa offers **optional insurance coverage** starting at **$10 per day**. This protection is designed to cover **accidental damages, theft, and limited liability** related to the trailer during the rental period."
+                "answer": "To rent a trailer on Lorepa, you must have **FAQ clause 27** on your auto insurance policy. Contact your insurer to verify before your reservation. Without this protection, you will not be able to rent."
             },
             {
                 "question": "Can I cancel my booking?",
@@ -265,7 +265,7 @@ const faqContent = {
             },
             {
                 "question": "How much can I earn with Lorepa?",
-                "answer": "You keep **85%** of the rental price. The remaining **15%** covers Lorepa’s service fee. Payouts are processed automatically via **Stripe** within **3–5 business days** after the rental ends."
+                "answer": "Your first rental is free — you keep **100%** of the amount. From the second rental onward, Lorepa retains an **8%** service fee. For example, on a **$100** rental, you receive **$92** net. Payment is deposited to your bank account via **Interac** on the **Monday** following the end of your rental."
             },
             {
                 "question": "Can I cancel a reservation?",
@@ -559,7 +559,7 @@ const faqContent = {
             },
             {
                 "question": "Lorepa propose-t-elle une assurance pour la location ?",
-                "answer": "Oui. Lorepa propose une **assurance optionnelle** à partir de **10 $ par jour**. Cette protection est conçue pour couvrir les **dommages accidentels, le vol et la responsabilité limitée** liés à la remorque pendant la période de location."
+                "answer": "Pour louer une remorque sur Lorepa, tu dois disposer de la **clause FAQ 27** sur ta police d'assurance automobile. Contacte tes assurance pour vérifier avant ta réservation. Sans cette protection, tu ne pourras pas louer."
             },
             {
                 "question": "Puis-je annuler ma réservation ?",
@@ -613,7 +613,7 @@ const faqContent = {
             },
             {
                 "question": "Combien puis-je gagner avec Lorepa ?",
-                "answer": "Vous conservez **85%** du prix de la location. Les **15%** restants couvrent les frais de service de Lorepa. Les paiements sont traités automatiquement via **Stripe** dans les **3 à 5 jours ouvrables** après la fin de la location."
+                "answer": "Ta première location est offerte — tu gardes **100%** du montant. À partir de la deuxième, Lorepa retient **8%** de frais de service. Par exemple, pour une location à **100$**, tu reçois **92$** net. Le paiement est déposé sur ton compte bancaire par **Interac** le **lundi** suivant la fin de ta location."
             },
             {
                 "question": "Puis-je annuler une réservation ?",
