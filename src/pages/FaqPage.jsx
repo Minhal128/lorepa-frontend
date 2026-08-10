@@ -559,7 +559,7 @@ const faqContent = {
             },
             {
                 "question": "Lorepa propose-t-elle une assurance pour la location ?",
-                "answer": "Pour louer une remorque sur Lorepa, vous devez disposer de la **clause FAQ 27** sur ta police d'assurance automobile. Contactez vos assurances pour vérifier avant d'effectuer une réservation. Sans cette protection, vous ne pourrez pas louer."
+                "answer": "Pour louer une remorque sur Lorepa, vous devez disposer de la **clause FAQ 27** sur votre police d'assurance automobile. Contactez vos assurances pour vérifier avant d'effectuer une réservation. Sans cette protection, vous ne pourrez pas louer."
             },
             {
                 "question": "Puis-je annuler ma réservation ?",
