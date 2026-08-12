@@ -8,7 +8,7 @@ import { FaRegQuestionCircle } from 'react-icons/fa';
 import { TbMoneybag } from "react-icons/tb";
 import { MdOutlineCancel } from 'react-icons/md';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Animation Variants
 const fadeInUp = {
@@ -110,6 +110,7 @@ const whoPageTranslations = {
 };
 
 const WhoPage = () => {
+    const navigate = useNavigate();
     const [translations, setTranslations] = useState(() => {
         const storedLang = localStorage.getItem('lang');
         return whoPageTranslations[storedLang] || whoPageTranslations.fr;
@@ -128,10 +129,9 @@ const WhoPage = () => {
 
     useEffect(() => {
         if (window.location.hash === '#signin-signup') {
-            const section = document.getElementById('signin-signup');
-            section?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            navigate('/register', { replace: true });
         }
-    }, []);
+    }, [navigate]);
 
     return (
         <div className="text-black overflow-x-hidden">
