@@ -572,7 +572,7 @@ export default function LouerUneRemorquePage() {
               </p>
 
               <Link
-                to="/trailers"
+                to="/who#signin-signup"
                 className="flex sm:inline-flex items-center justify-center gap-3 text-white font-semibold rounded-xl transition-all duration-300 hover:-translate-y-0.5"
                 style={{
                   background: "#2563EB",
@@ -588,7 +588,7 @@ export default function LouerUneRemorquePage() {
                 }
                 onClick={() => window.gtag?.('event', 'conversion', { send_to: 'AW-18220478445/CONVERSION_LABEL' })}
               >
-                Trouver une remorque près de moi
+                Créer mon compte gratuitement
                 <FiArrowRight className="w-5 h-5" />
               </Link>
 

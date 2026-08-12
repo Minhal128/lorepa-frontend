@@ -126,6 +126,13 @@ const WhoPage = () => {
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
+    useEffect(() => {
+        if (window.location.hash === '#signin-signup') {
+            const section = document.getElementById('signin-signup');
+            section?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, []);
+
     return (
         <div className="text-black overflow-x-hidden">
             <SEO
@@ -188,7 +195,7 @@ const WhoPage = () => {
             </div>
 
             {/* Buttons Section */}
-            <motion.div className="flex flex-col sm:flex-row justify-center items-center gap-4 my-10 mobile-px" variants={zoomBounce}>
+            <motion.div id="signin-signup" className="flex flex-col sm:flex-row justify-center items-center gap-4 my-10 mobile-px" variants={zoomBounce}>
                 <button className="mobile-btn-primary w-full sm:w-auto min-w-[200px]">
                     <Link to="/login" className="block w-full h-full">{translations.signInButton}</Link>
                 </button>
