@@ -272,15 +272,15 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
             )}
             <div
                 role="note"
-                className="mt-4 mb-2 rounded-xl border-2 border-emerald-300 bg-emerald-50 px-4 py-3.5 flex items-center gap-3 shadow-sm"
+                className="mt-4 mb-2 rounded-xl border-2 border-blue-300 bg-blue-50 px-4 py-3.5 flex items-center gap-3 shadow-sm"
             >
                 <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white text-lg"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white"
                     aria-hidden="true"
                 >
-                    🔒
+                    <FiLock className="w-5 h-5" />
                 </span>
-                <p className="text-sm sm:text-[15px] font-semibold text-emerald-950 leading-snug">
+                <p className="text-sm sm:text-[15px] font-semibold text-blue-950 leading-snug">
                     {t.documentsPrivacyNotice}
                 </p>
             </div>
@@ -337,7 +337,7 @@ const UserProfilePage = () => {
 
     const getKycStatusStyle = (status) => {
         switch (status) {
-            case 'Verified': return 'text-green-600';
+            case 'Verified': return 'text-blue-600';
             case 'Not Verified': return 'text-red-500';
             default: return 'text-gray-600';
         }
