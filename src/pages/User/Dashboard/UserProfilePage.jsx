@@ -270,7 +270,21 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
                     <DocumentUploadBlock t={t} side={t.faq27DepositField} file={userData.faq27Image || userData.faq27ImageURL} onFileSelect={e => setUserData({ ...userData, faq27Image: e.target.files[0], faq27ImageURL: URL.createObjectURL(e.target.files[0]) })} />
                 </div>
             )}
-            <div className="mt-8 pt-6 border-t border-gray-200 flex justify-end">
+            <div
+                role="note"
+                className="mt-4 mb-2 rounded-xl border-2 border-emerald-300 bg-emerald-50 px-4 py-3.5 flex items-center gap-3 shadow-sm"
+            >
+                <span
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white text-lg"
+                    aria-hidden="true"
+                >
+                    🔒
+                </span>
+                <p className="text-sm sm:text-[15px] font-semibold text-emerald-950 leading-snug">
+                    {t.documentsPrivacyNotice}
+                </p>
+            </div>
+            <div className="mt-4 pt-6 border-t border-gray-200 flex justify-end">
                 <button type="button" disabled={loading} onClick={handleUpload} className="w-full sm:w-auto px-8 py-3 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-150 shadow-md">
                     {loading ? t.uploading : t.upload}
                 </button>

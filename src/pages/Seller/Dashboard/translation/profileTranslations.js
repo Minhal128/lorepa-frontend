@@ -46,6 +46,7 @@ export const profileTranslations = {
     clickToUploadFile: "Click to upload",
     faq27Title: "Amendment FAQ 27",
     faq27DepositField: "Car insurance policy FAQ 27 page",
+    documentsPrivacyNotice: "Your information is protected and confidential. Lorepa never shares your personal data.",
   },
   es: {
     profileSettings: "Perfil y Configuración",
@@ -94,6 +95,7 @@ export const profileTranslations = {
     clickToUploadFile: "Haga clic para subir",
     faq27Title: "Endoso / FAQ 27",
     faq27DepositField: "Página de póliza de seguro de automóvil endoso / FAQ 27",
+    documentsPrivacyNotice: "Tu información está protegida y es confidencial. Lorepa nunca comparte tus datos personales.",
   },
   fr: {
     profileSettings: "Profil & Paramètres",
@@ -142,6 +144,7 @@ export const profileTranslations = {
     faq27DepositField: "Police d'assurance auto page FAQ 27",
     kycNotVerifiedMessage: "Votre KYC n'est pas encore vérifié. Veuillez télécharger tous les documents requis.",
     clickToUploadFile: "Cliquez pour télécharger",
+    documentsPrivacyNotice: "Tes informations sont protégées et confidentielles. Lorepa ne partage jamais tes données personnelles.",
   },
   cn: {
     profileSettings: "个人资料与设置",
@@ -190,5 +193,6 @@ export const profileTranslations = {
     kycVerifiedMessage: "您的身份证件已获批准。",
     kycNotVerifiedMessage: "您的 KYC 尚未通过验证。请上传所有必需文件。",
     clickToUploadFile: "点击上传",
+    documentsPrivacyNotice: "您的信息受到保护且保密。Lorepa 绝不会分享您的个人数据。",
   }
 };
