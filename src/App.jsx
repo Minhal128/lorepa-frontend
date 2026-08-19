@@ -87,6 +87,7 @@ const lazyWithRetry = (componentImport) =>
   });
 
 const RegisterPage = lazyWithRetry(() => import('./pages/Auth/RegisterPage'));
+const OnboardingPage = lazyWithRetry(() => import('./pages/OnboardingPage'));
 const AdminLayout = lazyWithRetry(() => import('./components/admin/Layout'));
 const UserLayout = lazyWithRetry(() => import('./components/user/Layout'));
 const BuyerLayout = lazyWithRetry(() => import('./components/buyer/Layout'));
@@ -193,6 +194,7 @@ function App() {
             <Route path='/verify-otp' element={<VerifyOtpPage />} />
             <Route path='/change-password' element={<ChangePasswordPage />} />
             <Route path='/verify' element={<VerifyPage />} />
+            <Route path='/onboarding' element={<OnboardingPage />} />
 
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel/>} />

@@ -36,15 +36,8 @@ const VerifyPage = () => {
                 localStorage.setItem("role", response?.data?.data?.role)
                 toast.success(t.accountVerified);
                 
-                // Redirect based on user role
-                const userRole = response?.data?.data?.role;
-                setTimeout(() => { 
-                    if (userRole === "owner") {
-                        nav("/seller/dashboard/home");
-                    } else {
-                        nav("/user/dashboard/home");
-                    }
-                }, 2000);
+                // Straight to onboarding after signup
+                setTimeout(() => nav("/onboarding"), 2000);
             }
         }
         catch (error) {
