@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FiBell, FiCheck, FiMail, FiUploadCloud, FiTruck, FiCalendar, FiLock, FiChevronRight, FiChevronDown, FiAlertTriangle, FiExternalLink, FiHeadphones } from 'react-icons/fi';
 import Logo from '../assets/logo.svg';
 import Avatar from '../assets/avatar.png';
-import config from '../config';
+import { fetchOnboarding } from '../helpers/onboarding';
 import { onboardingTranslations } from './Auth/translation/onboardingTranslations';
 
 const STEP_META = [
@@ -36,8 +35,8 @@ const OnboardingPage = () => {
       nav('/login');
       return;
     }
-    axios.get(`${config.baseUrl}/account/onboarding/${userId}`)
-      .then((res) => setData((prev) => ({ ...prev, ...res.data.data })))
+    fetchOnboarding(userId)
+      .then((payload) => setData((prev) => ({ ...prev, ...payload })))
       .catch(() => toast.error(t.loadFailed));
   }, [userId]);
 

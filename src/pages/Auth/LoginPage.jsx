@@ -10,6 +10,7 @@ import { jwtDecode } from 'jwt-decode';
 import { LoginSocialFacebook } from 'reactjs-social-login';
 import config from '../../config';
 import Logo from '../../assets/logo.svg';
+import { fetchOnboarding } from '../../helpers/onboarding';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -106,6 +107,20 @@ const getDashboardPath = (role) => (
   role === 'owner' ? "/seller/dashboard/home" : "/user/dashboard/home"
 );
 
+const goAfterAuth = async (nav, role) => {
+  const navigateTo = localStorage.getItem("naviagte");
+  if (navigateTo) {
+    nav(navigateTo);
+    return;
+  }
+  try {
+    const progress = await fetchOnboarding(localStorage.getItem('userId'));
+    nav(progress.percent < 100 ? '/onboarding' : getDashboardPath(role));
+  } catch {
+    nav(getDashboardPath(role));
+  }
+};
+
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -137,13 +152,7 @@ const LoginPage = () => {
       localStorage.setItem('userId', userId);
       localStorage.setItem('role', role);
       toast.success(translations.loginSuccess);
-
-      const navigateTo = localStorage.getItem("naviagte");
-      if (navigateTo) {
-        nav(navigateTo);
-      } else {
-        nav(getDashboardPath(role));
-      }
+      goAfterAuth(nav, role);
     } else if (params.get('error') === 'google_failed') {
       toast.error(translations.googleAuthFailed);
     }
@@ -157,14 +166,7 @@ const LoginPage = () => {
         localStorage.setItem('userId', res.data.data._id);
         localStorage.setItem('role', res.data.data.role);
         toast.success(translations.loginSuccess);
-        setTimeout(() => {
-          const navigateTo = localStorage.getItem("naviagte");
-          if (navigateTo) {
-            nav(navigateTo);
-          } else {
-            nav(getDashboardPath(res.data.data.role));
-          }
-        }, 2000);
+        setTimeout(() => goAfterAuth(nav, res.data.data.role), 2000);
       } else {
         toast.error(res.data?.msg || translations.loginFailed);
       }
@@ -189,7 +191,7 @@ const LoginPage = () => {
       localStorage.setItem('userId', res.data.data._id);
       localStorage.setItem('role', res.data.data.role);
       toast.success(translations.loginSuccess);
-      nav(getDashboardPath(res.data.data.role));
+      await goAfterAuth(nav, res.data.data.role);
     } catch (err) {
       toast.error(err.response?.data?.msg || translations.loginFailed);
     }
