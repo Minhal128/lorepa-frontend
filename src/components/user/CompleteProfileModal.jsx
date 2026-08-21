@@ -21,7 +21,7 @@ const CompleteProfileModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
 
     const handleGoToProfile = () => {
-        navigate('/user/dashboard/profile?tab=documents');
+        navigate('/user/dashboard/profile?tab=documents&from=onboarding');
         onClose();
     };
 

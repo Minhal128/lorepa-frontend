@@ -16,6 +16,9 @@ const STEP_META = [
   { key: 'firstRental', icon: FiCalendar },
 ];
 
+const glass = 'border border-white/50 bg-white/55 shadow-[0_8px_32px_-12px_rgba(37,99,235,0.25)] backdrop-blur-xl';
+const glassSoft = 'border border-white/40 bg-white/40 shadow-sm backdrop-blur-lg';
+
 const OnboardingPage = () => {
   const nav = useNavigate();
   const userId = localStorage.getItem('userId');
@@ -45,8 +48,8 @@ const OnboardingPage = () => {
   const avatarSrc = data.profilePicture?.trim() ? data.profilePicture : AvatarIcon;
 
   const ctaPath = (cta) => {
-    if (cta === 'upload') return `${dashboard}/profile?tab=documents`;
-    if (cta === 'list') return isOwner ? '/seller/dashboard/listing' : '/trailers';
+    if (cta === 'upload') return `${dashboard}/profile?tab=documents&from=onboarding`;
+    if (cta === 'list') return isOwner ? '/seller/dashboard/listing?from=onboarding' : '/trailers';
     return `${dashboard}/home`;
   };
 
@@ -56,15 +59,20 @@ const OnboardingPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#eef3fb] px-3 py-4 sm:px-6 sm:py-8">
+    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#b8d0ff] via-[#e8efff] to-[#c5daf8] px-3 py-4 sm:px-6 sm:py-8">
+      {/* Ambient blobs — glass needs something to blur */}
+      <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-blue-400/40 blur-3xl" />
+      <div className="pointer-events-none absolute -right-16 top-1/4 h-80 w-80 rounded-full bg-indigo-300/35 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-sky-300/40 blur-3xl" />
+
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="mx-auto w-full max-w-6xl overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_-24px_rgba(37,99,235,0.28)] sm:rounded-[28px]"
+        className={`relative mx-auto w-full max-w-6xl overflow-hidden rounded-2xl sm:rounded-[28px] ${glass}`}
       >
         {/* Header */}
-        <header className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-3 sm:px-6 sm:py-4">
+        <header className="flex items-center justify-between gap-3 border-b border-white/50 bg-white/30 px-4 py-3 backdrop-blur-xl sm:px-6 sm:py-4">
           <Link to="/" className="flex items-center">
             <img src={Logo} alt="Lorepa" className="h-14 w-auto object-contain sm:h-16 md:h-20" />
           </Link>
@@ -73,16 +81,16 @@ const OnboardingPage = () => {
               type="button"
               onClick={() => nav(`${dashboard}/notification`)}
               aria-label={t.notifications}
-              className="grid h-10 w-10 place-items-center rounded-full text-gray-500 transition hover:bg-gray-50 active:scale-95"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/60 bg-white/50 text-gray-600 shadow-sm backdrop-blur-md transition hover:bg-white/80 active:scale-95"
             >
               <FiBell className="h-5 w-5" />
             </button>
             <button
               type="button"
               onClick={() => nav(`${dashboard}/profile`)}
-              className="flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-2.5 transition hover:bg-gray-50 sm:pr-3"
+              className="flex items-center gap-2 rounded-full border border-white/60 bg-white/50 py-1.5 pl-1.5 pr-2.5 shadow-sm backdrop-blur-md transition hover:bg-white/80 sm:pr-3"
             >
-              <img src={avatarSrc} alt="" className="h-9 w-9 rounded-full object-cover" />
+              <img src={avatarSrc} alt="" className="h-9 w-9 rounded-full object-cover ring-2 ring-white/70" />
               <span className="hidden max-w-[120px] truncate text-sm font-semibold text-gray-800 sm:block">{data.name || t.you}</span>
               <FiChevronDown className="h-4 w-4 text-gray-500" />
             </button>
@@ -90,33 +98,30 @@ const OnboardingPage = () => {
         </header>
 
         <div className="grid grid-cols-1 gap-5 p-4 sm:p-6 lg:grid-cols-3 lg:gap-6 lg:p-8">
-          {/* Left: progress + steps */}
           <div className="lg:col-span-2">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">{t.title} 👋</h1>
-                <p className="mt-1.5 max-w-md text-sm text-gray-500">{isOwner ? t.subtitleOwner : t.subtitleRenter}</p>
+                <p className="mt-1.5 max-w-md text-sm text-gray-600">{isOwner ? t.subtitleOwner : t.subtitleRenter}</p>
               </div>
-              <div className="flex items-center gap-1.5 self-start rounded-full bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-700">
+              <div className="flex items-center gap-1.5 self-start rounded-full border border-amber-200/60 bg-amber-50/70 px-3 py-1.5 text-sm font-medium text-amber-700 backdrop-blur-md">
                 <span>{t.profileIs} {data.percent}% {t.complete}</span>
                 {data.percent < 100 && <FiAlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />}
               </div>
             </div>
 
-            {/* Progress bar */}
             <div className="mt-6">
-              <div className="h-3 w-full overflow-hidden rounded-full bg-gray-100">
+              <div className="h-3.5 w-full overflow-hidden rounded-full border border-white/60 bg-white/40 shadow-inner backdrop-blur-md">
                 <div
                   style={{ width: `${data.percent}%` }}
-                  className="h-full rounded-full bg-blue-600 transition-[width] duration-700 ease-out"
+                  className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-400 transition-[width] duration-700 ease-out"
                 />
               </div>
-              <div className="mt-1.5 flex justify-between px-0.5 text-[10px] font-medium text-gray-400 sm:text-xs">
+              <div className="mt-1.5 flex justify-between px-0.5 text-[10px] font-medium text-gray-500 sm:text-xs">
                 {['0%', '25%', '50%', '75%', '100%'].map((tick) => <span key={tick}>{tick}</span>)}
               </div>
             </div>
 
-            {/* Steps */}
             <ul className="mt-6 space-y-3">
               {STEP_META.map(({ key, icon: Icon, cta }, index) => {
                 const status = statusOf(index);
@@ -127,14 +132,14 @@ const OnboardingPage = () => {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05 * index, duration: 0.35 }}
-                    className={`flex flex-wrap items-center gap-3 rounded-2xl border p-3 transition sm:gap-4 sm:p-4 ${
+                    className={`flex flex-wrap items-center gap-3 rounded-2xl p-3 transition sm:gap-4 sm:p-4 ${
                       status === 'current'
-                        ? 'border-blue-300 bg-blue-50/60 shadow-[0_8px_24px_-12px_rgba(37,99,235,0.45)]'
-                        : 'border-gray-100 bg-white shadow-sm'
-                    } ${status === 'locked' ? 'opacity-60' : ''}`}
+                        ? 'border border-blue-300/70 bg-blue-100/50 shadow-[0_8px_28px_-10px_rgba(37,99,235,0.55)] backdrop-blur-xl ring-1 ring-blue-200/50'
+                        : `${glassSoft}`
+                    } ${status === 'locked' ? 'opacity-65' : ''}`}
                   >
-                    <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${
-                      status === 'locked' ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-600'
+                    <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/60 backdrop-blur-md ${
+                      status === 'locked' ? 'bg-white/30 text-gray-400' : 'bg-white/70 text-blue-600 shadow-sm'
                     }`}>
                       <StepIcon className="h-5 w-5" />
                     </span>
@@ -148,14 +153,14 @@ const OnboardingPage = () => {
                       {status === 'done' && (
                         <span className="flex items-center gap-1.5 text-sm font-semibold text-green-600">
                           {t.completed}
-                          <FiCheck className="h-5 w-5 rounded-full bg-green-100 p-1" />
+                          <FiCheck className="h-5 w-5 rounded-full bg-green-100/80 p-1 backdrop-blur-sm" />
                         </span>
                       )}
                       {status === 'current' && (
-                        <span className="text-sm font-semibold text-blue-600">{t.inProgress}</span>
+                        <span className="rounded-md border border-blue-200/60 bg-blue-100/70 px-2 py-1 text-xs font-semibold text-blue-700 backdrop-blur-sm">{t.inProgress}</span>
                       )}
                       {status === 'locked' && (
-                        <span className="flex items-center gap-1 text-sm font-semibold text-gray-400">
+                        <span className="flex items-center gap-1 rounded-md border border-white/50 bg-white/40 px-2 py-1 text-xs font-semibold text-gray-500 backdrop-blur-sm">
                           <FiLock className="h-3.5 w-3.5" /> {t.locked}
                         </span>
                       )}
@@ -167,8 +172,8 @@ const OnboardingPage = () => {
                           onClick={() => nav(ctaPath(cta))}
                           className={`flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-semibold transition active:scale-95 sm:px-4 ${
                             status === 'current'
-                              ? 'bg-blue-600 text-white shadow-md hover:bg-blue-700'
-                              : 'cursor-not-allowed border border-gray-200 bg-white text-gray-400'
+                              ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30 hover:bg-blue-700'
+                              : 'cursor-not-allowed border border-white/50 bg-white/40 text-gray-400 backdrop-blur-sm'
                           }`}
                         >
                           {cta === 'upload' ? t.uploadNow : t.listTrailer}
@@ -186,15 +191,14 @@ const OnboardingPage = () => {
             </button>
           </div>
 
-          {/* Right: benefits, tip, help */}
           <aside className="space-y-4 lg:space-y-5">
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-sm">
+            <div className={`rounded-2xl p-5 text-center ${glass}`}>
               <div className="relative mx-auto mb-3 grid h-14 w-14 place-items-center">
                 <span className="absolute -left-1 top-1 h-1.5 w-1.5 rounded-full bg-blue-300" />
                 <span className="absolute -right-0.5 top-0 h-1 w-1 rounded-full bg-blue-200" />
-                <span className="absolute bottom-1 -left-2 h-1 w-1 rounded-full bg-gray-300" />
+                <span className="absolute bottom-1 -left-2 h-1 w-1 rounded-full bg-white/80" />
                 <span className="absolute -right-1 bottom-2 h-1.5 w-1.5 rounded-full bg-blue-400" />
-                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-200">
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-400/40">
                   <FiShield className="h-6 w-6" />
                 </span>
               </div>
@@ -209,17 +213,17 @@ const OnboardingPage = () => {
               </ul>
             </div>
 
-            <div className="rounded-2xl border border-blue-100 bg-blue-50/70 p-5">
+            <div className="rounded-2xl border border-blue-200/50 bg-blue-100/40 p-5 shadow-sm backdrop-blur-xl">
               <p className="flex items-center gap-2 font-bold text-gray-900">💡 {t.tipTitle}</p>
               <p className="mt-2 text-sm text-gray-600">{t.tipBody}</p>
             </div>
 
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className={`rounded-2xl p-5 ${glass}`}>
               <p className="font-bold text-gray-900">{t.helpTitle}</p>
               <p className="mt-1 text-sm text-gray-600">{t.helpBody}</p>
               <Link
                 to="/contact"
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-blue-600 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-blue-600/80 bg-white/40 py-2.5 text-sm font-semibold text-blue-600 backdrop-blur-md transition hover:bg-white/70"
               >
                 <FiHeadphones className="h-4 w-4" /> {t.contactSupport}
               </Link>
