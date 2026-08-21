@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FiUpload, FiLock, FiUser } from 'react-icons/fi';
 import axios from 'axios';
 import config from '../../../config';
@@ -214,6 +214,9 @@ const DocumentUploadBlock = ({ side, file, onFileSelect, t }) => {
 
 const DocumentUpload = ({ userData, setUserData, t }) => {
     const [loading, setLoading] = useState(false);
+    const [searchParams] = useSearchParams();
+    const nav = useNavigate();
+    const fromOnboarding = searchParams.get('from') === 'onboarding';
 
     const handleUpload = async () => {
         try {
@@ -237,6 +240,7 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             toast.success(res.data.msg);
+            if (fromOnboarding) nav('/onboarding');
         } catch (error) {
             toast.error(error.response?.data?.msg || t.failedToUploadDocuments);
         } finally {
