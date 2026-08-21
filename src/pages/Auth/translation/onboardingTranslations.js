@@ -24,7 +24,7 @@ export const onboardingTranslations = {
     benefitsTitle: "Once your profile is complete:",
     benefits: [
       { emoji: "✅", text: "Your trailer appears in search results" },
-      { emoji: "📩", text: "You start receiving rental requests" },
+      { emoji: "📢", text: "You start receiving rental requests" },
       { emoji: "💰", text: "You get paid every Monday via Interac" },
       { emoji: "🎉", text: "Your first rental = 0% commission. You keep 100%" },
     ],
@@ -60,7 +60,7 @@ export const onboardingTranslations = {
     benefitsTitle: "Une fois votre profil complété :",
     benefits: [
       { emoji: "✅", text: "Votre remorque apparaît dans les résultats de recherche" },
-      { emoji: "📩", text: "Vous commencez à recevoir des demandes de location" },
+      { emoji: "📢", text: "Vous commencez à recevoir des demandes de location" },
       { emoji: "💰", text: "Vous êtes payé chaque lundi par Interac" },
       { emoji: "🎉", text: "Votre première location = 0 % de commission. Vous gardez 100 %" },
     ],
