@@ -1,43 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { IoMailOutline } from "react-icons/io5";
-import { FaGoogle, FaFacebookF } from "react-icons/fa";
+import { FaFacebookF } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from "framer-motion";
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
 import { LoginSocialFacebook } from 'reactjs-social-login';
+import {
+  FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiMenu, FiChevronDown, FiArrowRight,
+  FiTruck, FiAward, FiHeadphones,
+} from 'react-icons/fi';
+import { CiGlobe } from 'react-icons/ci';
 import config from '../../config';
 import Logo from '../../assets/logo.svg';
 import { fetchOnboarding } from '../../helpers/onboarding';
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: 'easeOut' },
-  },
-};
+// The card sits over the dim sky / dark grass half of login.png (measured luminance
+// 40-130), so it needs the opaque /70 frost, not the /45 the bright OTP background took.
+const card = 'bg-white/70 backdrop-blur-[20px] backdrop-saturate-150 border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.08)]';
+const pill = 'h-11 rounded-xl bg-white/85 backdrop-blur-md border border-white/70 shadow-[0_2px_10px_rgba(0,0,0,0.08)] text-black flex items-center justify-center transition hover:bg-white';
+const bar = 'bg-black/55 backdrop-blur-[20px] backdrop-saturate-150 border border-white/25';
+const field = 'w-full h-12 pl-11 rounded-xl bg-white/85 border border-white/80 text-[14px] text-black placeholder:text-black/40 outline-none transition-colors focus:border-[#2563EB] focus:bg-white';
 
-const stagger = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.15 },
-  },
-};
+// ponytail: same mark as RegisterPage; 8 inline lines beat a shared component for two callers
+const GoogleG = () => (
+  <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.2 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z" />
+    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 12 24 12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.2 6.1 29.4 4 24 4 16.3 4 9.6 8.3 6.3 14.7z" />
+    <path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1.1 3.1-3.5 5.5-6.6 6.5l6.3 5.3C37.4 41.4 44 36.5 44 24c0-1.2-.1-2.3-.4-3.5z" />
+  </svg>
+);
 
 const loginTranslations = {
   en: {
     title: "Login Or Signup",
     welcome: "Welcome to Lorepa",
-    emailLabel: "Email",
-    emailPlaceholder: "Email Address",
+    emailLabel: "Email Address",
+    emailPlaceholder: "Enter your email",
     passwordLabel: "Password",
-    passwordPlaceholder: "Password",
-    loginBtn: "Login",
-    or: "Or",
+    passwordPlaceholder: "Enter your password",
+    loginBtn: "Sign In",
+    or: "OR",
     continueWithGoogle: "Continue with Google",
     continueWithFacebook: "Continue with Facebook",
     noAccount: "Don't have an account?",
@@ -46,14 +48,30 @@ const loginTranslations = {
     loginFailed: "Login failed",
     googleAuthFailed: "Google Authentication Failed",
     facebookLoginFailed: "Facebook login failed",
+    kicker: "TRAILER RENTAL, REINVENTED",
+    h1a: "Reliable Trailers.",
+    h1b: "Smooth Journeys.",
+    h1c: "Every Mile, Covered.",
+    desc: "Sign in to access your bookings, manage listings, and hit the road with confidence.",
+    welcomeBack: "Welcome Back",
+    cardSub: "Sign in to continue to Lorepa",
+    rememberMe: "Remember me",
+    forgot: "Forgot password?",
+    signUpNav: "Sign Up",
+    b1t: "Wide Selection", b1d: "Browse from thousands of trailers.",
+    b2t: "Best Prices", b2d: "Competitive rates guaranteed.",
+    b3t: "24/7 Support", b3d: "We're here to help anytime.",
+    whoAreWe: "Who are we",
+    contactUs: "Contact us",
+    calculator: "How much can you earn?",
   },
   es: {
     title: "Iniciar sesión o registrarse",
     welcome: "Bienvenido a Lorepa",
     emailLabel: "Correo electrónico",
-    emailPlaceholder: "Dirección de correo electrónico",
+    emailPlaceholder: "Introduce tu correo",
     passwordLabel: "Contraseña",
-    passwordPlaceholder: "Contraseña",
+    passwordPlaceholder: "Introduce tu contraseña",
     loginBtn: "Iniciar sesión",
     or: "O",
     continueWithGoogle: "Continuar con Google",
@@ -64,14 +82,30 @@ const loginTranslations = {
     loginFailed: "Inicio de sesión fallido",
     googleAuthFailed: "Autenticación de Google fallida",
     facebookLoginFailed: "Inicio de sesión con Facebook fallido",
+    kicker: "ALQUILER DE REMOLQUES, REINVENTADO",
+    h1a: "Remolques Fiables.",
+    h1b: "Viajes Tranquilos.",
+    h1c: "Cada Kilómetro, Cubierto.",
+    desc: "Inicia sesión para ver tus reservas, gestionar anuncios y salir a la carretera con confianza.",
+    welcomeBack: "Bienvenido de nuevo",
+    cardSub: "Inicia sesión para continuar en Lorepa",
+    rememberMe: "Recordarme",
+    forgot: "¿Olvidaste tu contraseña?",
+    signUpNav: "Registrarse",
+    b1t: "Amplia Selección", b1d: "Explora entre miles de remolques.",
+    b2t: "Mejores Precios", b2d: "Tarifas competitivas garantizadas.",
+    b3t: "Soporte 24/7", b3d: "Estamos aquí para ayudarte.",
+    whoAreWe: "Quiénes somos",
+    contactUs: "Contáctanos",
+    calculator: "¿Cuánto puedes ganar?",
   },
   cn: {
     title: "登录或注册",
     welcome: "欢迎来到 Lorepa",
-    emailLabel: "电子邮件",
-    emailPlaceholder: "电子邮件地址",
+    emailLabel: "电子邮件地址",
+    emailPlaceholder: "请输入您的邮箱",
     passwordLabel: "密码",
-    passwordPlaceholder: "密码",
+    passwordPlaceholder: "请输入您的密码",
     loginBtn: "登录",
     or: "或",
     continueWithGoogle: "使用 Google 继续",
@@ -82,16 +116,32 @@ const loginTranslations = {
     loginFailed: "登录失败",
     googleAuthFailed: "谷歌身份验证失败",
     facebookLoginFailed: "Facebook 登录失败",
+    kicker: "拖车租赁，焕然一新",
+    h1a: "可靠的拖车。",
+    h1b: "顺畅的旅程。",
+    h1c: "每一英里，皆有保障。",
+    desc: "登录即可查看预订、管理房源，安心上路。",
+    welcomeBack: "欢迎回来",
+    cardSub: "登录以继续使用 Lorepa",
+    rememberMe: "记住我",
+    forgot: "忘记密码？",
+    signUpNav: "注册",
+    b1t: "多样选择", b1d: "浏览数千辆拖车。",
+    b2t: "优惠价格", b2d: "保证有竞争力的价格。",
+    b3t: "全天候支持", b3d: "我们随时为您提供帮助。",
+    whoAreWe: "关于我们",
+    contactUs: "联系我们",
+    calculator: "您能赚多少？",
   },
   fr: {
     title: "Connexion ou inscription",
     welcome: "Bienvenue sur Lorepa",
-    emailLabel: "E-mail",
-    emailPlaceholder: "Adresse e-mail",
+    emailLabel: "Adresse e-mail",
+    emailPlaceholder: "Entrez votre e-mail",
     passwordLabel: "Mot de passe",
-    passwordPlaceholder: "Mot de passe",
+    passwordPlaceholder: "Entrez votre mot de passe",
     loginBtn: "Se connecter",
-    or: "Ou",
+    or: "OU",
     continueWithGoogle: "Continuer avec Google",
     continueWithFacebook: "Continuer avec Facebook",
     noAccount: "Vous n'avez pas de compte ?",
@@ -100,6 +150,22 @@ const loginTranslations = {
     loginFailed: "Échec de la connexion",
     googleAuthFailed: "Échec de l'authentification Google",
     facebookLoginFailed: "Échec de la connexion avec Facebook",
+    kicker: "LA LOCATION DE REMORQUES, RÉINVENTÉE",
+    h1a: "Remorques Fiables.",
+    h1b: "Trajets Sereins.",
+    h1c: "Chaque Kilomètre, Couvert.",
+    desc: "Connectez-vous pour accéder à vos réservations, gérer vos annonces et prendre la route en toute confiance.",
+    welcomeBack: "Bon retour",
+    cardSub: "Connectez-vous pour continuer sur Lorepa",
+    rememberMe: "Se souvenir de moi",
+    forgot: "Mot de passe oublié ?",
+    signUpNav: "S'inscrire",
+    b1t: "Large Sélection", b1d: "Parcourez des milliers de remorques.",
+    b2t: "Meilleurs Prix", b2d: "Des tarifs compétitifs garantis.",
+    b3t: "Assistance 24/7", b3d: "Nous sommes là pour vous aider.",
+    whoAreWe: "Qui sommes-nous",
+    contactUs: "Contactez-nous",
+    calculator: "Combien pouvez-vous gagner ?",
   }
 };
 
@@ -122,8 +188,12 @@ const goAfterAuth = async (nav, role) => {
 };
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => localStorage.getItem('rememberEmail') || '');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(() => !!localStorage.getItem('rememberEmail'));
+  const [showPass, setShowPass] = useState(false);
+  const [showLanguages, setShowLanguages] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const nav = useNavigate();
   const [translations, setTranslations] = useState(() => {
     const storedLang = localStorage.getItem('lang');
@@ -136,9 +206,11 @@ const LoginPage = () => {
       setTranslations(loginTranslations[storedLang] || loginTranslations.fr);
     };
     window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('app-language-changed', handleStorageChange);
     handleStorageChange();
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('app-language-changed', handleStorageChange);
     };
   }, []);
 
@@ -165,6 +237,9 @@ const LoginPage = () => {
       if (res.data?.code === 200) {
         localStorage.setItem('userId', res.data.data._id);
         localStorage.setItem('role', res.data.data.role);
+        // only the address is kept, never the password
+        if (remember) localStorage.setItem('rememberEmail', email);
+        else localStorage.removeItem('rememberEmail');
         toast.success(translations.loginSuccess);
         setTimeout(() => goAfterAuth(nav, res.data.data.role), 2000);
       } else {
@@ -197,70 +272,200 @@ const LoginPage = () => {
     }
   };
 
+  const handleLanguageChange = (langSymbol) => {
+    localStorage.setItem('lang', langSymbol);
+    localStorage.setItem('i18nextLng', langSymbol);
+    window.dispatchEvent(new CustomEvent('app-language-changed', { detail: { lang: langSymbol } }));
+    setShowLanguages(false);
+    window.location.reload();
+  };
+
+  const bottom = [
+    { Icon: FiTruck, t: translations.b1t, d: translations.b1d },
+    { Icon: FiAward, t: translations.b2t, d: translations.b2d },
+    { Icon: FiHeadphones, t: translations.b3t, d: translations.b3d },
+  ];
+
   return (
-    <div className='min-h-screen bg-white flex flex-col items-center justify-center mobile-px relative py-12'>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className='absolute top-6 left-6 lg:top-8 lg:left-12 mb-4 lg:mb-0'
-      >
-        <Link to={'/'}>
-          <img src={Logo} alt='logo' className='h-16 sm:h-20 w-auto' />
-        </Link>
-      </motion.div>
-
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className='p-6 sm:p-8 md:p-10 w-full max-w-md'>
-        <motion.h2 variants={fadeInUp} className='text-xl mb-2'>{translations.title}</motion.h2>
-        <motion.p variants={fadeInUp} className='text-sm mb-8'>{translations.welcome}</motion.p>
-
-        <motion.form onSubmit={handleLogin} className='space-y-4' variants={stagger}>
-          <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.emailLabel}</label>
-            <input type='text' required value={email} onChange={(e) => setEmail(e.target.value)} placeholder={translations.emailPlaceholder} className='mobile-input' />
-          </motion.div>
-          <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.passwordLabel}</label>
-            <input type='password' required value={password} onChange={(e) => setPassword(e.target.value)} placeholder={translations.passwordPlaceholder} className='mobile-input' />
-          </motion.div>
-          <motion.div variants={fadeInUp} className="text-right mb-4 -mt-3">
-            <Link to="/forget-password" alt="Forgot Password?" className="text-blue-600 hover:text-blue-500 text-xs sm:text-sm">
-              Forgot Password?
-            </Link>
-          </motion.div>
-          <motion.div variants={fadeInUp}>
-            <button type='submit' className='mobile-btn-primary w-full'>{translations.loginBtn}</button>
-          </motion.div>
-        </motion.form>
-
-        <motion.div variants={fadeInUp} className='relative mt-6 mb-6'>
-          <div className='absolute inset-0 flex items-center'><div className='w-full border-t border-gray-300' /></div>
-          <div className='relative flex justify-center text-sm'><span className='px-2 bg-white text-gray-500'>{translations.or}</span></div>
-        </motion.div>
-
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={handleGoogleRedirect}
-            className="w-full flex items-center justify-center gap-3 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 font-medium"
-          >
-            <FaGoogle className="text-red-500 w-5 h-5" />
-            {translations.continueWithGoogle}
-          </button>
-          {/* <LoginSocialFacebook
-            appId="1463083271394413"
-            fields="name,email,picture"
-            onResolve={handleFacebookAuth}
-            onReject={() => toast.error(translations.facebookLoginFailed)}
-          >
-            <button className="w-full flex items-center justify-center gap-2 py-2 bg-blue-700 text-white rounded-md">
-              <FaFacebookF /> {translations.continueWithFacebook}
+    <div
+      className="min-h-screen relative overflow-x-hidden bg-cover bg-center bg-no-repeat text-black"
+      style={{ backgroundImage: "url('/login.png')" }}
+    >
+      <div className="relative z-10 w-full min-h-screen flex flex-col px-6 sm:px-8 lg:px-12">
+        <header className="shrink-0 flex items-center justify-between">
+          <Link to="/" className="shrink-0">
+            <img src={Logo} alt="Lorepa" className="h-16 sm:h-20 [@media(min-width:1024px)_and_(min-height:900px)]:h-24 w-auto" />
+          </Link>
+          <div className="relative flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowLanguages((v) => !v)}
+              className={`${pill} px-3 gap-1`}
+              aria-label="Change language"
+            >
+              <CiGlobe className="w-5 h-5" />
+              <FiChevronDown className="w-3.5 h-3.5 text-black/50" />
             </button>
-          </LoginSocialFacebook> */}
+            <Link to="/register" className={`${pill} px-5 text-[14px] font-semibold`}>
+              {translations.signUpNav}
+            </Link>
+            <button type="button" onClick={() => setShowMenu((v) => !v)} className={`${pill} w-11`} aria-label="Menu">
+              <FiMenu className="w-5 h-5" />
+            </button>
+            {showLanguages && (
+              <div className={`absolute right-0 top-full mt-2 w-44 rounded-xl ${card} overflow-hidden z-30`}>
+                {[['en', 'English'], ['es', 'Spanish'], ['cn', 'Chinese'], ['fr', 'French']].map(([code, label]) => (
+                  <button key={code} onClick={() => handleLanguageChange(code)} className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+            {showMenu && (
+              <div className={`absolute right-0 top-full mt-2 w-56 rounded-xl ${card} overflow-hidden z-30`}>
+                {[['/who', translations.whoAreWe], ['/contact', translations.contactUs], ['/calculator', translations.calculator]].map(([to, label]) => (
+                  <Link key={to} to={to} className="block px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </header>
+
+        <div className="flex-1 grid lg:grid-cols-[minmax(0,1fr)_510px] gap-10 items-center pb-6 [@media(min-height:900px)]:pb-10 lg:pr-10">
+          <div className="min-w-0 self-stretch flex flex-col pt-4 lg:pt-8 lg:pl-14 [@media(min-width:1024px)_and_(min-height:900px)]:pt-14">
+            <p className="text-[#2563EB] text-[12px] font-bold tracking-[0.18em]">{translations.kicker}</p>
+            <h1 className="mt-3 text-[38px] sm:text-[46px] xl:text-[52px] font-extrabold leading-[1.12] tracking-tight text-[#0A0F18]">
+              {translations.h1a}<br />
+              {translations.h1b}<br />
+              <span className="text-[#2563EB]">{translations.h1c}</span>
+            </h1>
+            <p className="mt-5 max-w-[380px] text-[#0A0F18]/70 text-[16px] leading-[1.55]">{translations.desc}</p>
+
+            <div className={`${bar} mt-auto mb-8 [@media(min-height:900px)]:mb-12 lg:-ml-4 w-full max-w-[720px] rounded-2xl px-5 py-4 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:divide-x sm:divide-white/15`}>
+              {bottom.map(({ Icon, t, d }) => (
+                <div key={t} className="flex items-start gap-3 min-w-0 sm:[&:not(:first-child)]:pl-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/90 text-[#2563EB]">
+                    <Icon className="w-[18px] h-[18px]" strokeWidth={2} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold text-[13px] leading-tight text-white">{t}</span>
+                    <span className="block text-[12px] text-white/75 leading-snug mt-1">{d}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={`${card} w-full rounded-[32px] px-8 sm:px-10 py-6 [@media(min-height:900px)]:py-14 text-black`}>
+            <div className="flex flex-col items-center">
+              <span className="h-16 w-16 rounded-full bg-white flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
+                <FiUser className="w-7 h-7 text-[#2563EB]" strokeWidth={1.6} />
+              </span>
+              <h2 className="mt-3 [@media(min-height:900px)]:mt-5 text-[26px] font-extrabold tracking-tight">{translations.welcomeBack}</h2>
+              <p className="text-[15px] text-black/65 mt-1.5">{translations.cardSub}</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleRedirect}
+              className="w-full h-[52px] mt-4 [@media(min-height:900px)]:mt-7 rounded-xl bg-white flex items-center justify-center gap-3 text-[15px] font-semibold text-black shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition hover:bg-white/90"
+            >
+              <GoogleG /> {translations.continueWithGoogle}
+            </button>
+
+            <div className="flex items-center gap-4 my-3 [@media(min-height:900px)]:my-6">
+              <div className="h-px flex-1 bg-black/15" />
+              <span className="text-[12px] font-semibold tracking-wider text-black/50 uppercase">{translations.or}</span>
+              <div className="h-px flex-1 bg-black/15" />
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-2.5 [@media(min-height:900px)]:space-y-4">
+              <div>
+                <label htmlFor="login-email" className="block text-[13px] font-semibold text-black/80 mb-2">{translations.emailLabel}</label>
+                <div className="relative">
+                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-black/45" />
+                  <input
+                    id="login-email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={translations.emailPlaceholder}
+                    className={field}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="login-password" className="block text-[13px] font-semibold text-black/80 mb-2">{translations.passwordLabel}</label>
+                <div className="relative">
+                  <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-black/45" />
+                  <input
+                    id="login-password"
+                    type={showPass ? 'text' : 'password'}
+                    required
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={translations.passwordPlaceholder}
+                    className={`${field} pr-11`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass((v) => !v)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-black/45 hover:text-black"
+                    aria-label={showPass ? 'Hide password' : 'Show password'}
+                  >
+                    {showPass ? <FiEye className="w-[18px] h-[18px]" /> : <FiEyeOff className="w-[18px] h-[18px]" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1">
+                <label className="flex items-center gap-2.5 text-[14px] text-black/80 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={remember}
+                    onChange={(e) => setRemember(e.target.checked)}
+                    className="h-[18px] w-[18px] rounded accent-[#2563EB] cursor-pointer"
+                  />
+                  {translations.rememberMe}
+                </label>
+                <Link to="/forget-password" className="text-[14px] text-[#2563EB] font-medium hover:underline">
+                  {translations.forgot}
+                </Link>
+              </div>
+
+              <button
+                type="submit"
+                className="relative w-full h-[56px] !mt-5 [@media(min-height:900px)]:!mt-7 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] text-white text-[16px] font-semibold flex items-center justify-center shadow-[0_8px_24px_rgba(37,99,235,0.35)] transition"
+              >
+                {translations.loginBtn}
+                <FiArrowRight className="absolute right-6 w-5 h-5" />
+              </button>
+            </form>
+
+            <p className="mt-4 [@media(min-height:900px)]:mt-6 text-center text-[15px] text-black/70">
+              {translations.noAccount}{' '}
+              <Link to="/register" className="text-[#2563EB] font-semibold hover:underline">{translations.signup}</Link>
+            </p>
+
+            {/* <LoginSocialFacebook
+              appId="1463083271394413"
+              fields="name,email,picture"
+              onResolve={handleFacebookAuth}
+              onReject={() => toast.error(translations.facebookLoginFailed)}
+            >
+              <button className="w-full flex items-center justify-center gap-2 py-2 bg-blue-700 text-white rounded-md">
+                <FaFacebookF /> {translations.continueWithFacebook}
+              </button>
+            </LoginSocialFacebook> */}
+          </div>
         </div>
-        <motion.div variants={fadeInUp} className='mt-8 text-center text-sm'>
-          <p>{translations.noAccount} <Link to={"/register"} className='text-blue-600 hover:text-blue-500'>{translations.signup}</Link></p>
-        </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 };
