@@ -7,10 +7,11 @@ import { CiGlobe } from "react-icons/ci";
 import config from "../../config";
 import Logo from "../../assets/logo.svg";
 
-const glass = "bg-white/25 backdrop-blur-[20px] backdrop-saturate-150 border border-white/50";
+const glass = "bg-black/55 backdrop-blur-[20px] backdrop-saturate-150 border border-white/25";
+const pill = "h-10 rounded-xl bg-white/85 backdrop-blur-md border border-white/70 shadow-[0_2px_10px_rgba(0,0,0,0.08)] text-black flex items-center justify-center";
 const card = "bg-white/70 backdrop-blur-[20px] backdrop-saturate-150 border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.08)]";
 const OTP_LEN = 6;
-const OTP_TTL = 105; // ponytail: mock timer; backend expiry is source of truth
+const RESEND_COOLDOWN = 60; // seconds before Resend re-arms; code expiry comes from the API
 
 const otpTranslations = {
   en: {
@@ -108,23 +109,29 @@ const otpTranslations = {
 };
 
 const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+const normalizeEmail = (e) => encodeURIComponent(String(e || "").trim().toLowerCase());
+const secondsUntil = (iso) => (iso ? Math.max(0, Math.round((new Date(iso) - Date.now()) / 1000)) : 0);
 
 const VerifyOtpPage = () => {
   const [digits, setDigits] = useState(() => Array(OTP_LEN).fill(""));
-  const [left, setLeft] = useState(OTP_TTL);
+  const [left, setLeft] = useState(null);
+  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
   const [loading, setLoading] = useState(false);
   const [showLanguages, setShowLanguages] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const inputs = useRef([]);
   const nav = useNavigate();
-  const email = useLocation().state?.email;
+  const loc = useLocation();
+  const isSignup = loc.pathname === "/verify";
+  const email = loc.state?.email || localStorage.getItem("uEmail");
+  const backTo = isSignup ? "/register" : "/forget-password";
   const [translations, setTranslations] = useState(() => {
     const storedLang = localStorage.getItem("lang");
     return otpTranslations[storedLang] || otpTranslations.fr;
   });
 
   useEffect(() => {
-    if (!email) nav("/forget-password");
+    if (!email) nav(backTo);
     const sync = () => {
       const storedLang = localStorage.getItem("lang");
       setTranslations(otpTranslations[storedLang] || otpTranslations.fr);
@@ -135,13 +142,32 @@ const VerifyOtpPage = () => {
       window.removeEventListener("storage", sync);
       window.removeEventListener("app-language-changed", sync);
     };
-  }, [email, nav]);
+  }, [email, nav, backTo]);
 
   useEffect(() => {
-    if (left <= 0) return;
-    const id = setInterval(() => setLeft((n) => n - 1), 1000);
+    const id = setInterval(() => {
+      setLeft((n) => (n === null ? n : Math.max(0, n - 1)));
+      setCooldown((n) => Math.max(0, n - 1));
+    }, 1000);
     return () => clearInterval(id);
-  }, [left]);
+  }, []);
+
+  // the code was mailed by register/forget-password, so ask the API how long it has left
+  useEffect(() => {
+    if (!email) return;
+    let alive = true;
+    axios
+      .get(`${config.baseUrl}/account/otp/status/${normalizeEmail(email)}`)
+      .then((r) => {
+        if (!alive) return;
+        const secs = secondsUntil(r.data?.data?.otpExpiresAt);
+        setLeft(secs);
+        // nothing valid to wait on -> let them ask for a new code straight away
+        if (secs === 0) setCooldown(0);
+      })
+      .catch(() => alive && setLeft(0));
+    return () => { alive = false; };
+  }, [email]);
 
   const otp = digits.join("");
 
@@ -173,9 +199,15 @@ const VerifyOtpPage = () => {
     }
     setLoading(true);
     try {
-      await axios.post(`${config.baseUrl}/account/verify/otp`, { email, otp });
+      const res = await axios.post(`${config.baseUrl}/account/verify/otp`, { email, otp });
       toast.success(translations.ok);
-      nav("/change-password", { state: { email } });
+      if (isSignup) {
+        localStorage.setItem("userId", res?.data?.data?._id);
+        localStorage.setItem("role", res?.data?.data?.role);
+        nav("/onboarding");
+      } else {
+        nav("/change-password", { state: { email } });
+      }
     } catch (err) {
       toast.error(err.response?.data?.msg || translations.fail);
     } finally {
@@ -184,13 +216,13 @@ const VerifyOtpPage = () => {
   };
 
   const resendOtp = async () => {
-    if (left > 0) return;
+    if (cooldown > 0) return;
     try {
-      const normalizedEmail = encodeURIComponent(String(email || "").trim().toLowerCase());
-      await axios.post(`${config.baseUrl}/account/send/otp/${normalizedEmail}`);
+      const res = await axios.post(`${config.baseUrl}/account/send/otp/${normalizeEmail(email)}`);
+      setLeft(secondsUntil(res.data?.data?.otpExpiresAt));
+      setCooldown(RESEND_COOLDOWN);
       toast.success(translations.resent);
       setDigits(Array(OTP_LEN).fill(""));
-      setLeft(OTP_TTL);
       inputs.current[0]?.focus();
     } catch (err) {
       toast.error(err.response?.data?.msg || translations.resendFail);
@@ -219,20 +251,20 @@ const VerifyOtpPage = () => {
       className="min-h-screen relative overflow-x-hidden bg-cover bg-center bg-no-repeat text-black"
       style={{ backgroundImage: "url('/otp.png')" }}
     >
-      <div className="relative z-10 w-full min-h-screen flex flex-col px-6 sm:px-10 lg:px-14">
-        <header className="shrink-0 flex items-center justify-between py-3">
+      <div className="relative z-10 w-full min-h-screen flex flex-col px-6 sm:px-8">
+        <header className="shrink-0 flex items-center justify-between">
           <Link to="/" className="shrink-0">
             <img src={Logo} alt="Lorepa" className="h-16 sm:h-20 lg:h-24 w-auto" />
           </Link>
-          <div className="relative flex items-center gap-3">
-            <button type="button" onClick={() => setShowLanguages((v) => !v)} className="text-black" aria-label="Change language">
-              <CiGlobe className="w-6 h-6" />
+          <div className="relative flex items-center gap-4">
+            <button type="button" onClick={() => setShowLanguages((v) => !v)} className={`${pill} w-10`} aria-label="Change language">
+              <CiGlobe className="w-5 h-5" />
             </button>
-            <Link to="/login" className="h-9 px-4 rounded-lg border border-black/25 bg-white/20 text-black text-[13px] font-medium flex items-center">
+            <Link to="/login" className={`${pill} px-4 text-[13px] font-medium`}>
               {translations.logIn}
             </Link>
-            <button type="button" onClick={() => setShowMenu((v) => !v)} className="text-black" aria-label="Menu">
-              <FiMenu className="w-6 h-6" />
+            <button type="button" onClick={() => setShowMenu((v) => !v)} className={`${pill} w-10`} aria-label="Menu">
+              <FiMenu className="w-5 h-5" />
             </button>
             {showLanguages && (
               <div className={`absolute right-0 top-full mt-2 w-44 rounded-xl ${card} overflow-hidden z-30`}>
@@ -255,35 +287,49 @@ const VerifyOtpPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 grid lg:grid-cols-[1fr_420px] xl:grid-cols-[1fr_460px] gap-8 items-start pt-1 lg:pt-2 lg:pr-6">
-          <div className="min-w-0 lg:pl-8">
+        <div className="flex-1 grid md:grid-cols-[1fr_406px] xl:grid-cols-[1fr_460px] gap-8 items-start md:pr-6">
+          <div className="min-w-0 md:pl-8 self-stretch flex flex-col">
             <p className="font-sans text-[#2563EB] text-[11px] font-bold tracking-[0.2em] uppercase">{translations.kicker}</p>
-            <h1 className="font-sans mt-1.5 whitespace-nowrap text-[36px] sm:text-[44px] xl:text-[48px] font-extrabold leading-[1.08] tracking-tight text-[#0A0F18]">
+            <h1 className="font-sans mt-1.5 text-[36px] sm:text-[44px] xl:text-[48px] font-extrabold leading-[1.08] tracking-tight text-[#0A0F18]">
               {translations.headline}
             </h1>
-            <p className="mt-8 font-sans text-[#0A0F18]/70 text-[14px] max-w-[380px]">
+            <p className="mt-1 font-sans text-[#0A0F18]/70 text-[14px] max-w-[220px]">
               {translations.sentTo}{" "}
               <span className="text-[#2563EB] font-semibold inline-flex items-center gap-2">
                 {dest}
-                <Link to="/forget-password" aria-label="Edit" className="inline-flex h-6 w-6 rounded-full bg-[#DBEAFE] items-center justify-center">
+                <Link to={backTo} aria-label="Edit" className="inline-flex h-6 w-6 rounded-full bg-[#DBEAFE] items-center justify-center">
                   <FiEdit2 className="w-3 h-3" />
                 </Link>
               </span>
             </p>
+
+            <div className={`${glass} mt-auto mb-12 md:-ml-8 w-full md:w-[calc(100%+2rem)] max-w-[720px] rounded-2xl px-5 py-3.5 grid grid-cols-1 lg:grid-cols-3 gap-4`}>
+              {foot.map(({ Icon, t, d }) => (
+                <div key={t} className="flex items-start gap-2.5 min-w-0">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white">
+                    <Icon className="w-4 h-4" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold text-[12px] leading-tight text-white">{t}</span>
+                    <span className="block text-[11px] text-white/70 leading-snug mt-0.5">{d}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="w-full min-h-[560px] lg:min-h-[640px] rounded-[32px] bg-white/45 backdrop-blur-[24px] border border-white/70 shadow-[0_16px_50px_rgba(0,0,0,0.12)] px-7 py-10 text-black flex flex-col">
+          <div className="w-full min-h-[560px] md:min-h-[624px] rounded-[32px] bg-white/45 backdrop-blur-[24px] border border-white/70 shadow-[0_16px_50px_rgba(0,0,0,0.12)] px-7 pt-14 pb-10 text-black flex flex-col">
             <div className="flex flex-col items-center mb-8">
-              <span className="h-14 w-14 rounded-full bg-[#DBEAFE] flex items-center justify-center mb-3">
-                <FiLock className="w-[22px] h-[22px] text-[#2563EB]" strokeWidth={1.8} />
+              <span className="h-[60px] w-[60px] rounded-full bg-[#DBEAFE] flex items-center justify-center mb-7">
+                <FiLock className="w-6 h-6 text-[#2563EB]" strokeWidth={1.8} />
               </span>
               <h2 className="font-sans text-[26px] font-extrabold tracking-tight text-center">{translations.title}</h2>
-              <p className="text-[13px] text-black/55 mt-1.5 text-center">
+              <p className="text-[13px] text-black/55 mt-1.5 text-center max-w-[200px] leading-[1.4]">
                 {translations.cardHint} <span className="text-[#2563EB] font-medium">{dest}</span>
               </p>
             </div>
 
-            <div className="flex justify-center gap-2.5">
+            <div className="flex w-full justify-center gap-2">
               {digits.map((d, i) => (
                 <input
                   key={i}
@@ -294,17 +340,17 @@ const VerifyOtpPage = () => {
                   value={d}
                   onChange={(e) => put(i, e.target.value)}
                   onKeyDown={(e) => onKey(i, e)}
-                  className={`h-[52px] w-[52px] rounded-[12px] bg-white text-center text-lg font-semibold outline-none border ${i === (focused === -1 ? OTP_LEN - 1 : focused) ? "border-[#2563EB] border-2" : "border-[#E5E7EB]"} focus:border-[#2563EB] focus:border-2`}
+                  className={`h-14 w-full min-w-0 max-w-[51px] rounded-[12px] bg-white text-center text-lg font-semibold outline-none border ${i === (focused === -1 ? OTP_LEN - 1 : focused) ? "border-[#2563EB] border-2" : "border-[#E5E7EB]"} focus:border-[#2563EB] focus:border-2`}
                 />
               ))}
             </div>
 
-            <div className="mt-8 flex items-center justify-between rounded-xl bg-[#F3F4F6]/80 px-4 py-2.5 text-[13px]">
+            <div className="mt-8 flex items-center justify-between rounded-xl bg-[#F3F4F6]/80 px-4 h-12 text-[13px]">
               <span className="flex items-center gap-1.5 text-[#2563EB] font-medium">
                 <FiClock className="w-4 h-4" />
-                {translations.expires} {mmss(Math.max(0, left))}
+                {translations.expires} {left === null ? "--:--" : mmss(left)}
               </span>
-              <button type="button" onClick={resendOtp} disabled={left > 0} className="text-black/40 font-medium disabled:text-black/35 enabled:text-[#2563EB]">
+              <button type="button" onClick={resendOtp} disabled={cooldown > 0} className="text-black/40 font-medium disabled:text-black/35 enabled:text-[#2563EB]">
                 {translations.resendOtp}
               </button>
             </div>
@@ -313,33 +359,22 @@ const VerifyOtpPage = () => {
               type="button"
               onClick={verifyOtp}
               disabled={loading}
-              className="w-full h-12 mt-auto rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1d4ed8] disabled:opacity-70 text-white text-[15px] font-semibold inline-flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(37,99,235,0.35)]"
+              className="w-full h-12 mt-8 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1d4ed8] disabled:opacity-70 text-white text-[15px] font-semibold inline-flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(37,99,235,0.35)]"
             >
               {loading && <span className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
               {translations.verifyBtn}
               {!loading && <FiArrowRight className="w-5 h-5" />}
             </button>
 
-            <p className="mt-8 flex items-center justify-center gap-2 text-[11px] text-black/45 leading-snug text-center">
-              <FiShield className="w-3.5 h-3.5 shrink-0" />
-              {translations.trust}
-            </p>
+            <div className="mt-11 flex items-start justify-center gap-2.5">
+              <span className="mt-0.5 h-7 w-7 shrink-0 rounded-lg border border-black/15 flex items-center justify-center">
+                <FiShield className="w-3.5 h-3.5 text-black/45" />
+              </span>
+              <p className="text-[11px] text-black/45 leading-[1.5] max-w-[210px]">{translations.trust}</p>
+            </div>
           </div>
         </div>
 
-        <div className={`${glass} mb-6 mt-auto w-full max-w-[720px] rounded-2xl px-5 py-3.5 grid grid-cols-1 sm:grid-cols-3 gap-4`}>
-          {foot.map(({ Icon, t, d }) => (
-            <div key={t} className="flex items-start gap-2.5 min-w-0">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white">
-                <Icon className="w-4 h-4" />
-              </span>
-              <span className="min-w-0">
-                <span className="block font-semibold text-[12px] leading-tight text-black">{t}</span>
-                <span className="block text-[11px] text-black/60 leading-snug mt-0.5">{d}</span>
-              </span>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
