@@ -7,7 +7,6 @@ import { Toaster } from 'react-hot-toast';
 import LoaderGif from './assets/loader.gif';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/Auth/LoginPage';
-import VerifyPage from './pages/Auth/VerifyPage';
 import AdminHomePage from './pages/Admin/Dashboard/AdminHomePage';
 import AdminUserPage from './pages/Admin/Dashboard/AdminUserPage';
 import AdminSupportPage from './pages/Admin/Dashboard/AdminSupportPage';
@@ -193,7 +192,7 @@ function App() {
             <Route path='/forget-password' element={<ForgetPasswordPage />} />
             <Route path='/verify-otp' element={<VerifyOtpPage />} />
             <Route path='/change-password' element={<ChangePasswordPage />} />
-            <Route path='/verify' element={<VerifyPage />} />
+            <Route path='/verify' element={<VerifyOtpPage />} />
             <Route path='/onboarding' element={<OnboardingPage />} />
 
             <Route path="/payment-success" element={<PaymentSuccess />} />
