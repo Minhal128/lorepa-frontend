@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import config from '../config';
 
 const STEPS = ['accountCreated', 'emailVerified', 'documentsUploaded', 'trailerListed', 'firstRental'];
@@ -60,4 +62,37 @@ export const fetchOnboarding = async (userId) => {
   const account = res.data?.data;
   if (!account) throw new Error('User not found');
   return deriveOnboarding(userId, account);
+};
+
+export const FILL_ONBOARDING_MSG = 'Fill your onboarding first';
+
+// ponytail: 100% includes firstRental, which needs dashboard pages — unlock at 80% (docs + profile/listing done)
+export const isDashboardLinkLocked = (link, percent, role) => {
+  if (percent >= 80) return false;
+  if (link === 'profile') return false;
+  if (link === 'listing' && role === 'owner') return false;
+  return true;
+};
+
+export const useOnboardingLock = () => {
+  const [percent, setPercent] = useState(null);
+  const [role, setRole] = useState(localStorage.getItem('role') || '');
+
+  useEffect(() => {
+    const id = localStorage.getItem('userId');
+    if (!id) return;
+    fetchOnboarding(id)
+      .then((d) => {
+        setPercent(Number(d.percent) || 0);
+        if (d.role) setRole(d.role);
+      })
+      .catch(() => setPercent(0));
+  }, []);
+
+  const locked = (link) => percent != null && isDashboardLinkLocked(link, percent, role);
+  const block = (e) => {
+    e?.preventDefault?.();
+    toast.error(FILL_ONBOARDING_MSG);
+  };
+  return { locked, block, percent, role };
 };

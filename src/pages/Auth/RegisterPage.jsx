@@ -1,123 +1,276 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from "framer-motion";
-import Logo from "../../assets/logo.svg";
 import axios from 'axios';
 import config from '../../config';
 import toast from 'react-hot-toast';
-import { FaFacebookF, FaGoogle, FaSort } from 'react-icons/fa';
+import {
+  FiShield, FiZap, FiCheck, FiUsers, FiTruck, FiAward, FiHeadphones, FiMenu, FiStar,
+  FiUser, FiPhone, FiMail, FiLock, FiEye, FiEyeOff, FiBriefcase, FiChevronDown, FiArrowRight, FiMapPin, FiHome,
+} from 'react-icons/fi';
+import { CiGlobe } from 'react-icons/ci';
+import Logo from '../../assets/logo.svg';
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-};
+const glass = 'bg-white/25 backdrop-blur-[20px] backdrop-saturate-150 border border-white/50';
+const card = 'bg-white/70 backdrop-blur-[20px] backdrop-saturate-150 border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.08)]';
+const glassField = 'peer w-full h-11 pl-11 pr-10 pt-3.5 rounded-xl bg-white/65 backdrop-blur-md border border-white/80 text-[14px] text-black outline-none transition-colors focus:border-[#2563EB] focus:bg-white/85';
 
-const stagger = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15 } },
-};
+const GoogleG = () => (
+  <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.2 6.1 29.4 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.2-.1-2.3-.4-3.5z" />
+    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 12 24 12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.2 6.1 29.4 4 24 4 16.3 4 9.6 8.3 6.3 14.7z" />
+    <path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1.1 3.1-3.5 5.5-6.6 6.5l6.3 5.3C37.4 41.4 44 36.5 44 24c0-1.2-.1-2.3-.4-3.5z" />
+  </svg>
+);
 
 const registerTranslations = {
   en: {
-    title: "Register",
-    welcome: "Welcome to Lorepa",
+    title: "Create Your Account",
+    subtitle: "Join thousands of satisfied customers",
+    kicker: "TRAILER RENTAL, REINVENTED",
+    headlineBefore: "Find the Trailer You Want,",
+    headlineAccent: "Wherever",
+    headlineAfter: "You Want!",
+    desc: "Create your account and start your journey today.",
+    f1t: "Secure & Trusted", f1d: "Your data is always safe",
+    f2t: "Quick & Easy", f2d: "Sign up in just seconds",
+    f3t: "Verified Platform", f3d: "Trusted by 10K+ users",
+    f4t: "Active Community", f4d: "Join thousands of satisfied customers",
+    b1t: "Wide Selection", b1d: "Browse from thousands of trailers",
+    b2t: "Best Prices", b2d: "Competitive rates guaranteed",
+    b3t: "24/7 Support", b3d: "We're here to help anytime",
+    badge: "Rated 4.9/5 by 10K+ renters",
+    s1v: "10K+", s1l: "Active users",
+    s2v: "2.5K+", s2l: "Trailers listed",
+    s3v: "4.9/5", s3l: "Average rating",
     continueWithGoogle: "Continue with Google",
-    continueWithFacebook: "Continue with Facebook",
+    or: "OR",
     fullName: "Full Name",
     phone: "Phone Number",
     email: "Email",
+    country: "Country",
+    state: "State",
+    city: "City",
+    postalCode: "Postal Code",
+    address: "Address",
+    address2: "Address 2",
     password: "Password",
+    confirmPassword: "Confirm Password",
     role: "Role",
-    renter: "Renter",
-    owner: "Owner",
-    registerBtn: "Register",
+    renter: "Locataire",
+    owner: "Propriétaire",
+    registerBtn: "Create Account",
     alreadyHaveAccount: "Already have an account?",
-    signIn: "Sign in",
+    signIn: "Log in",
+    logIn: "Log In",
     successToast: "Account created successfully!",
     failToast: "Registration failed",
     errorToast: "Something went wrong",
     googleSignupFail: "Google signup failed",
     facebookSignupFail: "Facebook signup failed",
     googleSelected: "Google account selected. Please fill the remaining details.",
-    facebookSelected: "Facebook account selected. Please fill the remaining details."
+    facebookSelected: "Facebook account selected. Please fill the remaining details.",
+    passwordMismatch: "Passwords do not match",
+    whoAreWe: "Who are we",
+    contactUs: "Contact us",
+    calculator: "How much can you earn?",
+    dashboard: "Dashboard",
+    logout: "Logout",
   },
   es: {
-    title: "Registrarse",
-    welcome: "Bienvenido a Lorepa",
+    title: "Crea tu cuenta",
+    subtitle: "Únete a miles de clientes satisfechos",
+    kicker: "ALQUILER DE REMOLQUES, REINVENTADO",
+    headlineBefore: "Encuentra el remolque que quieres,",
+    headlineAccent: "Donde",
+    headlineAfter: "quieras!",
+    desc: "Crea tu cuenta y empieza tu viaje hoy.",
+    f1t: "Seguro y de confianza", f1d: "Tus datos siempre están a salvo",
+    f2t: "Rápido y fácil", f2d: "Regístrate en segundos",
+    f3t: "Plataforma verificada", f3d: "Confiada por más de 10K usuarios",
+    f4t: "Comunidad activa", f4d: "Únete a miles de clientes satisfechos",
+    b1t: "Gran selección", b1d: "Miles de remolques",
+    b2t: "Mejores precios", b2d: "Tarifas competitivas",
+    b3t: "Soporte 24/7", b3d: "Estamos para ayudarte",
+    badge: "Valorado 4.9/5 por más de 10K usuarios",
+    s1v: "10K+", s1l: "Usuarios activos",
+    s2v: "2.5K+", s2l: "Remolques disponibles",
+    s3v: "4.9/5", s3l: "Valoración media",
     continueWithGoogle: "Continuar con Google",
-    continueWithFacebook: "Continuar con Facebook",
+    or: "O",
     fullName: "Nombre completo",
     phone: "Número de teléfono",
     email: "Correo electrónico",
+    country: "País",
+    state: "Estado",
+    city: "Ciudad",
+    postalCode: "Código Postal",
+    address: "Dirección",
+    address2: "Dirección 2",
     password: "Contraseña",
+    confirmPassword: "Confirmar contraseña",
     role: "Rol",
-    renter: "Inquilino",
-    owner: "Propietario",
-    registerBtn: "Registrarse",
+    renter: "Locataire",
+    owner: "Propriétaire",
+    registerBtn: "Crear cuenta",
     alreadyHaveAccount: "¿Ya tienes una cuenta?",
     signIn: "Iniciar sesión",
+    logIn: "Log In",
     successToast: "¡Cuenta creada con éxito!",
     failToast: "Registro fallido",
     errorToast: "Algo salió mal",
     googleSignupFail: "Registro con Google fallido",
     facebookSignupFail: "Registro con Facebook fallido",
     googleSelected: "Cuenta de Google seleccionada. Por favor, rellene los detalles restantes.",
-    facebookSelected: "Cuenta de Facebook seleccionada. Por favor, rellene los detalles restantes."
+    facebookSelected: "Cuenta de Facebook seleccionada. Por favor, rellene los detalles restantes.",
+    passwordMismatch: "Las contraseñas no coinciden",
+    whoAreWe: "¿Quiénes somos?",
+    contactUs: "Contáctanos",
+    calculator: "¿Cuánto se gana?",
+    dashboard: "Panel de Control",
+    logout: "Cerrar sesión",
   },
   cn: {
-    title: "注册",
-    welcome: "欢迎来到 Lorepa",
+    title: "创建账户",
+    subtitle: "加入成千上万满意的客户",
+    kicker: "拖车租赁，全新体验",
+    headlineBefore: "找到你想要的拖车，",
+    headlineAccent: "随时随地",
+    headlineAfter: "！",
+    desc: "创建账户，立即开始。",
+    f1t: "安全可信", f1d: "您的数据始终安全",
+    f2t: "快速简单", f2d: "几秒即可注册",
+    f3t: "认证平台", f3d: "超过1万用户信赖",
+    f4t: "活跃社区", f4d: "加入成千上万满意客户",
+    b1t: "丰富选择", b1d: "浏览数千辆拖车",
+    b2t: "最优价格", b2d: "有竞争力的价格",
+    b3t: "全天候支持", b3d: "随时为您提供帮助",
+    badge: "超过 1 万用户评分 4.9/5",
+    s1v: "10K+", s1l: "活跃用户",
+    s2v: "2.5K+", s2l: "已上架拖车",
+    s3v: "4.9/5", s3l: "平均评分",
     continueWithGoogle: "使用 Google 继续",
-    continueWithFacebook: "使用 Facebook 继续",
+    or: "或",
     fullName: "全名",
     phone: "电话号码",
     email: "电子邮件",
+    country: "国家",
+    state: "州/省",
+    city: "城市",
+    postalCode: "邮政编码",
+    address: "地址",
+    address2: "地址 2",
     password: "密码",
+    confirmPassword: "确认密码",
     role: "角色",
-    renter: "租客",
-    owner: "业主",
-    registerBtn: "注册",
+    renter: "Locataire",
+    owner: "Propriétaire",
+    registerBtn: "创建账户",
     alreadyHaveAccount: "已有账户？",
     signIn: "登录",
+    logIn: "Log In",
     successToast: "账户创建成功！",
     failToast: "注册失败",
     errorToast: "出了点问题",
     googleSignupFail: "谷歌注册失败",
     facebookSignupFail: "Facebook 注册失败",
     googleSelected: "已选择谷歌账户。请填写剩余信息。",
-    facebookSelected: "已选择 Facebook 账户。请填写剩余信息。"
+    facebookSelected: "已选择 Facebook 账户。请填写剩余信息。",
+    passwordMismatch: "两次密码不一致",
+    whoAreWe: "我们是谁",
+    contactUs: "联系我们",
+    calculator: "能赚多少？",
+    dashboard: "仪表板",
+    logout: "注销",
   },
   fr: {
-    title: "S'inscrire",
-    welcome: "Bienvenue sur Lorepa",
-    continueWithGoogle: "Continuer avec Google",
-    continueWithFacebook: "Continuer avec Facebook",
-    fullName: "Nom complet",
-    phone: "Numéro de téléphone",
-    email: "E-mail",
-    password: "Mot de passe",
-    role: "Rôle",
+    title: "Create Your Account",
+    subtitle: "Join thousands of satisfied customers",
+    kicker: "TRAILER RENTAL, REINVENTED",
+    headlineBefore: "Find the Trailer You Want,",
+    headlineAccent: "Wherever",
+    headlineAfter: "You Want!",
+    desc: "Create your account and start your journey today.",
+    f1t: "Secure & Trusted", f1d: "Your data is always safe",
+    f2t: "Quick & Easy", f2d: "Sign up in just seconds",
+    f3t: "Verified Platform", f3d: "Trusted by 10K+ users",
+    f4t: "Active Community", f4d: "Join thousands of satisfied customers",
+    b1t: "Wide Selection", b1d: "Browse from thousands of trailers",
+    b2t: "Best Prices", b2d: "Competitive rates guaranteed",
+    b3t: "24/7 Support", b3d: "We're here to help anytime",
+    badge: "Rated 4.9/5 by 10K+ renters",
+    s1v: "10K+", s1l: "Active users",
+    s2v: "2.5K+", s2l: "Trailers listed",
+    s3v: "4.9/5", s3l: "Average rating",
+    continueWithGoogle: "Continue with Google",
+    or: "OR",
+    fullName: "Full Name",
+    phone: "Phone Number",
+    email: "Email",
+    country: "Country",
+    state: "State",
+    city: "City",
+    postalCode: "Postal Code",
+    address: "Address",
+    address2: "Address 2",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    role: "Role",
     renter: "Locataire",
     owner: "Propriétaire",
-    registerBtn: "S'inscrire",
-    alreadyHaveAccount: "Vous avez déjà un compte ?",
-    signIn: "Se connecter",
+    registerBtn: "Create Account",
+    alreadyHaveAccount: "Already have an account?",
+    signIn: "Log in",
+    logIn: "Log In",
     successToast: "Compte créé avec succès !",
     failToast: "Échec de l'inscription",
     errorToast: "Quelque chose a mal tourné",
     googleSignupFail: "Échec de l'inscription Google",
     facebookSignupFail: "Échec de l'inscription Facebook",
     googleSelected: "Compte Google sélectionné. Veuillez remplir les détails restants.",
-    facebookSelected: "Compte Facebook sélectionné. Veuillez remplir les détails restants."
+    facebookSelected: "Compte Facebook sélectionné. Veuillez remplir les détails restants.",
+    passwordMismatch: "Les mots de passe ne correspondent pas",
+    whoAreWe: "Qui sommes-nous",
+    contactUs: "Nous contacter",
+    calculator: "Ça rapporte combien ?",
+    dashboard: "Tableau de Bord",
+    logout: "Se déconnecter",
   },
 };
+
+// Label floats to the top once the control holds a value; a <select> never matches
+// :placeholder-shown, so its label stays pinned up like the Role field in the design.
+const Field = ({ icon: Icon, label, right, required = true, children }) => (
+  <div className="relative">
+    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 z-10 text-black/70 pointer-events-none">
+      <Icon className="w-[17px] h-[17px]" strokeWidth={1.8} />
+    </span>
+    {children}
+    <label className="pointer-events-none absolute left-11 top-[5px] text-[9px] font-medium text-black/60 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[13px] peer-focus:top-[5px] peer-focus:translate-y-0 peer-focus:text-[9px]">
+      {label}{required && <span className="text-red-500 ml-1">*</span>}
+    </label>
+    {right}
+  </div>
+);
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [country, setCountry] = useState('');
+  const [state, setState] = useState('');
+  const [city, setCity] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [address, setAddress] = useState('');
+  const [street, setStreet] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('renter');
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showLanguages, setShowLanguages] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [loading, setLoading] = useState(false);
   const nav = useNavigate();
 
   const [translations, setTranslations] = useState(() => {
@@ -131,34 +284,33 @@ const RegisterPage = () => {
       setTranslations(registerTranslations[storedLang] || registerTranslations.fr);
     };
     window.addEventListener('storage', handleStorageChange);
-    const savedEmail = localStorage.getItem("socialEmail");
-    const savedPass = localStorage.getItem("socialPassword");
-    const savedName = localStorage.getItem("socialName");
+    window.addEventListener('app-language-changed', handleStorageChange);
+    const savedEmail = localStorage.getItem('socialEmail');
+    const savedPass = localStorage.getItem('socialPassword');
+    const savedName = localStorage.getItem('socialName');
     if (savedEmail && savedPass) {
       setEmail(savedEmail);
       setPassword(savedPass);
+      setConfirmPassword(savedPass);
       if (savedName) setName(savedName);
     }
     return () => {
       window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('app-language-changed', handleStorageChange);
     };
   }, []);
-
-
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const userId = params.get('userId');
-    const role = params.get('role');
+    const roleParam = params.get('role');
     const googleLogin = params.get('googleLogin');
 
-    if (googleLogin === 'success' && userId && role) {
+    if (googleLogin === 'success' && userId && roleParam) {
       localStorage.setItem('userId', userId);
-      localStorage.setItem('role', role);
+      localStorage.setItem('role', roleParam);
       toast.success(translations.successToast);
-
-      const navigateTo = localStorage.getItem("naviagte") || "/";
-      nav(navigateTo);
+      nav(localStorage.getItem('naviagte') || '/');
     } else if (params.get('error') === 'google_failed') {
       toast.error(translations.googleSignupFail);
     }
@@ -166,127 +318,264 @@ const RegisterPage = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    if (password !== confirmPassword) {
+      toast.error(translations.passwordMismatch);
+      return;
+    }
+    setLoading(true);
     try {
-      const res = await axios.post(`${config.baseUrl}/account/register`, { name, phone, email, password, role });
+      const res = await axios.post(`${config.baseUrl}/account/register`, {
+        name, phone, email, password, role, country, state, city, postalCode, address, street,
+      });
       if (res.data?.status === 200) {
-        localStorage.removeItem("socialEmail");
-        localStorage.removeItem("socialPassword");
-        localStorage.removeItem("socialName");
+        localStorage.removeItem('socialEmail');
+        localStorage.removeItem('socialPassword');
+        localStorage.removeItem('socialName');
         localStorage.setItem('userId', res.data.data._id);
         localStorage.setItem('role', res.data.data.role);
-        localStorage.setItem('uEmail', email); // Store email for verification page
+        localStorage.setItem('uEmail', email);
         toast.success(translations.successToast);
-        setTimeout(() => nav("/verify"), 2000);
+        setTimeout(() => nav('/verify'), 2000);
       } else {
         toast.error(res.data?.msg || translations.failToast);
       }
     } catch (err) {
       toast.error(err.response?.data?.msg || translations.errorToast);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleGoogleRedirect = () => {
-    window.location.href = `${config.baseUrl}/account/google`;
+  const handleLanguageChange = (langSymbol) => {
+    localStorage.setItem('lang', langSymbol);
+    localStorage.setItem('i18nextLng', langSymbol);
+    window.dispatchEvent(new CustomEvent('app-language-changed', { detail: { lang: langSymbol } }));
+    setShowLanguages(false);
+    window.location.reload();
   };
 
-  const toggleRole = () => {
-    setRole((prevRole) => (prevRole === 'renter' ? 'owner' : 'renter'));
-  };
+  const features = [
+    { Icon: FiShield, t: translations.f1t, d: translations.f1d },
+    { Icon: FiZap, t: translations.f2t, d: translations.f2d },
+    { Icon: FiCheck, t: translations.f3t, d: translations.f3d },
+    { Icon: FiUsers, t: translations.f4t, d: translations.f4d },
+  ];
+  const bottom = [
+    { Icon: FiTruck, t: translations.b1t, d: translations.b1d },
+    { Icon: FiAward, t: translations.b2t, d: translations.b2d },
+    { Icon: FiHeadphones, t: translations.b3t, d: translations.b3d },
+  ];
+  // ponytail: marketing placeholders, swap for real numbers when the API exposes them
+  const stats = [
+    { v: translations.s1v, l: translations.s1l },
+    { v: translations.s2v, l: translations.s2l },
+    { v: translations.s3v, l: translations.s3l },
+  ];
 
-  const handleFacebookSignup = ({ data }) => {
-    if (!data.email) {
-      toast.error(translations.facebookSignupFail);
-      return;
-    }
-    localStorage.setItem("socialEmail", data.email);
-    localStorage.setItem("socialPassword", data.id);
-    localStorage.setItem("socialName", data.name || '');
-    setEmail(data.email);
-    setPassword(data.id);
-    setName(data.name || '');
-    toast.success(translations.facebookSelected);
-  };
+  const eyeBtn = (on, set) => (
+    <button type="button" onClick={() => set(!on)} className="absolute right-4 top-1/2 -translate-y-1/2 text-black/50 hover:text-black" aria-label="Toggle password">
+      {on ? <FiEye className="w-[18px] h-[18px]" /> : <FiEyeOff className="w-[18px] h-[18px]" />}
+    </button>
+  );
 
   return (
-    <div className='min-h-screen bg-white flex flex-col items-center justify-center mobile-px relative py-12'>
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-        className='absolute top-6 left-6 lg:top-8 lg:left-12 mb-4 lg:mb-0'>
-        <Link to={"/"}><img src={Logo} alt="logo" className='h-16 sm:h-20 w-auto' /></Link>
-      </motion.div>
+    <div
+      className="min-h-screen [@media(min-width:1024px)_and_(min-height:860px)]:h-screen [@media(min-width:1024px)_and_(min-height:860px)]:overflow-hidden relative overflow-x-hidden bg-cover bg-center bg-no-repeat text-black"
+      style={{ backgroundImage: "url('/signup.png')" }}
+    >
+      <div className="absolute inset-0 bg-white/10" />
 
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className='p-6 sm:p-8 md:p-10 w-full max-w-md'>
-        <motion.h2 variants={fadeInUp} className='text-xl mb-2'>{translations.title}</motion.h2>
-        <motion.p variants={fadeInUp} className='text-sm mb-8'>{translations.welcome}</motion.p>
-
-        <div className="flex flex-col gap-3 mb-6">
-          <button
-            onClick={handleGoogleRedirect}
-            className="w-full flex items-center justify-center gap-3 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700 font-medium"
-          >
-            <FaGoogle className="text-red-500 w-5 h-5" />
-            {translations.continueWithGoogle}
-          </button>
-          {/* <LoginSocialFacebook
-            appId="1463083271394413"
-            fields="name,email,picture"
-            onResolve={handleFacebookSignup}
-            onReject={() => toast.error(translations.facebookSignupFail)}
-          >
-            <button className="w-full flex items-center justify-center gap-2 py-2 bg-blue-700 text-white rounded-md">
-              <FaFacebookF /> {translations.continueWithFacebook}
+      <div className="relative z-10 w-full h-full flex flex-col px-5 sm:px-8 lg:px-12">
+        <header className="shrink-0 flex items-center justify-between py-3 sm:py-4">
+          <Link to="/" className="shrink-0">
+            <img src={Logo} alt="Lorepa" className="h-16 sm:h-20 lg:h-24 w-auto" />
+          </Link>
+          <div className="relative flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setShowLanguages((v) => !v)}
+              className={`h-11 w-11 rounded-xl ${glass} flex items-center justify-center text-black transition hover:bg-white/40`}
+              aria-label="Change language"
+            >
+              <CiGlobe className="w-5 h-5" />
             </button>
-          </LoginSocialFacebook> */}
-        </div>
+            <Link to="/login" className={`h-11 px-4 sm:px-5 rounded-xl ${glass} flex items-center text-black text-sm font-semibold transition hover:bg-white/40`}>
+              {translations.logIn}
+            </Link>
+            <button
+              type="button"
+              onClick={() => setShowMenu((v) => !v)}
+              className={`h-11 w-11 rounded-xl ${glass} flex items-center justify-center text-black transition hover:bg-white/40`}
+              aria-label="Menu"
+            >
+              <FiMenu className="w-5 h-5" />
+            </button>
+            {showLanguages && (
+              <div className={`absolute right-0 top-full mt-2 w-44 rounded-xl ${card} overflow-hidden z-30`}>
+                {[['en', 'English'], ['es', 'Spanish'], ['cn', 'Chinese'], ['fr', 'French']].map(([code, label]) => (
+                  <button key={code} onClick={() => handleLanguageChange(code)} className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+            {showMenu && (
+              <div className={`absolute right-0 top-full mt-2 w-56 rounded-xl ${card} overflow-hidden z-30`}>
+                {[['/who', translations.whoAreWe], ['/contact', translations.contactUs], ['/calculator', translations.calculator]].map(([to, label]) => (
+                  <Link key={to} to={to} className="block px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </header>
 
-        <motion.form onSubmit={handleRegister} className='space-y-4' variants={stagger}>
-          <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.fullName}<span className="text-red-500 ml-1">*</span></label>
-            <input type='text' required value={name} onChange={(e) => setName(e.target.value)}
-              className='mobile-input' />
-          </motion.div>
-          <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.phone}<span className="text-red-500 ml-1">*</span></label>
-            <input type='tel' required value={phone} onChange={(e) => setPhone(e.target.value)}
-              className='mobile-input' />
-          </motion.div>
-          <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.email}<span className="text-red-500 ml-1">*</span></label>
-            <input type='email' required value={email} disabled={!!localStorage.getItem("socialEmail")}
-              onChange={(e) => setEmail(e.target.value)} className='mobile-input' />
-          </motion.div>
-          <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.password}<span className="text-red-500 ml-1">*</span></label>
-            <input type='password' required value={password} disabled={!!localStorage.getItem("socialPassword")}
-              onChange={(e) => setPassword(e.target.value)} className='mobile-input' />
-          </motion.div>
-          <motion.div variants={fadeInUp} className="mobile-form-group">
-            <label className='mobile-form-label'>{translations.role}<span className="text-red-500 ml-1">*</span></label>
-            <div className='relative'>
-              <select required value={role} onChange={(e) => setRole(e.target.value)}
-                className='mobile-select pr-12'>
-                <option value='renter'>{translations.renter}</option>
-                <option value='owner'>{translations.owner}</option>
-              </select>
-              <button
-                type='button'
-                onClick={toggleRole}
-                aria-label={`Switch role to ${role === 'renter' ? translations.owner : translations.renter}`}
-                title={`Switch to ${role === 'renter' ? translations.owner : translations.renter}`}
-                className='absolute right-3 top-1/2 -translate-y-1/2 h-7 w-7 rounded-md border border-gray-300 bg-white text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center'
-              >
-                <FaSort className='h-3.5 w-3.5' />
-              </button>
+        <div className="flex-1 min-h-0 pb-6 grid lg:grid-cols-[minmax(0,1fr)_640px] gap-8 lg:gap-10 xl:gap-14 items-center">
+          <div className="min-w-0 lg:pl-[95px]">
+            <div className={`${card} inline-flex items-center gap-2 rounded-full pl-1.5 pr-3.5 py-1 mb-3`}>
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2563EB] text-white">
+                <FiStar className="w-3 h-3 fill-current" strokeWidth={0} />
+              </span>
+              <span className="text-[11px] font-semibold text-black">{translations.badge}</span>
             </div>
-          </motion.div>
-          <motion.div variants={fadeInUp}>
-            <button type='submit' className='mobile-btn-primary w-full'>{translations.registerBtn}</button>
-          </motion.div>
-        </motion.form>
 
-        <motion.div variants={fadeInUp} className='mt-8 text-center text-sm'>
-          <p>{translations.alreadyHaveAccount} <Link to={"/login"} className='text-blue-600 hover:text-blue-500'>{translations.signIn}</Link></p>
-        </motion.div>
-      </motion.div>
+            <p className="text-[#2563EB] text-[11px] font-bold tracking-[0.18em] mb-2.5">{translations.kicker}</p>
+            <h1 className="font-display max-w-[460px] text-[30px] xs:text-[34px] xl:text-[40px] font-extrabold leading-[1.14] tracking-tight text-black">
+              {translations.headlineBefore}{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] to-[#60A5FA]">{translations.headlineAccent}</span>{' '}
+              {translations.headlineAfter}
+            </h1>
+            <p className="mt-3 max-w-[340px] text-black/70 text-[14px] leading-relaxed">{translations.desc}</p>
+
+            <div className="mt-5 flex max-w-[560px] items-center gap-6 sm:gap-10">
+              {stats.map(({ v, l }) => (
+                <div key={l} className="min-w-0">
+                  <p className="font-display text-xl xl:text-2xl font-extrabold leading-none text-black">{v}</p>
+                  <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-black/55">{l}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 space-y-2.5">
+              {features.map(({ Icon, t, d }) => (
+                <div key={t} className={`${card} flex items-center gap-3.5 w-full sm:w-fit sm:max-w-full rounded-2xl pl-3 pr-5 sm:pr-6 py-2.5`}>
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.4)]">
+                    <Icon className="w-[18px] h-[18px]" strokeWidth={2} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-light text-[14px] leading-tight text-black">{t}</span>
+                    <span className="block text-[12px] text-black/60 mt-0.5">{d}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className={`${card} mt-5 max-w-[560px] rounded-2xl px-4 sm:px-5 py-3.5 grid grid-cols-1 sm:grid-cols-3 gap-4`}>
+              {bottom.map(({ Icon, t, d }) => (
+                <div key={t} className="flex items-center gap-2.5 min-w-0">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#2563EB] shadow-[0_2px_10px_rgba(37,99,235,0.25)]">
+                    <Icon className="w-[18px] h-[18px]" strokeWidth={2} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-light text-[12px] leading-tight text-black">{t}</span>
+                    <span className="block text-[11px] text-black/60 leading-snug mt-0.5">{d}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className={`${glass} w-full rounded-[28px] sm:rounded-[36px] p-5 sm:p-6 text-black shadow-[0_20px_60px_rgba(0,0,0,0.15)]`}>
+            <div className="flex flex-col items-center mb-3.5">
+              <span className="h-11 w-11 rounded-full bg-[#DBEAFE] flex items-center justify-center mb-2">
+                <FiUser className="w-[22px] h-[22px] text-[#2563EB]" strokeWidth={1.8} />
+              </span>
+              <h2 className="font-display text-[22px] font-extrabold tracking-tight text-black text-center">{translations.title}</h2>
+              <p className="text-[12px] text-black/60 mt-1 text-center">{translations.subtitle}</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => { window.location.href = `${config.baseUrl}/account/google`; }}
+              className="w-full h-11 rounded-xl bg-white flex items-center justify-center gap-3 text-[14px] font-semibold text-black shadow-sm transition hover:bg-white/90"
+            >
+              <GoogleG /> {translations.continueWithGoogle}
+            </button>
+
+            <div className="flex items-center gap-4 my-3">
+              <div className="h-px flex-1 bg-black/15" />
+              <span className="text-[11px] font-semibold tracking-wider text-black/50">{translations.or}</span>
+              <div className="h-px flex-1 bg-black/15" />
+            </div>
+
+            <form onSubmit={handleRegister} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Field icon={FiUser} label={translations.fullName}>
+                <input required placeholder=" " value={name} onChange={(e) => setName(e.target.value)} className={glassField} />
+              </Field>
+              <Field icon={FiPhone} label={translations.phone}>
+                <input type="tel" required placeholder=" " value={phone} onChange={(e) => setPhone(e.target.value)} className={glassField} />
+              </Field>
+              <div className="sm:col-span-2">
+                <Field icon={FiMail} label={translations.email}>
+                  <input type="email" required placeholder=" " value={email} disabled={!!localStorage.getItem('socialEmail')} onChange={(e) => setEmail(e.target.value)} className={`${glassField} disabled:opacity-70`} />
+                </Field>
+              </div>
+              <Field icon={FiMapPin} label={translations.country}>
+                <input required placeholder=" " value={country} onChange={(e) => setCountry(e.target.value)} className={glassField} />
+              </Field>
+              <Field icon={FiMapPin} label={translations.state}>
+                <input required placeholder=" " value={state} onChange={(e) => setState(e.target.value)} className={glassField} />
+              </Field>
+              <Field icon={FiMapPin} label={translations.city}>
+                <input required placeholder=" " value={city} onChange={(e) => setCity(e.target.value)} className={glassField} />
+              </Field>
+              <Field icon={FiMapPin} label={translations.postalCode}>
+                <input required placeholder=" " value={postalCode} onChange={(e) => setPostalCode(e.target.value)} className={glassField} />
+              </Field>
+              <div className="sm:col-span-2">
+                <Field icon={FiHome} label={translations.address}>
+                  <input required placeholder=" " value={address} onChange={(e) => setAddress(e.target.value)} className={glassField} />
+                </Field>
+              </div>
+              <div className="sm:col-span-2">
+                <Field icon={FiHome} label={translations.address2} required={false}>
+                  <input placeholder=" " value={street} onChange={(e) => setStreet(e.target.value)} className={glassField} />
+                </Field>
+              </div>
+              <Field icon={FiLock} label={translations.password} right={eyeBtn(showPass, setShowPass)}>
+                <input type={showPass ? 'text' : 'password'} required placeholder=" " value={password} disabled={!!localStorage.getItem('socialPassword')} onChange={(e) => setPassword(e.target.value)} className={`${glassField} disabled:opacity-70`} />
+              </Field>
+              <Field icon={FiLock} label={translations.confirmPassword} right={eyeBtn(showConfirm, setShowConfirm)}>
+                <input type={showConfirm ? 'text' : 'password'} required placeholder=" " value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className={glassField} />
+              </Field>
+              <div className="sm:col-span-2">
+                <Field
+                  icon={FiBriefcase}
+                  label={translations.role}
+                  right={<FiChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-black/50 pointer-events-none" />}
+                >
+                  <select required value={role} onChange={(e) => setRole(e.target.value)} className={`${glassField} appearance-none`}>
+                    <option value="renter">{translations.renter}</option>
+                    <option value="owner">{translations.owner}</option>
+                  </select>
+                </Field>
+              </div>
+              <button type="submit" disabled={loading} className="sm:col-span-2 relative w-full h-12 mt-1.5 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] disabled:opacity-70 disabled:pointer-events-none text-white text-[15px] font-semibold flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(37,99,235,0.35)] transition">
+                {loading && <span className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true" />}
+                {translations.registerBtn}
+                {!loading && <FiArrowRight className="absolute right-6 w-5 h-5" />}
+              </button>
+            </form>
+
+            <p className="mt-3.5 text-center text-[13px] text-black/70">
+              {translations.alreadyHaveAccount}{' '}
+              <Link to="/login" className="text-[#2563EB] font-semibold">{translations.signIn}</Link>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

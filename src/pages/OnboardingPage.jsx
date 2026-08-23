@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { FiBell, FiCheck, FiMail, FiUploadCloud, FiTruck, FiCalendar, FiLock, FiChevronRight, FiChevronDown, FiAlertTriangle, FiExternalLink, FiHeadphones, FiShield } from 'react-icons/fi';
+import { CiGlobe } from 'react-icons/ci';
 import Logo from '../assets/logo.svg';
 import AvatarIcon from '../assets/dashboard/avatar.jpg';
 import { fetchOnboarding } from '../helpers/onboarding';
@@ -13,7 +14,7 @@ const STEP_META = [
   { key: 'emailVerified', icon: FiMail },
   { key: 'documentsUploaded', icon: FiUploadCloud, cta: 'upload' },
   { key: 'trailerListed', icon: FiTruck, cta: 'list' },
-  { key: 'firstRental', icon: FiCalendar },
+  { key: 'firstRental', icon: FiCalendar, cta: 'home' },
 ];
 
 const glass = 'border border-white/50 bg-white/55 shadow-[0_8px_32px_-12px_rgba(37,99,235,0.25)] backdrop-blur-xl';
@@ -23,6 +24,7 @@ const OnboardingPage = () => {
   const nav = useNavigate();
   const userId = localStorage.getItem('userId');
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'fr');
+  const [showLanguages, setShowLanguages] = useState(false);
   const t = onboardingTranslations[lang] || onboardingTranslations.fr;
 
   const [data, setData] = useState({ percent: 20, step: 1, steps: {}, role: localStorage.getItem('role') || 'renter', name: '' });
@@ -30,8 +32,20 @@ const OnboardingPage = () => {
   useEffect(() => {
     const onLang = () => setLang(localStorage.getItem('lang') || 'fr');
     window.addEventListener('storage', onLang);
-    return () => window.removeEventListener('storage', onLang);
+    window.addEventListener('app-language-changed', onLang);
+    return () => {
+      window.removeEventListener('storage', onLang);
+      window.removeEventListener('app-language-changed', onLang);
+    };
   }, []);
+
+  const handleLanguageChange = (code) => {
+    localStorage.setItem('lang', code);
+    localStorage.setItem('i18nextLng', code);
+    window.dispatchEvent(new CustomEvent('app-language-changed', { detail: { lang: code } }));
+    setLang(code);
+    setShowLanguages(false);
+  };
 
   useEffect(() => {
     if (!userId) {
@@ -76,7 +90,24 @@ const OnboardingPage = () => {
           <Link to="/" className="flex items-center">
             <img src={Logo} alt="Lorepa" className="h-14 w-auto object-contain sm:h-16 md:h-20" />
           </Link>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="relative flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setShowLanguages((v) => !v)}
+              aria-label="Change language"
+              className="grid h-10 w-10 place-items-center rounded-full border border-white/60 bg-white/50 text-gray-600 shadow-sm backdrop-blur-md transition hover:bg-white/80 active:scale-95"
+            >
+              <CiGlobe className="h-5 w-5" />
+            </button>
+            {showLanguages && (
+              <div className="absolute right-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-xl border border-white/60 bg-white/90 shadow-lg backdrop-blur-xl">
+                {[['en', 'English'], ['es', 'Spanish'], ['cn', 'Chinese'], ['fr', 'French']].map(([code, label]) => (
+                  <button key={code} type="button" onClick={() => handleLanguageChange(code)} className="w-full px-4 py-2.5 text-left text-sm text-gray-800 hover:bg-white">
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
             <button
               type="button"
               onClick={() => nav(`${dashboard}/notification`)}
@@ -176,7 +207,7 @@ const OnboardingPage = () => {
                               : 'cursor-not-allowed border border-white/50 bg-white/40 text-gray-400 backdrop-blur-sm'
                           }`}
                         >
-                          {cta === 'upload' ? t.uploadNow : t.listTrailer}
+                          {cta === 'upload' ? t.uploadNow : cta === 'list' ? t.listTrailer : t.skip}
                           <FiChevronRight className="h-4 w-4" />
                         </button>
                       )}

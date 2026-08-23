@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { buyerNav } from '../../../constants/sidebarData';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSidebar } from '../../../context/SidebarContext';
 import Logo from '../../../assets/logo.svg'
 import { HiLogout } from 'react-icons/hi';
-import { LANGUAGES, sidebarTranslations } from "../../../i18n/translations";
+import { sidebarTranslations } from "../../../i18n/translations";
+import DashboardNavLinks from '../../DashboardNavLinks';
 
 const Sidebar = () => {
 
@@ -51,21 +52,7 @@ const Sidebar = () => {
           <div>
             <p className="px-4 text-[10px] font-black text-white/50 uppercase tracking-widest mb-4">{t.menu}</p>
             <div className="space-y-1">
-              {buyerNav?.map((i) => (
-                <Link
-                  to={`/seller/dashboard/${i.link}`}
-                  key={i.id}
-                  className={`flex items-center gap-x-3 px-4 py-3.5 rounded-2xl transition-all duration-300 group ${location === i.link
-                    ? "bg-white text-blue-600 shadow-xl shadow-blue-700/20"
-                    : "text-blue-100 hover:bg-white/10"
-                    }`}
-                >
-                  <div className={`text-xl transition-transform group-hover:scale-110 ${location === i.link ? "text-blue-600" : "text-blue-100"}`}>
-                    {i.icon}
-                  </div>
-                  <span className="text-sm font-bold tracking-tight">{t[i.key]}</span>
-                </Link>
-              ))}
+              <DashboardNavLinks items={buyerNav} prefix="/seller/dashboard" active={location} t={t} />
             </div>
           </div>
 
@@ -105,22 +92,7 @@ const Sidebar = () => {
           <div>
             <p className="px-4 text-[10px] font-black text-white/50 uppercase tracking-widest mb-4">{t.menu}</p>
             <div className="space-y-1">
-              {buyerNav?.map((i) => (
-                <Link
-                  to={`/seller/dashboard/${i.link}`}
-                  key={i.id}
-                  onClick={toggleNav}
-                  className={`flex items-center gap-x-3 px-4 py-3.5 rounded-2xl transition-all duration-300 ${location === i.link
-                    ? "bg-white text-blue-600 shadow-xl"
-                    : "text-blue-100 active:bg-white/10"
-                    }`}
-                >
-                  <div className={`text-xl ${location === i.link ? "text-blue-600" : "text-blue-100"}`}>
-                    {i.icon}
-                  </div>
-                  <span className="text-sm font-bold tracking-tight">{t[i.key]}</span>
-                </Link>
-              ))}
+              <DashboardNavLinks items={buyerNav} prefix="/seller/dashboard" active={location} t={t} onNavigate={toggleNav} />
             </div>
           </div>
 

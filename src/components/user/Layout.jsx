@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './sidebar/Sidebar';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import CompleteProfileModal from './CompleteProfileModal';
 import axios from 'axios';
 import config from '../../config';
 import { isProfileComplete } from '../../helpers/profileCompletion';
+import { FILL_ONBOARDING_MSG, useOnboardingLock } from '../../helpers/onboarding';
+import toast from 'react-hot-toast';
 
 const Layout = () => {
   const location = useLocation();
+  const nav = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  // ponytail: already on profile — modal would block the upload UI
   const onProfile = location.pathname.includes('/profile');
+  const { locked, percent } = useOnboardingLock();
+  const page = location.pathname.split('/')[3] || 'home';
+
+  useEffect(() => {
+    if (percent == null) return;
+    if (locked(page)) {
+      toast.error(FILL_ONBOARDING_MSG);
+      nav('/user/dashboard/profile', { replace: true });
+    }
+  }, [page, percent]);
 
   useEffect(() => {
     const checkProfileStatus = async () => {

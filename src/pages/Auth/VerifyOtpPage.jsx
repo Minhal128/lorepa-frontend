@@ -1,83 +1,346 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { FiArrowRight, FiClock, FiLock, FiMenu, FiShield, FiZap, FiCheck, FiEdit2 } from "react-icons/fi";
+import { CiGlobe } from "react-icons/ci";
 import config from "../../config";
+import Logo from "../../assets/logo.svg";
 
-const fadeInUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
+const glass = "bg-white/25 backdrop-blur-[20px] backdrop-saturate-150 border border-white/50";
+const card = "bg-white/70 backdrop-blur-[20px] backdrop-saturate-150 border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.08)]";
+const OTP_LEN = 6;
+const OTP_TTL = 105; // ponytail: mock timer; backend expiry is source of truth
 
 const otpTranslations = {
-  en: { title: "Verify OTP", otpLabel: "OTP", otpPlaceholder: "Enter OTP", verifyBtn: "Verify", resendOtp: "Resend OTP" },
-  es: { title: "Verificar OTP", otpLabel: "OTP", otpPlaceholder: "Ingresa OTP", verifyBtn: "Verificar", resendOtp: "Reenviar OTP" },
-  cn: { title: "验证 OTP", otpLabel: "OTP", otpPlaceholder: "输入 OTP", verifyBtn: "验证", resendOtp: "重新发送 OTP" },
-  fr: { title: "Vérifier OTP", otpLabel: "OTP", otpPlaceholder: "Entrez OTP", verifyBtn: "Vérifier", resendOtp: "Renvoyer OTP" },
+  en: {
+    title: "Verify OTP",
+    verifyBtn: "Verify & Continue",
+    resendOtp: "Resend Code",
+    logIn: "Log In",
+    kicker: "VERIFY YOUR NUMBER",
+    headline: "Just One Step Away!",
+    sentTo: "We've sent a 6-digit code to",
+    cardHint: "Enter the 6-digit code sent to",
+    expires: "Code expires in",
+    trust: "Your verification code is safe with us. We never share your information.",
+    f1t: "Secure & Private", f1d: "Your data is protected with industry-leading security.",
+    f2t: "Quick Verification", f2d: "Takes less than 30 seconds to get you verified.",
+    f3t: "Trusted Platform", f3d: "Join thousands of verified customers today.",
+    whoAreWe: "Who are we",
+    contactUs: "Contact us",
+    calculator: "How much can you earn?",
+    enterOtp: "Please enter OTP",
+    ok: "OTP Verified",
+    fail: "OTP verification failed",
+    resent: "OTP resent successfully",
+    resendFail: "Failed to resend OTP",
+  },
+  es: {
+    title: "Verificar OTP",
+    verifyBtn: "Verificar y continuar",
+    resendOtp: "Reenviar código",
+    logIn: "Iniciar sesión",
+    kicker: "VERIFICA TU NÚMERO",
+    headline: "¡Solo un paso más!",
+    sentTo: "Hemos enviado un código de 6 dígitos a",
+    cardHint: "Ingresa el código de 6 dígitos enviado a",
+    expires: "El código caduca en",
+    trust: "Tu código está seguro con nosotros. Nunca compartimos tu información.",
+    f1t: "Seguro y privado", f1d: "Tus datos están protegidos con seguridad de primer nivel.",
+    f2t: "Verificación rápida", f2d: "Toma menos de 30 segundos verificarte.",
+    f3t: "Plataforma de confianza", f3d: "Únete a miles de clientes verificados hoy.",
+    whoAreWe: "Quiénes somos",
+    contactUs: "Contáctanos",
+    calculator: "¿Cuánto puedes ganar?",
+    enterOtp: "Ingresa el OTP",
+    ok: "OTP verificado",
+    fail: "Error al verificar OTP",
+    resent: "OTP reenviado",
+    resendFail: "No se pudo reenviar el OTP",
+  },
+  cn: {
+    title: "验证 OTP",
+    verifyBtn: "验证并继续",
+    resendOtp: "重新发送",
+    logIn: "登录",
+    kicker: "验证您的号码",
+    headline: "只差一步！",
+    sentTo: "我们已向以下地址发送 6 位验证码",
+    cardHint: "请输入发送至以下地址的 6 位验证码",
+    expires: "验证码有效期",
+    trust: "您的验证码由我们妥善保管，我们绝不会分享您的信息。",
+    f1t: "安全私密", f1d: "您的数据受到行业领先的安全保护。",
+    f2t: "快速验证", f2d: "不到 30 秒即可完成验证。",
+    f3t: "值得信赖", f3d: "加入成千上万已验证的用户。",
+    whoAreWe: "我们是谁",
+    contactUs: "联系我们",
+    calculator: "您能赚多少？",
+    enterOtp: "请输入 OTP",
+    ok: "OTP 已验证",
+    fail: "OTP 验证失败",
+    resent: "OTP 已重新发送",
+    resendFail: "重新发送失败",
+  },
+  fr: {
+    title: "Vérifier OTP",
+    verifyBtn: "Vérifier et continuer",
+    resendOtp: "Renvoyer le code",
+    logIn: "Connexion",
+    kicker: "VÉRIFIEZ VOTRE NUMÉRO",
+    headline: "Plus qu'une étape !",
+    sentTo: "Nous avons envoyé un code à 6 chiffres à",
+    cardHint: "Entrez le code à 6 chiffres envoyé à",
+    expires: "Le code expire dans",
+    trust: "Votre code est en sécurité. Nous ne partageons jamais vos informations.",
+    f1t: "Sécurisé et privé", f1d: "Vos données sont protégées par une sécurité de premier plan.",
+    f2t: "Vérification rapide", f2d: "Moins de 30 secondes pour être vérifié.",
+    f3t: "Plateforme de confiance", f3d: "Rejoignez des milliers de clients vérifiés.",
+    whoAreWe: "Qui sommes-nous",
+    contactUs: "Nous contacter",
+    calculator: "Combien pouvez-vous gagner ?",
+    enterOtp: "Veuillez entrer l'OTP",
+    ok: "OTP vérifié",
+    fail: "Échec de la vérification OTP",
+    resent: "OTP renvoyé",
+    resendFail: "Échec du renvoi de l'OTP",
+  },
 };
 
+const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+
 const VerifyOtpPage = () => {
-  const [otp, setOtp] = useState("");
+  const [digits, setDigits] = useState(() => Array(OTP_LEN).fill(""));
+  const [left, setLeft] = useState(OTP_TTL);
+  const [loading, setLoading] = useState(false);
+  const [showLanguages, setShowLanguages] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const inputs = useRef([]);
+  const nav = useNavigate();
+  const email = useLocation().state?.email;
   const [translations, setTranslations] = useState(() => {
     const storedLang = localStorage.getItem("lang");
     return otpTranslations[storedLang] || otpTranslations.fr;
   });
-  const nav = useNavigate();
-  const location = useLocation();
-  const email = location.state?.email;
 
   useEffect(() => {
     if (!email) nav("/forget-password");
-    const handleStorageChange = () => {
+    const sync = () => {
       const storedLang = localStorage.getItem("lang");
       setTranslations(otpTranslations[storedLang] || otpTranslations.fr);
     };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, [email]);
+    window.addEventListener("storage", sync);
+    window.addEventListener("app-language-changed", sync);
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener("app-language-changed", sync);
+    };
+  }, [email, nav]);
 
-  const verifyOtp = async () => {
-    if (!otp) {
-      toast.error("Please enter OTP");
+  useEffect(() => {
+    if (left <= 0) return;
+    const id = setInterval(() => setLeft((n) => n - 1), 1000);
+    return () => clearInterval(id);
+  }, [left]);
+
+  const otp = digits.join("");
+
+  const put = (i, value) => {
+    const clean = value.replace(/\D/g, "");
+    if (!clean) {
+      setDigits((d) => { const n = [...d]; n[i] = ""; return n; });
       return;
     }
-    
+    if (clean.length > 1) {
+      const next = [...digits];
+      clean.slice(0, OTP_LEN).split("").forEach((c, j) => { next[j] = c; });
+      setDigits(next);
+      inputs.current[Math.min(clean.length, OTP_LEN) - 1]?.focus();
+      return;
+    }
+    setDigits((d) => { const n = [...d]; n[i] = clean; return n; });
+    if (i < OTP_LEN - 1) inputs.current[i + 1]?.focus();
+  };
+
+  const onKey = (i, e) => {
+    if (e.key === "Backspace" && !digits[i] && i > 0) inputs.current[i - 1]?.focus();
+  };
+
+  const verifyOtp = async () => {
+    if (otp.length !== OTP_LEN) {
+      toast.error(translations.enterOtp);
+      return;
+    }
+    setLoading(true);
     try {
-      const { data } = await axios.post(`${config.baseUrl}/account/verify/otp`, { email, otp });
-      toast.success("OTP Verified");
-      // Navigate to change password page with email in state
+      await axios.post(`${config.baseUrl}/account/verify/otp`, { email, otp });
+      toast.success(translations.ok);
       nav("/change-password", { state: { email } });
     } catch (err) {
-      toast.error(err.response?.data?.msg || "OTP verification failed");
+      toast.error(err.response?.data?.msg || translations.fail);
+    } finally {
+      setLoading(false);
     }
   };
 
   const resendOtp = async () => {
+    if (left > 0) return;
     try {
       const normalizedEmail = encodeURIComponent(String(email || "").trim().toLowerCase());
       await axios.post(`${config.baseUrl}/account/send/otp/${normalizedEmail}`);
-      toast.success("OTP resent successfully");
+      toast.success(translations.resent);
+      setDigits(Array(OTP_LEN).fill(""));
+      setLeft(OTP_TTL);
+      inputs.current[0]?.focus();
     } catch (err) {
-      toast.error(err.response?.data?.msg || "Failed to resend OTP");
+      toast.error(err.response?.data?.msg || translations.resendFail);
     }
   };
 
+  const handleLanguageChange = (langSymbol) => {
+    localStorage.setItem("lang", langSymbol);
+    localStorage.setItem("i18nextLng", langSymbol);
+    window.dispatchEvent(new CustomEvent("app-language-changed", { detail: { lang: langSymbol } }));
+    setShowLanguages(false);
+    window.location.reload();
+  };
+
+  const foot = [
+    { Icon: FiShield, t: translations.f1t, d: translations.f1d },
+    { Icon: FiZap, t: translations.f2t, d: translations.f2d },
+    { Icon: FiCheck, t: translations.f3t, d: translations.f3d },
+  ];
+
+  const dest = email;
+  const focused = digits.findIndex((d) => !d);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4">
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible" className="w-full max-w-md p-6 border rounded-md shadow">
-        <h2 className="text-xl mb-4">{translations.title}</h2>
-        <label className="block text-sm mb-1">{translations.otpLabel}</label>
-        <input
-          type="text"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          placeholder={translations.otpPlaceholder}
-          className="block w-full px-4 py-2 mb-4 border rounded-md"
-        />
-        <button onClick={verifyOtp} className="w-full py-2 bg-blue-600 text-white rounded-md">{translations.verifyBtn}</button>
-        <button onClick={resendOtp} className="w-full mt-2 py-2 bg-gray-200 rounded-md">{translations.resendOtp}</button>
-        <p className="mt-4 text-center text-sm">
-          <Link to="/login" className="text-blue-600">Back to Login</Link>
-        </p>
-      </motion.div>
+    <div
+      className="min-h-screen relative overflow-x-hidden bg-cover bg-center bg-no-repeat text-black"
+      style={{ backgroundImage: "url('/otp.png')" }}
+    >
+      <div className="relative z-10 w-full min-h-screen flex flex-col px-6 sm:px-10 lg:px-14">
+        <header className="shrink-0 flex items-center justify-between py-3">
+          <Link to="/" className="shrink-0">
+            <img src={Logo} alt="Lorepa" className="h-16 sm:h-20 lg:h-24 w-auto" />
+          </Link>
+          <div className="relative flex items-center gap-3">
+            <button type="button" onClick={() => setShowLanguages((v) => !v)} className="text-black" aria-label="Change language">
+              <CiGlobe className="w-6 h-6" />
+            </button>
+            <Link to="/login" className="h-9 px-4 rounded-lg border border-black/25 bg-white/20 text-black text-[13px] font-medium flex items-center">
+              {translations.logIn}
+            </Link>
+            <button type="button" onClick={() => setShowMenu((v) => !v)} className="text-black" aria-label="Menu">
+              <FiMenu className="w-6 h-6" />
+            </button>
+            {showLanguages && (
+              <div className={`absolute right-0 top-full mt-2 w-44 rounded-xl ${card} overflow-hidden z-30`}>
+                {[["en", "English"], ["es", "Spanish"], ["cn", "Chinese"], ["fr", "French"]].map(([code, label]) => (
+                  <button key={code} onClick={() => handleLanguageChange(code)} className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+            {showMenu && (
+              <div className={`absolute right-0 top-full mt-2 w-56 rounded-xl ${card} overflow-hidden z-30`}>
+                {[["/who", translations.whoAreWe], ["/contact", translations.contactUs], ["/calculator", translations.calculator]].map(([to, label]) => (
+                  <Link key={to} to={to} className="block px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </header>
+
+        <div className="flex-1 grid lg:grid-cols-[1fr_420px] xl:grid-cols-[1fr_460px] gap-8 items-start pt-1 lg:pt-2 lg:pr-6">
+          <div className="min-w-0 lg:pl-8">
+            <p className="font-sans text-[#2563EB] text-[11px] font-bold tracking-[0.2em] uppercase">{translations.kicker}</p>
+            <h1 className="font-sans mt-1.5 whitespace-nowrap text-[36px] sm:text-[44px] xl:text-[48px] font-extrabold leading-[1.08] tracking-tight text-[#0A0F18]">
+              {translations.headline}
+            </h1>
+            <p className="mt-8 font-sans text-[#0A0F18]/70 text-[14px] max-w-[380px]">
+              {translations.sentTo}{" "}
+              <span className="text-[#2563EB] font-semibold inline-flex items-center gap-2">
+                {dest}
+                <Link to="/forget-password" aria-label="Edit" className="inline-flex h-6 w-6 rounded-full bg-[#DBEAFE] items-center justify-center">
+                  <FiEdit2 className="w-3 h-3" />
+                </Link>
+              </span>
+            </p>
+          </div>
+
+          <div className="w-full min-h-[560px] lg:min-h-[640px] rounded-[32px] bg-white/45 backdrop-blur-[24px] border border-white/70 shadow-[0_16px_50px_rgba(0,0,0,0.12)] px-7 py-10 text-black flex flex-col">
+            <div className="flex flex-col items-center mb-8">
+              <span className="h-14 w-14 rounded-full bg-[#DBEAFE] flex items-center justify-center mb-3">
+                <FiLock className="w-[22px] h-[22px] text-[#2563EB]" strokeWidth={1.8} />
+              </span>
+              <h2 className="font-sans text-[26px] font-extrabold tracking-tight text-center">{translations.title}</h2>
+              <p className="text-[13px] text-black/55 mt-1.5 text-center">
+                {translations.cardHint} <span className="text-[#2563EB] font-medium">{dest}</span>
+              </p>
+            </div>
+
+            <div className="flex justify-center gap-2.5">
+              {digits.map((d, i) => (
+                <input
+                  key={i}
+                  ref={(el) => { inputs.current[i] = el; }}
+                  inputMode="numeric"
+                  autoComplete={i === 0 ? "one-time-code" : "off"}
+                  maxLength={OTP_LEN}
+                  value={d}
+                  onChange={(e) => put(i, e.target.value)}
+                  onKeyDown={(e) => onKey(i, e)}
+                  className={`h-[52px] w-[52px] rounded-[12px] bg-white text-center text-lg font-semibold outline-none border ${i === (focused === -1 ? OTP_LEN - 1 : focused) ? "border-[#2563EB] border-2" : "border-[#E5E7EB]"} focus:border-[#2563EB] focus:border-2`}
+                />
+              ))}
+            </div>
+
+            <div className="mt-8 flex items-center justify-between rounded-xl bg-[#F3F4F6]/80 px-4 py-2.5 text-[13px]">
+              <span className="flex items-center gap-1.5 text-[#2563EB] font-medium">
+                <FiClock className="w-4 h-4" />
+                {translations.expires} {mmss(Math.max(0, left))}
+              </span>
+              <button type="button" onClick={resendOtp} disabled={left > 0} className="text-black/40 font-medium disabled:text-black/35 enabled:text-[#2563EB]">
+                {translations.resendOtp}
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={verifyOtp}
+              disabled={loading}
+              className="w-full h-12 mt-auto rounded-xl bg-gradient-to-r from-[#2563EB] to-[#3B82F6] hover:from-[#1d4ed8] disabled:opacity-70 text-white text-[15px] font-semibold inline-flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(37,99,235,0.35)]"
+            >
+              {loading && <span className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+              {translations.verifyBtn}
+              {!loading && <FiArrowRight className="w-5 h-5" />}
+            </button>
+
+            <p className="mt-8 flex items-center justify-center gap-2 text-[11px] text-black/45 leading-snug text-center">
+              <FiShield className="w-3.5 h-3.5 shrink-0" />
+              {translations.trust}
+            </p>
+          </div>
+        </div>
+
+        <div className={`${glass} mb-6 mt-auto w-full max-w-[720px] rounded-2xl px-5 py-3.5 grid grid-cols-1 sm:grid-cols-3 gap-4`}>
+          {foot.map(({ Icon, t, d }) => (
+            <div key={t} className="flex items-start gap-2.5 min-w-0">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white">
+                <Icon className="w-4 h-4" />
+              </span>
+              <span className="min-w-0">
+                <span className="block font-semibold text-[12px] leading-tight text-black">{t}</span>
+                <span className="block text-[11px] text-black/60 leading-snug mt-0.5">{d}</span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
