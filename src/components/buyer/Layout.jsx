@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './sidebar/Sidebar';
+<<<<<<< HEAD
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+=======
+import { Outlet, useLocation } from 'react-router-dom';
+>>>>>>> b06cde1ce220afc977b5cfbc5dbbae161ae4df8c
 import Header from './Header';
 import CompleteProfileModal from './CompleteProfileModal';
 import axios from 'axios';
@@ -11,6 +15,7 @@ import toast from 'react-hot-toast';
 
 const Layout = () => {
   const location = useLocation();
+<<<<<<< HEAD
   const nav = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const onProfile = location.pathname.includes('/profile');
@@ -24,6 +29,11 @@ const Layout = () => {
       nav('/seller/dashboard/profile', { replace: true });
     }
   }, [page, percent]);
+=======
+  const [showModal, setShowModal] = useState(false);
+  // ponytail: already on profile — modal would block the upload UI
+  const onProfile = location.pathname.includes('/profile');
+>>>>>>> b06cde1ce220afc977b5cfbc5dbbae161ae4df8c
 
   useEffect(() => {
     const checkProfileStatus = async () => {
