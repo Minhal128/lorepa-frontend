@@ -12,7 +12,7 @@ import Logo from '../../assets/logo.svg';
 
 const glass = 'bg-white/25 backdrop-blur-[20px] backdrop-saturate-150 border border-white/50';
 const card = 'bg-white/70 backdrop-blur-[20px] backdrop-saturate-150 border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.08)]';
-const glassField = 'peer w-full h-11 pl-11 pr-10 pt-3.5 rounded-xl bg-white/65 backdrop-blur-md border border-white/80 text-[14px] text-black outline-none transition-colors focus:border-[#2563EB] focus:bg-white/85';
+const glassField = 'peer w-full h-10 pl-11 pr-10 pt-3.5 rounded-xl bg-white/65 backdrop-blur-md border border-white/80 text-[14px] text-black outline-none transition-colors focus:border-[#2563EB] focus:bg-white/85';
 
 const GoogleG = () => (
   <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
@@ -387,7 +387,7 @@ const RegisterPage = () => {
       <div className="absolute inset-0 bg-white/10" />
 
       <div className="relative z-10 w-full h-full flex flex-col px-5 sm:px-8 lg:px-12">
-        <header className="shrink-0 flex items-center justify-between py-3 sm:py-4">
+        <header className="shrink-0 flex items-center justify-between">
           <Link to="/" className="shrink-0">
             <img src={Logo} alt="Lorepa" className="h-16 sm:h-20 lg:h-24 w-auto" />
           </Link>
@@ -432,24 +432,24 @@ const RegisterPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 min-h-0 pb-6 grid lg:grid-cols-[minmax(0,1fr)_640px] gap-8 lg:gap-10 xl:gap-14 items-center">
+        <div className="flex-1 min-h-0 pb-4 grid lg:grid-cols-[minmax(0,1fr)_640px] gap-8 lg:gap-10 xl:gap-14 items-center">
           <div className="min-w-0 lg:pl-[95px]">
-            <div className={`${card} inline-flex items-center gap-2 rounded-full pl-1.5 pr-3.5 py-1 mb-3`}>
+            <div className={`${card} inline-flex items-center gap-2 rounded-full pl-1.5 pr-3.5 py-1 mb-2`}>
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2563EB] text-white">
                 <FiStar className="w-3 h-3 fill-current" strokeWidth={0} />
               </span>
               <span className="text-[11px] font-semibold text-black">{translations.badge}</span>
             </div>
 
-            <p className="text-[#2563EB] text-[11px] font-bold tracking-[0.18em] mb-2.5">{translations.kicker}</p>
-            <h1 className="font-display max-w-[460px] text-[30px] xs:text-[34px] xl:text-[40px] font-extrabold leading-[1.14] tracking-tight text-black">
+            <p className="text-[#2563EB] text-[11px] font-bold tracking-[0.18em] mb-1.5">{translations.kicker}</p>
+            <h1 className="font-display max-w-[460px] text-[26px] xs:text-[28px] xl:text-[32px] font-extrabold leading-[1.14] tracking-tight text-black">
               {translations.headlineBefore}{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] to-[#60A5FA]">{translations.headlineAccent}</span>{' '}
               {translations.headlineAfter}
             </h1>
-            <p className="mt-3 max-w-[340px] text-black/70 text-[14px] leading-relaxed">{translations.desc}</p>
+            <p className="mt-2 max-w-[340px] text-black/70 text-[13px] leading-relaxed">{translations.desc}</p>
 
-            <div className="mt-5 flex max-w-[560px] items-center gap-6 sm:gap-10">
+            <div className="mt-3 flex max-w-[560px] items-center gap-6 sm:gap-10">
               {stats.map(({ v, l }) => (
                 <div key={l} className="min-w-0">
                   <p className="font-display text-xl xl:text-2xl font-extrabold leading-none text-black">{v}</p>
@@ -458,11 +458,11 @@ const RegisterPage = () => {
               ))}
             </div>
 
-            <div className="mt-5 space-y-2.5">
+            <div className="mt-3 space-y-2">
               {features.map(({ Icon, t, d }) => (
-                <div key={t} className={`${card} flex items-center gap-3.5 w-full sm:w-fit sm:max-w-full rounded-2xl pl-3 pr-5 sm:pr-6 py-2.5`}>
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.4)]">
-                    <Icon className="w-[18px] h-[18px]" strokeWidth={2} />
+                <div key={t} className={`${card} flex items-center gap-3.5 w-full sm:w-fit sm:max-w-full rounded-2xl pl-3 pr-5 sm:pr-6 py-2`}>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.4)]">
+                    <Icon className="w-4 h-4" strokeWidth={2} />
                   </span>
                   <span className="min-w-0">
                     <span className="block font-light text-[14px] leading-tight text-black">{t}</span>
@@ -472,11 +472,11 @@ const RegisterPage = () => {
               ))}
             </div>
 
-            <div className={`${card} mt-5 max-w-[560px] rounded-2xl px-4 sm:px-5 py-3.5 grid grid-cols-1 sm:grid-cols-3 gap-4`}>
+            <div className={`${card} mt-3 max-w-[560px] rounded-2xl px-4 sm:px-5 py-2.5 grid grid-cols-1 sm:grid-cols-3 gap-4`}>
               {bottom.map(({ Icon, t, d }) => (
                 <div key={t} className="flex items-center gap-2.5 min-w-0">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#2563EB] shadow-[0_2px_10px_rgba(37,99,235,0.25)]">
-                    <Icon className="w-[18px] h-[18px]" strokeWidth={2} />
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[#2563EB] shadow-[0_2px_10px_rgba(37,99,235,0.25)]">
+                    <Icon className="w-4 h-4" strokeWidth={2} />
                   </span>
                   <span className="min-w-0">
                     <span className="block font-light text-[12px] leading-tight text-black">{t}</span>
@@ -487,30 +487,30 @@ const RegisterPage = () => {
             </div>
           </div>
 
-          <div className={`${glass} w-full rounded-[28px] sm:rounded-[36px] p-5 sm:p-6 text-black shadow-[0_20px_60px_rgba(0,0,0,0.15)]`}>
-            <div className="flex flex-col items-center mb-3.5">
-              <span className="h-11 w-11 rounded-full bg-[#DBEAFE] flex items-center justify-center mb-2">
-                <FiUser className="w-[22px] h-[22px] text-[#2563EB]" strokeWidth={1.8} />
+          <div className={`${glass} w-full rounded-[28px] sm:rounded-[36px] p-4 sm:p-5 text-black shadow-[0_20px_60px_rgba(0,0,0,0.15)]`}>
+            <div className="flex flex-col items-center mb-2">
+              <span className="h-9 w-9 rounded-full bg-[#DBEAFE] flex items-center justify-center mb-1.5">
+                <FiUser className="w-[18px] h-[18px] text-[#2563EB]" strokeWidth={1.8} />
               </span>
-              <h2 className="font-display text-[22px] font-extrabold tracking-tight text-black text-center">{translations.title}</h2>
-              <p className="text-[12px] text-black/60 mt-1 text-center">{translations.subtitle}</p>
+              <h2 className="font-display text-[18px] leading-tight font-extrabold tracking-tight text-black text-center">{translations.title}</h2>
+              <p className="text-[11px] text-black/60 mt-1 text-center">{translations.subtitle}</p>
             </div>
 
             <button
               type="button"
               onClick={() => { window.location.href = `${config.baseUrl}/account/google`; }}
-              className="w-full h-11 rounded-xl bg-white flex items-center justify-center gap-3 text-[14px] font-semibold text-black shadow-sm transition hover:bg-white/90"
+              className="w-full h-10 rounded-xl bg-white flex items-center justify-center gap-3 text-[14px] font-semibold text-black shadow-sm transition hover:bg-white/90"
             >
               <GoogleG /> {translations.continueWithGoogle}
             </button>
 
-            <div className="flex items-center gap-4 my-3">
+            <div className="flex items-center gap-4 my-2">
               <div className="h-px flex-1 bg-black/15" />
               <span className="text-[11px] font-semibold tracking-wider text-black/50">{translations.or}</span>
               <div className="h-px flex-1 bg-black/15" />
             </div>
 
-            <form onSubmit={handleRegister} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <form onSubmit={handleRegister} className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field icon={FiUser} label={translations.fullName}>
                 <input required placeholder=" " value={name} onChange={(e) => setName(e.target.value)} className={glassField} />
               </Field>
@@ -562,14 +562,14 @@ const RegisterPage = () => {
                   </select>
                 </Field>
               </div>
-              <button type="submit" disabled={loading} className="sm:col-span-2 relative w-full h-12 mt-1.5 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] disabled:opacity-70 disabled:pointer-events-none text-white text-[15px] font-semibold flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(37,99,235,0.35)] transition">
+              <button type="submit" disabled={loading} className="sm:col-span-2 relative w-full h-11 mt-1 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] disabled:opacity-70 disabled:pointer-events-none text-white text-[15px] font-semibold flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(37,99,235,0.35)] transition">
                 {loading && <span className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true" />}
                 {translations.registerBtn}
                 {!loading && <FiArrowRight className="absolute right-6 w-5 h-5" />}
               </button>
             </form>
 
-            <p className="mt-3.5 text-center text-[13px] text-black/70">
+            <p className="mt-2 text-center text-[13px] text-black/70">
               {translations.alreadyHaveAccount}{' '}
               <Link to="/login" className="text-[#2563EB] font-semibold">{translations.signIn}</Link>
             </p>
