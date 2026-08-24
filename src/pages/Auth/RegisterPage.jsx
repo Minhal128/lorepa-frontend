@@ -28,9 +28,9 @@ const registerTranslations = {
     title: "Create Your Account",
     subtitle: "Join thousands of satisfied customers",
     kicker: "TRAILER RENTAL, REINVENTED",
-    headlineBefore: "Find the Trailer You Want,",
-    headlineAccent: "Wherever",
-    headlineAfter: "You Want!",
+    headlineBefore: "Trailers nearby.",
+    headlineAccent: "Easy rental.",
+    headlineAfter: "Quebec’s first community!",
     desc: "Create your account and start your journey today.",
     f1t: "Secure & Trusted", f1d: "Your data is always safe",
     f2t: "Quick & Easy", f2d: "Sign up in just seconds",
@@ -74,6 +74,7 @@ const registerTranslations = {
     whoAreWe: "Who are we",
     contactUs: "Contact us",
     calculator: "How much can you earn?",
+    langEn: "English", langEs: "Spanish", langCn: "Chinese", langFr: "French",
     dashboard: "Dashboard",
     logout: "Logout",
   },
@@ -81,9 +82,9 @@ const registerTranslations = {
     title: "Crea tu cuenta",
     subtitle: "Únete a miles de clientes satisfechos",
     kicker: "ALQUILER DE REMOLQUES, REINVENTADO",
-    headlineBefore: "Encuentra el remolque que quieres,",
-    headlineAccent: "Donde",
-    headlineAfter: "quieras!",
+    headlineBefore: "Remolques cerca.",
+    headlineAccent: "Alquiler fácil.",
+    headlineAfter: "¡Primera comunidad quebequense!",
     desc: "Crea tu cuenta y empieza tu viaje hoy.",
     f1t: "Seguro y de confianza", f1d: "Tus datos siempre están a salvo",
     f2t: "Rápido y fácil", f2d: "Regístrate en segundos",
@@ -110,12 +111,12 @@ const registerTranslations = {
     password: "Contraseña",
     confirmPassword: "Confirmar contraseña",
     role: "Rol",
-    renter: "Locataire",
-    owner: "Propriétaire",
+    renter: "Arrendatario",
+    owner: "Propietario",
     registerBtn: "Crear cuenta",
     alreadyHaveAccount: "¿Ya tienes una cuenta?",
     signIn: "Iniciar sesión",
-    logIn: "Log In",
+    logIn: "Iniciar sesión",
     successToast: "¡Cuenta creada con éxito!",
     failToast: "Registro fallido",
     errorToast: "Algo salió mal",
@@ -127,6 +128,7 @@ const registerTranslations = {
     whoAreWe: "¿Quiénes somos?",
     contactUs: "Contáctanos",
     calculator: "¿Cuánto se gana?",
+    langEn: "Inglés", langEs: "Español", langCn: "Chino", langFr: "Francés",
     dashboard: "Panel de Control",
     logout: "Cerrar sesión",
   },
@@ -134,9 +136,9 @@ const registerTranslations = {
     title: "创建账户",
     subtitle: "加入成千上万满意的客户",
     kicker: "拖车租赁，全新体验",
-    headlineBefore: "找到你想要的拖车，",
-    headlineAccent: "随时随地",
-    headlineAfter: "！",
+    headlineBefore: "附近拖车。",
+    headlineAccent: "轻松租赁。",
+    headlineAfter: "魁北克首个社区！",
     desc: "创建账户，立即开始。",
     f1t: "安全可信", f1d: "您的数据始终安全",
     f2t: "快速简单", f2d: "几秒即可注册",
@@ -163,12 +165,12 @@ const registerTranslations = {
     password: "密码",
     confirmPassword: "确认密码",
     role: "角色",
-    renter: "Locataire",
-    owner: "Propriétaire",
+    renter: "租客",
+    owner: "车主",
     registerBtn: "创建账户",
     alreadyHaveAccount: "已有账户？",
     signIn: "登录",
-    logIn: "Log In",
+    logIn: "登录",
     successToast: "账户创建成功！",
     failToast: "注册失败",
     errorToast: "出了点问题",
@@ -180,17 +182,18 @@ const registerTranslations = {
     whoAreWe: "我们是谁",
     contactUs: "联系我们",
     calculator: "能赚多少？",
+    langEn: "英语", langEs: "西班牙语", langCn: "中文", langFr: "法语",
     dashboard: "仪表板",
     logout: "注销",
   },
   fr: {
-    title: "Content de vous revoir",
-    subtitle: "Votre location. N'attends plus que vous.",
+    title: "Créer votre compte",
+    subtitle: "Rejoignez la première communauté québécoise",
     kicker: "LA LOCATION DE REMORQUES, RÉINVENTÉE",
     headlineBefore: "Remorques proches.",
     headlineAccent: "Location facile.",
     headlineAfter: "Première communauté, Québécoise !",
-    desc: "Connectez-vous pour accéder à vos réservations, gérer vos annonces et prendre la route en toute confiance.",
+    desc: "Créez votre compte pour accéder à vos réservations, gérer vos annonces et prendre la route en toute confiance.",
     f1t: "Sécurisé et fiable", f1d: "Vos données sont toujours protégées",
     f2t: "Rapide et simple", f2d: "Inscrivez-vous en quelques secondes",
     f3t: "Plateforme vérifiée", f3d: "Approuvée par +100 membres",
@@ -233,6 +236,7 @@ const registerTranslations = {
     whoAreWe: "Qui sommes-nous",
     contactUs: "Nous contacter",
     calculator: "Ça rapporte combien ?",
+    langEn: "Anglais", langEs: "Espagnol", langCn: "Chinois", langFr: "Français",
     dashboard: "Tableau de Bord",
     logout: "Se déconnecter",
   },
@@ -328,7 +332,7 @@ const RegisterPage = () => {
       const res = await axios.post(`${config.baseUrl}/account/register`, {
         name, phone, email, password, role, country, state, city, postalCode, address, street,
       });
-      if (res.data?.status === 200) {
+      if (res.data?.status === 200 || res.data?.code === 200) {
         localStorage.removeItem('socialEmail');
         localStorage.removeItem('socialPassword');
         localStorage.removeItem('socialName');
@@ -381,15 +385,15 @@ const RegisterPage = () => {
 
   return (
     <div
-      className="min-h-screen [@media(min-width:1024px)_and_(min-height:860px)]:h-screen [@media(min-width:1024px)_and_(min-height:860px)]:overflow-hidden relative overflow-x-hidden bg-cover bg-center bg-no-repeat text-black"
+      className="min-h-screen relative overflow-x-hidden bg-[#dbeafe] bg-[length:100%_140px] bg-top bg-no-repeat text-black sm:bg-[length:100%_200px] lg:bg-cover lg:bg-center"
       style={{ backgroundImage: "url('/signup.png')" }}
     >
-      <div className="absolute inset-0 bg-white/10" />
+      <div className="absolute inset-0 hidden lg:block bg-white/10" />
 
-      <div className="relative z-10 w-full h-full flex flex-col px-5 sm:px-8 lg:px-12">
+      <div className="relative z-10 w-full h-full flex flex-col px-4 sm:px-8 lg:px-12">
         <header className="shrink-0 flex items-center justify-between">
           <Link to="/" className="shrink-0">
-            <img src={Logo} alt="Lorepa" className="h-16 sm:h-20 lg:h-24 w-auto" />
+            <img src={Logo} alt="Lorepa" className="h-12 sm:h-20 lg:h-24 w-auto" />
           </Link>
           <div className="relative flex items-center gap-2 sm:gap-3">
             <button
@@ -400,7 +404,7 @@ const RegisterPage = () => {
             >
               <CiGlobe className="w-5 h-5" />
             </button>
-            <Link to="/login" className={`h-11 px-4 sm:px-5 rounded-xl ${glass} flex items-center text-black text-sm font-semibold transition hover:bg-white/40`}>
+            <Link to="/login" className={`hidden sm:flex h-11 px-4 sm:px-5 rounded-xl ${glass} items-center text-black text-sm font-semibold transition hover:bg-white/40`}>
               {translations.logIn}
             </Link>
             <button
@@ -413,7 +417,7 @@ const RegisterPage = () => {
             </button>
             {showLanguages && (
               <div className={`absolute right-0 top-full mt-2 w-44 rounded-xl ${card} overflow-hidden z-30`}>
-                {[['en', 'English'], ['es', 'Spanish'], ['cn', 'Chinese'], ['fr', 'French']].map(([code, label]) => (
+                {[['en', translations.langEn], ['es', translations.langEs], ['cn', translations.langCn], ['fr', translations.langFr]].map(([code, label]) => (
                   <button key={code} onClick={() => handleLanguageChange(code)} className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-white/60">
                     {label}
                   </button>
@@ -432,8 +436,8 @@ const RegisterPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 min-h-0 pb-4 grid lg:grid-cols-[minmax(0,1fr)_640px] gap-8 lg:gap-10 xl:gap-14 items-center">
-          <div className="min-w-0 lg:pl-[95px]">
+        <div className="flex-1 min-h-0 pb-3 grid lg:grid-cols-[minmax(0,1fr)_640px] gap-4 lg:gap-10 xl:gap-14 items-start lg:items-center">
+          <div className="hidden lg:block min-w-0 lg:pl-[95px]">
             <div className={`${card} inline-flex items-center gap-2 rounded-full pl-1.5 pr-3.5 py-1 mb-2`}>
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2563EB] text-white">
                 <FiStar className="w-3 h-3 fill-current" strokeWidth={0} />
@@ -487,7 +491,7 @@ const RegisterPage = () => {
             </div>
           </div>
 
-          <div className={`${glass} w-full rounded-[28px] sm:rounded-[36px] p-4 sm:p-5 text-black shadow-[0_20px_60px_rgba(0,0,0,0.15)]`}>
+          <div className={`${glass} w-full mt-1 lg:mt-0 rounded-[24px] sm:rounded-[36px] p-3 sm:p-5 text-black shadow-[0_20px_60px_rgba(0,0,0,0.15)]`}>
             <div className="flex flex-col items-center mb-2">
               <span className="h-9 w-9 rounded-full bg-[#DBEAFE] flex items-center justify-center mb-1.5">
                 <FiUser className="w-[18px] h-[18px] text-[#2563EB]" strokeWidth={1.8} />
@@ -510,7 +514,7 @@ const RegisterPage = () => {
               <div className="h-px flex-1 bg-black/15" />
             </div>
 
-            <form onSubmit={handleRegister} className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <form onSubmit={handleRegister} className="grid grid-cols-2 gap-2">
               <Field icon={FiUser} label={translations.fullName}>
                 <input required placeholder=" " value={name} onChange={(e) => setName(e.target.value)} className={glassField} />
               </Field>

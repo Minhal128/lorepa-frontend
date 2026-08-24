@@ -49,9 +49,9 @@ const loginTranslations = {
     googleAuthFailed: "Google Authentication Failed",
     facebookLoginFailed: "Facebook login failed",
     kicker: "TRAILER RENTAL, REINVENTED",
-    h1a: "Reliable Trailers.",
-    h1b: "Smooth Journeys.",
-    h1c: "Every Mile, Covered.",
+    h1a: "Trailers nearby.",
+    h1b: "Easy rental.",
+    h1c: "Quebec’s first community!",
     desc: "Sign in to access your bookings, manage listings, and hit the road with confidence.",
     welcomeBack: "Welcome Back",
     cardSub: "Sign in to continue to Lorepa",
@@ -64,6 +64,7 @@ const loginTranslations = {
     whoAreWe: "Who are we",
     contactUs: "Contact us",
     calculator: "How much can you earn?",
+    langEn: "English", langEs: "Spanish", langCn: "Chinese", langFr: "French",
   },
   es: {
     title: "Iniciar sesión o registrarse",
@@ -83,9 +84,9 @@ const loginTranslations = {
     googleAuthFailed: "Autenticación de Google fallida",
     facebookLoginFailed: "Inicio de sesión con Facebook fallido",
     kicker: "ALQUILER DE REMOLQUES, REINVENTADO",
-    h1a: "Remolques Fiables.",
-    h1b: "Viajes Tranquilos.",
-    h1c: "Cada Kilómetro, Cubierto.",
+    h1a: "Remolques cerca.",
+    h1b: "Alquiler fácil.",
+    h1c: "¡Primera comunidad quebequense!",
     desc: "Inicia sesión para ver tus reservas, gestionar anuncios y salir a la carretera con confianza.",
     welcomeBack: "Bienvenido de nuevo",
     cardSub: "Inicia sesión para continuar en Lorepa",
@@ -98,6 +99,7 @@ const loginTranslations = {
     whoAreWe: "Quiénes somos",
     contactUs: "Contáctanos",
     calculator: "¿Cuánto puedes ganar?",
+    langEn: "Inglés", langEs: "Español", langCn: "Chino", langFr: "Francés",
   },
   cn: {
     title: "登录或注册",
@@ -117,9 +119,9 @@ const loginTranslations = {
     googleAuthFailed: "谷歌身份验证失败",
     facebookLoginFailed: "Facebook 登录失败",
     kicker: "拖车租赁，焕然一新",
-    h1a: "可靠的拖车。",
-    h1b: "顺畅的旅程。",
-    h1c: "每一英里，皆有保障。",
+    h1a: "附近拖车。",
+    h1b: "轻松租赁。",
+    h1c: "魁北克首个社区！",
     desc: "登录即可查看预订、管理房源，安心上路。",
     welcomeBack: "欢迎回来",
     cardSub: "登录以继续使用 Lorepa",
@@ -132,6 +134,7 @@ const loginTranslations = {
     whoAreWe: "关于我们",
     contactUs: "联系我们",
     calculator: "您能赚多少？",
+    langEn: "英语", langEs: "西班牙语", langCn: "中文", langFr: "法语",
   },
   fr: {
     title: "Content de vous revoir",
@@ -151,9 +154,9 @@ const loginTranslations = {
     googleAuthFailed: "Échec de l'authentification Google",
     facebookLoginFailed: "Échec de la connexion avec Facebook",
     kicker: "LA LOCATION DE REMORQUES, RÉINVENTÉE",
-    h1a: "Remorques Fiables.",
-    h1b: "Trajets Sereins.",
-    h1c: "Chaque Kilomètre, Couvert.",
+    h1a: "Remorques proches.",
+    h1b: "Location facile.",
+    h1c: "Première communauté, Québécoise !",
     desc: "Connectez-vous pour accéder à vos réservations, gérer vos annonces et prendre la route en toute confiance.",
     welcomeBack: "Bon retour",
     cardSub: "Connectez-vous pour continuer sur Lorepa",
@@ -166,6 +169,7 @@ const loginTranslations = {
     whoAreWe: "Qui sommes-nous",
     contactUs: "Contactez-nous",
     calculator: "Combien pouvez-vous gagner ?",
+    langEn: "Anglais", langEs: "Espagnol", langCn: "Chinois", langFr: "Français",
   }
 };
 
@@ -288,13 +292,13 @@ const LoginPage = () => {
 
   return (
     <div
-      className="min-h-screen relative overflow-x-hidden bg-cover bg-center bg-no-repeat text-black"
+      className="min-h-screen relative overflow-x-hidden bg-[#dbeafe] bg-[length:100%_168px] bg-top bg-no-repeat text-black sm:bg-[length:100%_220px] lg:bg-cover lg:bg-center"
       style={{ backgroundImage: "url('/login.png')" }}
     >
-      <div className="relative z-10 w-full min-h-screen flex flex-col px-6 sm:px-8 lg:px-12">
+      <div className="relative z-10 w-full min-h-screen flex flex-col px-4 sm:px-8 lg:px-12">
         <header className="shrink-0 flex items-center justify-between">
           <Link to="/" className="shrink-0">
-            <img src={Logo} alt="Lorepa" className="h-16 sm:h-20 [@media(min-width:1024px)_and_(min-height:900px)]:h-24 w-auto" />
+            <img src={Logo} alt="Lorepa" className="h-12 sm:h-20 [@media(min-width:1024px)_and_(min-height:900px)]:h-24 w-auto" />
           </Link>
           <div className="relative flex items-center gap-3">
             <button
@@ -306,7 +310,7 @@ const LoginPage = () => {
               <CiGlobe className="w-5 h-5" />
               <FiChevronDown className="w-3.5 h-3.5 text-black/50" />
             </button>
-            <Link to="/register" className={`${pill} px-5 text-[14px] font-semibold`}>
+            <Link to="/register" className={`${pill} hidden sm:flex px-5 text-[14px] font-semibold`}>
               {translations.signUpNav}
             </Link>
             <button type="button" onClick={() => setShowMenu((v) => !v)} className={`${pill} w-11`} aria-label="Menu">
@@ -314,7 +318,7 @@ const LoginPage = () => {
             </button>
             {showLanguages && (
               <div className={`absolute right-0 top-full mt-2 w-44 rounded-xl ${card} overflow-hidden z-30`}>
-                {[['en', 'English'], ['es', 'Spanish'], ['cn', 'Chinese'], ['fr', 'French']].map(([code, label]) => (
+                {[['en', translations.langEn], ['es', translations.langEs], ['cn', translations.langCn], ['fr', translations.langFr]].map(([code, label]) => (
                   <button key={code} onClick={() => handleLanguageChange(code)} className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-white/60">
                     {label}
                   </button>
@@ -333,8 +337,8 @@ const LoginPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 grid lg:grid-cols-[minmax(0,1fr)_510px] gap-10 items-center pb-6 [@media(min-height:900px)]:pb-10 lg:pr-10">
-          <div className="min-w-0 self-stretch flex flex-col pt-4 lg:pt-8 lg:pl-14 [@media(min-width:1024px)_and_(min-height:900px)]:pt-14">
+        <div className="flex-1 grid lg:grid-cols-[minmax(0,1fr)_510px] gap-4 lg:gap-10 items-start lg:items-center pb-4 lg:pb-6 [@media(min-height:900px)]:pb-10 lg:pr-10">
+          <div className="hidden lg:flex min-w-0 self-stretch flex-col pt-4 lg:pt-8 lg:pl-14 [@media(min-width:1024px)_and_(min-height:900px)]:pt-14">
             <p className="text-[#2563EB] text-[12px] font-bold tracking-[0.18em]">{translations.kicker}</p>
             <h1 className="mt-3 text-[38px] sm:text-[46px] xl:text-[52px] font-extrabold leading-[1.12] tracking-tight text-[#0A0F18]">
               {translations.h1a}<br />
@@ -358,7 +362,7 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <div className={`${card} w-full rounded-[32px] px-8 sm:px-10 py-6 [@media(min-height:900px)]:py-14 text-black`}>
+          <div className={`${card} w-full mt-2 lg:mt-0 rounded-[24px] lg:rounded-[32px] px-5 sm:px-10 py-4 sm:py-6 [@media(min-height:900px)]:py-14 text-black`}>
             <div className="flex flex-col items-center">
               <span className="h-16 w-16 rounded-full bg-white flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
                 <FiUser className="w-7 h-7 text-[#2563EB]" strokeWidth={1.6} />

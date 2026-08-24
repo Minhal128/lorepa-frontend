@@ -17,7 +17,7 @@ export const onboardingTranslations = {
     steps: {
       accountCreated: { title: "Account created", desc: "Welcome to Lorepa!" },
       emailVerified: { title: "Email verified", desc: "Your email has been verified." },
-      documentsUploaded: { title: "Upload documents", desc: "Upload your ID and proof of ownership." },
+      documentsUploaded: { title: "Deposit your documents", desc: "Deposit your driver's license and your trailer papers." },
       trailerListed: { title: "List your trailer", desc: "Add your trailer details and photos." },
       firstRental: { title: "Receive your first rental", desc: "Get your first booking and start earning." },
     },
@@ -53,7 +53,7 @@ export const onboardingTranslations = {
     steps: {
       accountCreated: { title: "Compte créé", desc: "Bienvenue sur Lorepa !" },
       emailVerified: { title: "E-mail vérifié", desc: "Votre e-mail a été vérifié." },
-      documentsUploaded: { title: "Téléverser vos documents", desc: "Ajoutez votre pièce d'identité et votre preuve de propriété." },
+      documentsUploaded: { title: "Déposer vos documents", desc: "Déposez votre permis de conduire et papier de votre remorque" },
       trailerListed: { title: "Publier votre remorque", desc: "Ajoutez les détails et les photos de votre remorque." },
       firstRental: { title: "Recevoir votre première location", desc: "Obtenez votre première réservation et commencez à gagner." },
     },

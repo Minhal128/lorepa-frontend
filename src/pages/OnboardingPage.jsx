@@ -68,7 +68,7 @@ const OnboardingPage = () => {
 
   const ctaPath = (cta) => {
     if (cta === 'upload') return `${dashboard}/profile?tab=documents&from=onboarding`;
-    if (cta === 'list') return isOwner ? '/seller/dashboard/listing?from=onboarding' : '/trailers';
+    if (cta === 'list') return isOwner ? '/seller/dashboard/listing?from=onboarding' : `${dashboard}/profile?from=onboarding`;
     return `${dashboard}/home`;
   };
 
