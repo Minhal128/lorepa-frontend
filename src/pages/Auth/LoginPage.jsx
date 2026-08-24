@@ -5,7 +5,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { LoginSocialFacebook } from 'reactjs-social-login';
 import {
-  FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiMenu, FiChevronDown, FiArrowRight,
+  FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiMenu, FiArrowRight,
   FiTruck, FiAward, FiHeadphones,
 } from 'react-icons/fi';
 import { CiGlobe } from 'react-icons/ci';
@@ -15,10 +15,11 @@ import { fetchOnboarding } from '../../helpers/onboarding';
 
 // The card sits over the dim sky / dark grass half of login.png (measured luminance
 // 40-130), so it needs the opaque /70 frost, not the /45 the bright OTP background took.
-const card = 'bg-white/70 backdrop-blur-[20px] backdrop-saturate-150 border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.08)]';
-const pill = 'h-11 rounded-xl bg-white/85 backdrop-blur-md border border-white/70 shadow-[0_2px_10px_rgba(0,0,0,0.08)] text-black flex items-center justify-center transition hover:bg-white';
-const bar = 'bg-black/55 backdrop-blur-[20px] backdrop-saturate-150 border border-white/25';
-const field = 'w-full h-12 pl-11 rounded-xl bg-white/85 border border-white/80 text-[14px] text-black placeholder:text-black/40 outline-none transition-colors focus:border-[#2563EB] focus:bg-white';
+const card = 'bg-white rounded-[32px] shadow-[0_16px_40px_rgba(0,0,0,0.16)]';
+const pill = 'h-10 w-10 rounded-[12px] bg-white/70 backdrop-blur-sm border border-[#2563EB]/25 text-[#2563EB] flex items-center justify-center lg:bg-white/15 lg:border-white/90 lg:text-white';
+const navOutline = 'hidden md:flex h-11 px-5 rounded-xl border-2 border-[#2563EB] text-[#2563EB] text-[14px] font-semibold items-center hover:bg-[#2563EB]/10 lg:border-white lg:text-white lg:hover:bg-white/10';
+const bar = 'bg-black/55 backdrop-blur-[20px] border border-white/20';
+const field = 'w-full h-12 pl-11 rounded-xl bg-white border border-[#E5E7EB] text-[14px] text-black placeholder:text-black/40 outline-none focus:border-[#2563EB]';
 
 // ponytail: same mark as RegisterPage; 8 inline lines beat a shared component for two callers
 const GoogleG = () => (
@@ -49,15 +50,16 @@ const loginTranslations = {
     googleAuthFailed: "Google Authentication Failed",
     facebookLoginFailed: "Facebook login failed",
     kicker: "TRAILER RENTAL, REINVENTED",
-    h1a: "Trailers nearby.",
-    h1b: "Easy rental.",
-    h1c: "Quebec’s first community!",
+    h1a: "Reliable Trailers.",
+    h1b: "Smooth Journeys.",
+    h1c: "Every Mile, Covered.",
     desc: "Sign in to access your bookings, manage listings, and hit the road with confidence.",
     welcomeBack: "Welcome Back",
     cardSub: "Sign in to continue to Lorepa",
     rememberMe: "Remember me",
     forgot: "Forgot password?",
     signUpNav: "Sign Up",
+    logInNav: "Log In",
     b1t: "Wide Selection", b1d: "Browse from thousands of trailers.",
     b2t: "Best Prices", b2d: "Competitive rates guaranteed.",
     b3t: "24/7 Support", b3d: "We're here to help anytime.",
@@ -93,6 +95,7 @@ const loginTranslations = {
     rememberMe: "Recordarme",
     forgot: "¿Olvidaste tu contraseña?",
     signUpNav: "Registrarse",
+    logInNav: "Iniciar sesión",
     b1t: "Amplia Selección", b1d: "Explora entre miles de remolques.",
     b2t: "Mejores Precios", b2d: "Tarifas competitivas garantizadas.",
     b3t: "Soporte 24/7", b3d: "Estamos aquí para ayudarte.",
@@ -128,6 +131,7 @@ const loginTranslations = {
     rememberMe: "记住我",
     forgot: "忘记密码？",
     signUpNav: "注册",
+    logInNav: "登录",
     b1t: "多样选择", b1d: "浏览数千辆拖车。",
     b2t: "优惠价格", b2d: "保证有竞争力的价格。",
     b3t: "全天候支持", b3d: "我们随时为您提供帮助。",
@@ -163,6 +167,7 @@ const loginTranslations = {
     rememberMe: "Se souvenir de moi",
     forgot: "Mot de passe oublié ?",
     signUpNav: "S'inscrire",
+    logInNav: "Connexion",
     b1t: "Large Sélection", b1d: "Parcourez des milliers de remorques.",
     b2t: "Meilleurs Prix", b2d: "Des tarifs compétitifs garantis.",
     b3t: "Assistance 24/7", b3d: "Nous sommes là pour vous aider.",
@@ -292,43 +297,34 @@ const LoginPage = () => {
 
   return (
     <div
-      className="min-h-screen relative overflow-x-hidden bg-[#dbeafe] bg-[length:100%_168px] bg-top bg-no-repeat text-black sm:bg-[length:100%_220px] lg:bg-cover lg:bg-center"
-      style={{ backgroundImage: "url('/login.png')" }}
+      className="min-h-screen relative overflow-x-hidden text-black bg-gradient-to-b from-[#F5F9FF] via-[#DBEAFE] to-[#BFDBFE] lg:bg-[url('/login.png')] lg:bg-cover lg:bg-center lg:bg-no-repeat"
     >
-      <div className="relative z-10 w-full min-h-screen flex flex-col px-4 sm:px-8 lg:px-12">
-        <header className="shrink-0 flex items-center justify-between">
+      <div className="relative z-10 w-full min-h-screen flex flex-col px-4 sm:px-8 lg:px-12 pb-8">
+        <header className="shrink-0 flex items-center justify-between py-2">
           <Link to="/" className="shrink-0">
-            <img src={Logo} alt="Lorepa" className="h-12 sm:h-20 [@media(min-width:1024px)_and_(min-height:900px)]:h-24 w-auto" />
+            <img src={Logo} alt="Lorepa" className="h-11 sm:h-16 lg:h-20 w-auto" />
           </Link>
-          <div className="relative flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setShowLanguages((v) => !v)}
-              className={`${pill} px-3 gap-1`}
-              aria-label="Change language"
-            >
+          <div className="relative flex items-center gap-2 sm:gap-3">
+            <button type="button" onClick={() => setShowLanguages((v) => !v)} className={pill} aria-label="Change language">
               <CiGlobe className="w-5 h-5" />
-              <FiChevronDown className="w-3.5 h-3.5 text-black/50" />
             </button>
-            <Link to="/register" className={`${pill} hidden sm:flex px-5 text-[14px] font-semibold`}>
-              {translations.signUpNav}
-            </Link>
-            <button type="button" onClick={() => setShowMenu((v) => !v)} className={`${pill} w-11`} aria-label="Menu">
+            <Link to="/register" className={navOutline}>{translations.signUpNav}</Link>
+            <button type="button" onClick={() => setShowMenu((v) => !v)} className={pill} aria-label="Menu">
               <FiMenu className="w-5 h-5" />
             </button>
             {showLanguages && (
-              <div className={`absolute right-0 top-full mt-2 w-44 rounded-xl ${card} overflow-hidden z-30`}>
+              <div className="absolute right-0 top-full mt-2 w-44 rounded-xl bg-white overflow-hidden z-30 shadow-lg">
                 {[['en', translations.langEn], ['es', translations.langEs], ['cn', translations.langCn], ['fr', translations.langFr]].map(([code, label]) => (
-                  <button key={code} onClick={() => handleLanguageChange(code)} className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                  <button key={code} onClick={() => handleLanguageChange(code)} className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-black/5">
                     {label}
                   </button>
                 ))}
               </div>
             )}
             {showMenu && (
-              <div className={`absolute right-0 top-full mt-2 w-56 rounded-xl ${card} overflow-hidden z-30`}>
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-xl bg-white overflow-hidden z-30 shadow-lg">
                 {[['/who', translations.whoAreWe], ['/contact', translations.contactUs], ['/calculator', translations.calculator]].map(([to, label]) => (
-                  <Link key={to} to={to} className="block px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                  <Link key={to} to={to} className="block px-4 py-2.5 text-sm text-black hover:bg-black/5">
                     {label}
                   </Link>
                 ))}
@@ -337,19 +333,21 @@ const LoginPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 grid lg:grid-cols-[minmax(0,1fr)_510px] gap-4 lg:gap-10 items-start lg:items-center pb-4 lg:pb-6 [@media(min-height:900px)]:pb-10 lg:pr-10">
-          <div className="hidden lg:flex min-w-0 self-stretch flex-col pt-4 lg:pt-8 lg:pl-14 [@media(min-width:1024px)_and_(min-height:900px)]:pt-14">
-            <p className="text-[#2563EB] text-[12px] font-bold tracking-[0.18em]">{translations.kicker}</p>
-            <h1 className="mt-3 text-[38px] sm:text-[46px] xl:text-[52px] font-extrabold leading-[1.12] tracking-tight text-[#0A0F18]">
-              {translations.h1a}<br />
-              {translations.h1b}<br />
-              <span className="text-[#2563EB]">{translations.h1c}</span>
-            </h1>
-            <p className="mt-5 max-w-[380px] text-[#0A0F18]/70 text-[16px] leading-[1.55]">{translations.desc}</p>
-
-            <div className={`${bar} mt-auto mb-8 [@media(min-height:900px)]:mb-12 lg:-ml-4 w-full max-w-[720px] rounded-2xl px-5 py-4 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:divide-x sm:divide-white/15`}>
+        <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_440px] xl:grid-cols-[minmax(0,1fr)_480px] gap-5 lg:gap-10 items-stretch">
+          <div className="w-full min-w-0 flex flex-col items-start text-left pt-1 lg:pt-10 lg:pl-8 lg:justify-between">
+            <div>
+              <p className="text-[#2563EB] text-[11px] sm:text-[12px] font-bold tracking-[0.18em]">{translations.kicker}</p>
+              <h1 className="mt-2 max-w-[520px] text-[28px] sm:text-[40px] xl:text-[48px] font-extrabold leading-[1.12] tracking-tight text-[#0A0F18]">
+                <span className="block">{translations.h1a}</span>
+                <span className="block">{translations.h1b}</span>
+                <span className="block text-[#2563EB]">{translations.h1c}</span>
+              </h1>
+              <p className="mt-3 max-w-[380px] text-[#0A0F18]/70 text-[14px] sm:text-[16px] leading-[1.55]">{translations.desc}</p>
+              <img src="/login.png" alt="" className="lg:hidden mt-5 w-full h-44 object-cover rounded-[24px] shadow-[0_16px_40px_rgba(0,0,0,0.18)]" />
+            </div>
+            <div className={`${bar} hidden lg:grid mt-10 mb-6 w-full max-w-[720px] rounded-2xl px-5 py-4 grid-cols-3 gap-4 divide-x divide-white/15`}>
               {bottom.map(({ Icon, t, d }) => (
-                <div key={t} className="flex items-start gap-3 min-w-0 sm:[&:not(:first-child)]:pl-4">
+                <div key={t} className="flex items-start gap-3 min-w-0 pl-4 first:pl-0">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/90 text-[#2563EB]">
                     <Icon className="w-[18px] h-[18px]" strokeWidth={2} />
                   </span>
@@ -362,10 +360,10 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <div className={`${card} w-full mt-2 lg:mt-0 rounded-[24px] lg:rounded-[32px] px-5 sm:px-10 py-4 sm:py-6 [@media(min-height:900px)]:py-14 text-black`}>
+          <div className={`${card} w-full max-w-[440px] lg:max-w-none px-5 sm:px-8 py-6 sm:py-8 text-black`}>
             <div className="flex flex-col items-center">
-              <span className="h-16 w-16 rounded-full bg-white flex items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
-                <FiUser className="w-7 h-7 text-[#2563EB]" strokeWidth={1.6} />
+              <span className="h-14 w-14 rounded-full border-2 border-[#93C5FD] bg-[#EFF6FF] flex items-center justify-center">
+                <FiUser className="w-7 h-7 text-[#2563EB]" strokeWidth={1.7} />
               </span>
               <h2 className="mt-3 [@media(min-height:900px)]:mt-5 text-[26px] font-extrabold tracking-tight">{translations.welcomeBack}</h2>
               <p className="text-[15px] text-black/65 mt-1.5">{translations.cardSub}</p>
@@ -374,7 +372,7 @@ const LoginPage = () => {
             <button
               type="button"
               onClick={handleGoogleRedirect}
-              className="w-full h-[52px] mt-4 [@media(min-height:900px)]:mt-7 rounded-xl bg-white flex items-center justify-center gap-3 text-[15px] font-semibold text-black shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition hover:bg-white/90"
+              className="w-full h-[52px] mt-4 [@media(min-height:900px)]:mt-7 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center gap-3 text-[15px] font-semibold text-black transition hover:bg-black/[0.02]"
             >
               <GoogleG /> {translations.continueWithGoogle}
             </button>

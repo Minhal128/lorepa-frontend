@@ -248,8 +248,7 @@ const VerifyOtpPage = () => {
 
   return (
     <div
-      className="min-h-screen relative overflow-x-hidden bg-cover bg-center bg-no-repeat text-black"
-      style={{ backgroundImage: "url('/otp.png')" }}
+      className="min-h-screen relative overflow-x-hidden text-black bg-gradient-to-b from-[#F5F9FF] via-[#DBEAFE] to-[#BFDBFE] md:bg-[url('/otp.png')] md:bg-cover md:bg-center md:bg-no-repeat"
     >
       <div className="relative z-10 w-full min-h-screen flex flex-col px-6 sm:px-8">
         <header className="shrink-0 flex items-center justify-between">
@@ -303,7 +302,9 @@ const VerifyOtpPage = () => {
               </span>
             </p>
 
-            <div className={`${glass} mt-auto mb-12 md:-ml-8 w-full md:w-[calc(100%+2rem)] max-w-[720px] rounded-2xl px-5 py-3.5 grid grid-cols-1 lg:grid-cols-3 gap-4`}>
+            <img src="/otp.png" alt="" className="md:hidden mt-5 w-full h-44 object-cover rounded-[24px] shadow-[0_16px_40px_rgba(0,0,0,0.18)]" />
+
+            <div className={`${glass} mt-auto mb-2 md:mb-12 md:-ml-8 w-full md:w-[calc(100%+2rem)] max-w-[720px] rounded-2xl px-5 py-3.5 grid grid-cols-1 lg:grid-cols-3 gap-4`}>
               {foot.map(({ Icon, t, d }) => (
                 <div key={t} className="flex items-start gap-2.5 min-w-0">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white">
@@ -318,7 +319,7 @@ const VerifyOtpPage = () => {
             </div>
           </div>
 
-          <div className="w-full min-h-[560px] md:min-h-[624px] rounded-[32px] bg-white/45 backdrop-blur-[24px] border border-white/70 shadow-[0_16px_50px_rgba(0,0,0,0.12)] px-7 pt-14 pb-10 text-black flex flex-col">
+          <div className="w-full min-h-[560px] md:min-h-[624px] rounded-[32px] bg-white md:bg-white/45 backdrop-blur-[24px] border border-white/70 shadow-[0_16px_50px_rgba(0,0,0,0.12)] px-7 pt-14 pb-10 text-black flex flex-col">
             <div className="flex flex-col items-center mb-8">
               <span className="h-[60px] w-[60px] rounded-full bg-[#DBEAFE] flex items-center justify-center mb-7">
                 <FiLock className="w-6 h-6 text-[#2563EB]" strokeWidth={1.8} />

@@ -4,15 +4,17 @@ import axios from 'axios';
 import config from '../../config';
 import toast from 'react-hot-toast';
 import {
-  FiShield, FiZap, FiCheck, FiUsers, FiTruck, FiAward, FiHeadphones, FiMenu, FiStar,
+  FiTruck, FiAward, FiHeadphones, FiMenu,
   FiUser, FiPhone, FiMail, FiLock, FiEye, FiEyeOff, FiBriefcase, FiChevronDown, FiArrowRight, FiMapPin, FiHome,
 } from 'react-icons/fi';
 import { CiGlobe } from 'react-icons/ci';
 import Logo from '../../assets/logo.svg';
 
-const glass = 'bg-white/25 backdrop-blur-[20px] backdrop-saturate-150 border border-white/50';
-const card = 'bg-white/70 backdrop-blur-[20px] backdrop-saturate-150 border border-white/80 shadow-[0_8px_30px_rgba(0,0,0,0.08)]';
-const glassField = 'peer w-full h-10 pl-11 pr-10 pt-3.5 rounded-xl bg-white/65 backdrop-blur-md border border-white/80 text-[14px] text-black outline-none transition-colors focus:border-[#2563EB] focus:bg-white/85';
+const card = 'bg-white rounded-[32px] shadow-[0_16px_40px_rgba(0,0,0,0.16)]';
+const pill = 'h-10 w-10 rounded-[12px] bg-white/70 backdrop-blur-sm border border-[#2563EB]/25 text-[#2563EB] flex items-center justify-center lg:bg-white/15 lg:border-white/90 lg:text-white';
+const navOutline = 'hidden md:flex h-11 px-5 rounded-xl border-2 border-[#2563EB] text-[#2563EB] text-[14px] font-semibold items-center hover:bg-[#2563EB]/10 lg:border-white lg:text-white lg:hover:bg-white/10';
+const bar = 'bg-black/55 backdrop-blur-[20px] border border-white/20';
+const glassField = 'peer w-full h-11 pl-11 pr-10 pt-3.5 rounded-xl bg-white border border-[#E5E7EB] text-[14px] text-black outline-none transition-colors focus:border-[#2563EB]';
 
 const GoogleG = () => (
   <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
@@ -63,6 +65,7 @@ const registerTranslations = {
     alreadyHaveAccount: "Already have an account?",
     signIn: "Log in",
     logIn: "Log In",
+    signUpNav: "Sign Up",
     successToast: "Account created successfully!",
     failToast: "Registration failed",
     errorToast: "Something went wrong",
@@ -117,6 +120,7 @@ const registerTranslations = {
     alreadyHaveAccount: "¿Ya tienes una cuenta?",
     signIn: "Iniciar sesión",
     logIn: "Iniciar sesión",
+    signUpNav: "Registrarse",
     successToast: "¡Cuenta creada con éxito!",
     failToast: "Registro fallido",
     errorToast: "Algo salió mal",
@@ -171,6 +175,7 @@ const registerTranslations = {
     alreadyHaveAccount: "已有账户？",
     signIn: "登录",
     logIn: "登录",
+    signUpNav: "注册",
     successToast: "账户创建成功！",
     failToast: "注册失败",
     errorToast: "出了点问题",
@@ -225,6 +230,7 @@ const registerTranslations = {
     alreadyHaveAccount: "Vous avez déjà un compte ?",
     signIn: "Se connecter",
     logIn: "Connexion",
+    signUpNav: "S'inscrire",
     successToast: "Compte créé avec succès !",
     failToast: "Échec de l'inscription",
     errorToast: "Quelque chose a mal tourné",
@@ -359,22 +365,10 @@ const RegisterPage = () => {
     window.location.reload();
   };
 
-  const features = [
-    { Icon: FiShield, t: translations.f1t, d: translations.f1d },
-    { Icon: FiZap, t: translations.f2t, d: translations.f2d },
-    { Icon: FiCheck, t: translations.f3t, d: translations.f3d },
-    { Icon: FiUsers, t: translations.f4t, d: translations.f4d },
-  ];
   const bottom = [
     { Icon: FiTruck, t: translations.b1t, d: translations.b1d },
     { Icon: FiAward, t: translations.b2t, d: translations.b2d },
     { Icon: FiHeadphones, t: translations.b3t, d: translations.b3d },
-  ];
-  // ponytail: marketing placeholders, swap for real numbers when the API exposes them
-  const stats = [
-    { v: translations.s1v, l: translations.s1l },
-    { v: translations.s2v, l: translations.s2l },
-    { v: translations.s3v, l: translations.s3l },
   ];
 
   const eyeBtn = (on, set) => (
@@ -385,49 +379,34 @@ const RegisterPage = () => {
 
   return (
     <div
-      className="min-h-screen relative overflow-x-hidden bg-[#dbeafe] bg-[length:100%_140px] bg-top bg-no-repeat text-black sm:bg-[length:100%_200px] lg:bg-cover lg:bg-center"
-      style={{ backgroundImage: "url('/signup.png')" }}
+      className="min-h-screen relative overflow-x-hidden text-black bg-gradient-to-b from-[#F5F9FF] via-[#DBEAFE] to-[#BFDBFE] lg:bg-[url('/signup.png')] lg:bg-cover lg:bg-center lg:bg-no-repeat"
     >
-      <div className="absolute inset-0 hidden lg:block bg-white/10" />
-
-      <div className="relative z-10 w-full h-full flex flex-col px-4 sm:px-8 lg:px-12">
-        <header className="shrink-0 flex items-center justify-between">
+      <div className="relative z-10 w-full min-h-screen flex flex-col px-4 sm:px-8 lg:px-12 pb-8">
+        <header className="shrink-0 flex items-center justify-between py-2">
           <Link to="/" className="shrink-0">
-            <img src={Logo} alt="Lorepa" className="h-12 sm:h-20 lg:h-24 w-auto" />
+            <img src={Logo} alt="Lorepa" className="h-11 sm:h-16 lg:h-20 w-auto" />
           </Link>
           <div className="relative flex items-center gap-2 sm:gap-3">
-            <button
-              type="button"
-              onClick={() => setShowLanguages((v) => !v)}
-              className={`h-11 w-11 rounded-xl ${glass} flex items-center justify-center text-black transition hover:bg-white/40`}
-              aria-label="Change language"
-            >
+            <button type="button" onClick={() => setShowLanguages((v) => !v)} className={pill} aria-label="Change language">
               <CiGlobe className="w-5 h-5" />
             </button>
-            <Link to="/login" className={`hidden sm:flex h-11 px-4 sm:px-5 rounded-xl ${glass} items-center text-black text-sm font-semibold transition hover:bg-white/40`}>
-              {translations.logIn}
-            </Link>
-            <button
-              type="button"
-              onClick={() => setShowMenu((v) => !v)}
-              className={`h-11 w-11 rounded-xl ${glass} flex items-center justify-center text-black transition hover:bg-white/40`}
-              aria-label="Menu"
-            >
+            <Link to="/login" className={navOutline}>{translations.logIn}</Link>
+            <button type="button" onClick={() => setShowMenu((v) => !v)} className={pill} aria-label="Menu">
               <FiMenu className="w-5 h-5" />
             </button>
             {showLanguages && (
-              <div className={`absolute right-0 top-full mt-2 w-44 rounded-xl ${card} overflow-hidden z-30`}>
+              <div className="absolute right-0 top-full mt-2 w-44 rounded-xl bg-white overflow-hidden z-30 shadow-lg">
                 {[['en', translations.langEn], ['es', translations.langEs], ['cn', translations.langCn], ['fr', translations.langFr]].map(([code, label]) => (
-                  <button key={code} onClick={() => handleLanguageChange(code)} className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                  <button key={code} onClick={() => handleLanguageChange(code)} className="w-full text-left px-4 py-2.5 text-sm text-black hover:bg-black/5">
                     {label}
                   </button>
                 ))}
               </div>
             )}
             {showMenu && (
-              <div className={`absolute right-0 top-full mt-2 w-56 rounded-xl ${card} overflow-hidden z-30`}>
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-xl bg-white overflow-hidden z-30 shadow-lg">
                 {[['/who', translations.whoAreWe], ['/contact', translations.contactUs], ['/calculator', translations.calculator]].map(([to, label]) => (
-                  <Link key={to} to={to} className="block px-4 py-2.5 text-sm text-black hover:bg-white/60">
+                  <Link key={to} to={to} className="block px-4 py-2.5 text-sm text-black hover:bg-black/5">
                     {label}
                   </Link>
                 ))}
@@ -436,74 +415,46 @@ const RegisterPage = () => {
           </div>
         </header>
 
-        <div className="flex-1 min-h-0 pb-3 grid lg:grid-cols-[minmax(0,1fr)_640px] gap-4 lg:gap-10 xl:gap-14 items-start lg:items-center">
-          <div className="hidden lg:block min-w-0 lg:pl-[95px]">
-            <div className={`${card} inline-flex items-center gap-2 rounded-full pl-1.5 pr-3.5 py-1 mb-2`}>
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2563EB] text-white">
-                <FiStar className="w-3 h-3 fill-current" strokeWidth={0} />
-              </span>
-              <span className="text-[11px] font-semibold text-black">{translations.badge}</span>
+        <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_min(100%,640px)] gap-5 lg:gap-10 items-stretch">
+          <div className="w-full min-w-0 flex flex-col items-start text-left pt-1 lg:pt-10 lg:pl-8 lg:justify-between">
+            <div>
+              <p className="text-[#2563EB] text-[11px] sm:text-[12px] font-bold tracking-[0.18em]">{translations.kicker}</p>
+              <h1 className="mt-2 max-w-[520px] text-[28px] sm:text-[40px] xl:text-[48px] font-extrabold leading-[1.12] tracking-tight text-[#0A0F18]">
+                <span className="block">{translations.headlineBefore}</span>
+                <span className="block">{translations.headlineAccent}</span>
+                <span className="block text-[#2563EB]">{translations.headlineAfter}</span>
+              </h1>
+              <p className="mt-3 max-w-[380px] text-[#0A0F18]/70 text-[14px] sm:text-[16px] leading-[1.55]">{translations.desc}</p>
+              <img src="/signup.png" alt="" className="lg:hidden mt-5 w-full h-44 object-cover rounded-[24px] shadow-[0_16px_40px_rgba(0,0,0,0.18)]" />
             </div>
-
-            <p className="text-[#2563EB] text-[11px] font-bold tracking-[0.18em] mb-1.5">{translations.kicker}</p>
-            <h1 className="font-display max-w-[460px] text-[26px] xs:text-[28px] xl:text-[32px] font-extrabold leading-[1.14] tracking-tight text-black">
-              {translations.headlineBefore}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2563EB] to-[#60A5FA]">{translations.headlineAccent}</span>{' '}
-              {translations.headlineAfter}
-            </h1>
-            <p className="mt-2 max-w-[340px] text-black/70 text-[13px] leading-relaxed">{translations.desc}</p>
-
-            <div className="mt-3 flex max-w-[560px] items-center gap-6 sm:gap-10">
-              {stats.map(({ v, l }) => (
-                <div key={l} className="min-w-0">
-                  <p className="font-display text-xl xl:text-2xl font-extrabold leading-none text-black">{v}</p>
-                  <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-black/55">{l}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-3 space-y-2">
-              {features.map(({ Icon, t, d }) => (
-                <div key={t} className={`${card} flex items-center gap-3.5 w-full sm:w-fit sm:max-w-full rounded-2xl pl-3 pr-5 sm:pr-6 py-2`}>
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-[0_4px_12px_rgba(37,99,235,0.4)]">
-                    <Icon className="w-4 h-4" strokeWidth={2} />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block font-light text-[14px] leading-tight text-black">{t}</span>
-                    <span className="block text-[12px] text-black/60 mt-0.5">{d}</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className={`${card} mt-3 max-w-[560px] rounded-2xl px-4 sm:px-5 py-2.5 grid grid-cols-1 sm:grid-cols-3 gap-4`}>
+            <div className={`${bar} hidden lg:grid mt-10 mb-6 w-full max-w-[720px] rounded-2xl px-5 py-4 grid-cols-3 gap-4 divide-x divide-white/15`}>
               {bottom.map(({ Icon, t, d }) => (
-                <div key={t} className="flex items-center gap-2.5 min-w-0">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[#2563EB] shadow-[0_2px_10px_rgba(37,99,235,0.25)]">
-                    <Icon className="w-4 h-4" strokeWidth={2} />
+                <div key={t} className="flex items-start gap-3 min-w-0 pl-4 first:pl-0">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/90 text-[#2563EB]">
+                    <Icon className="w-[18px] h-[18px]" strokeWidth={2} />
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-light text-[12px] leading-tight text-black">{t}</span>
-                    <span className="block text-[11px] text-black/60 leading-snug mt-0.5">{d}</span>
+                    <span className="block font-semibold text-[13px] leading-tight text-white">{t}</span>
+                    <span className="block text-[12px] text-white/75 leading-snug mt-1">{d}</span>
                   </span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className={`${glass} w-full mt-1 lg:mt-0 rounded-[24px] sm:rounded-[36px] p-3 sm:p-5 text-black shadow-[0_20px_60px_rgba(0,0,0,0.15)]`}>
-            <div className="flex flex-col items-center mb-2">
-              <span className="h-9 w-9 rounded-full bg-[#DBEAFE] flex items-center justify-center mb-1.5">
-                <FiUser className="w-[18px] h-[18px] text-[#2563EB]" strokeWidth={1.8} />
+          <div className={`${card} w-full max-w-[440px] lg:max-w-none px-5 sm:px-6 py-5 sm:py-6 text-black`}>
+            <div className="flex flex-col items-center mb-3">
+              <span className="h-14 w-14 rounded-full border-2 border-[#93C5FD] bg-[#EFF6FF] flex items-center justify-center">
+                <FiUser className="w-6 h-6 text-[#2563EB]" strokeWidth={1.7} />
               </span>
-              <h2 className="font-display text-[18px] leading-tight font-extrabold tracking-tight text-black text-center">{translations.title}</h2>
-              <p className="text-[11px] text-black/60 mt-1 text-center">{translations.subtitle}</p>
+              <h2 className="mt-3 text-[22px] leading-tight font-extrabold tracking-tight text-black text-center">{translations.title}</h2>
+              <p className="text-[13px] text-black/60 mt-1 text-center">{translations.subtitle}</p>
             </div>
 
             <button
               type="button"
               onClick={() => { window.location.href = `${config.baseUrl}/account/google`; }}
-              className="w-full h-10 rounded-xl bg-white flex items-center justify-center gap-3 text-[14px] font-semibold text-black shadow-sm transition hover:bg-white/90"
+              className="w-full h-11 rounded-xl bg-white border border-[#E5E7EB] flex items-center justify-center gap-3 text-[14px] font-semibold text-black transition hover:bg-black/[0.02]"
             >
               <GoogleG /> {translations.continueWithGoogle}
             </button>
@@ -514,7 +465,7 @@ const RegisterPage = () => {
               <div className="h-px flex-1 bg-black/15" />
             </div>
 
-            <form onSubmit={handleRegister} className="grid grid-cols-2 gap-2">
+            <form onSubmit={handleRegister} className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field icon={FiUser} label={translations.fullName}>
                 <input required placeholder=" " value={name} onChange={(e) => setName(e.target.value)} className={glassField} />
               </Field>
@@ -566,10 +517,10 @@ const RegisterPage = () => {
                   </select>
                 </Field>
               </div>
-              <button type="submit" disabled={loading} className="sm:col-span-2 relative w-full h-11 mt-1 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] disabled:opacity-70 disabled:pointer-events-none text-white text-[15px] font-semibold flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(37,99,235,0.35)] transition">
+              <button type="submit" disabled={loading} className="sm:col-span-2 w-full h-11 mt-1 rounded-xl bg-[#2563EB] hover:bg-[#1d4ed8] disabled:opacity-70 disabled:pointer-events-none text-white text-[15px] font-semibold flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(37,99,235,0.35)] transition">
                 {loading && <span className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" aria-hidden="true" />}
                 {translations.registerBtn}
-                {!loading && <FiArrowRight className="absolute right-6 w-5 h-5" />}
+                {!loading && <FiArrowRight className="w-5 h-5" />}
               </button>
             </form>
 
