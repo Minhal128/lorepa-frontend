@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { FiBell, FiCheck, FiMail, FiUploadCloud, FiTruck, FiCalendar, FiLock, FiChevronRight, FiChevronDown, FiAlertTriangle, FiExternalLink, FiHeadphones, FiShield } from 'react-icons/fi';
+import { FiBell, FiCheck, FiMail, FiUploadCloud, FiTruck, FiLock, FiChevronRight, FiChevronDown, FiAlertTriangle, FiExternalLink, FiHeadphones, FiShield } from 'react-icons/fi';
 import { CiGlobe } from 'react-icons/ci';
 import Logo from '../assets/logo.svg';
 import AvatarIcon from '../assets/dashboard/avatar.jpg';
@@ -14,7 +14,6 @@ const STEP_META = [
   { key: 'emailVerified', icon: FiMail },
   { key: 'documentsUploaded', icon: FiUploadCloud, cta: 'upload' },
   { key: 'trailerListed', icon: FiTruck, cta: 'list' },
-  { key: 'firstRental', icon: FiCalendar, cta: 'home' },
 ];
 
 const glass = 'border border-white/50 bg-white/55 shadow-[0_8px_32px_-12px_rgba(37,99,235,0.25)] backdrop-blur-xl';
@@ -53,7 +52,13 @@ const OnboardingPage = () => {
       return;
     }
     fetchOnboarding(userId)
-      .then((payload) => setData((prev) => ({ ...prev, ...payload })))
+      .then((payload) => {
+        setData((prev) => ({ ...prev, ...payload }));
+        if (payload.percent >= 100) {
+          const path = payload.role === 'owner' ? '/seller/dashboard/home' : '/user/dashboard/home';
+          nav(path, { replace: true });
+        }
+      })
       .catch(() => toast.error(t.loadFailed));
   }, [userId]);
 
@@ -132,7 +137,7 @@ const OnboardingPage = () => {
           <div className="lg:col-span-2">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">{t.title} 👋</h1>
+                <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">{t.title}</h1>
                 <p className="mt-1.5 max-w-md text-sm text-gray-600">{isOwner ? t.subtitleOwner : t.subtitleRenter}</p>
               </div>
               <div className="flex items-center gap-1.5 self-start rounded-full border border-amber-200/60 bg-amber-50/70 px-3 py-1.5 text-sm font-medium text-amber-700 backdrop-blur-md">

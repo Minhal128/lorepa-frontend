@@ -3,25 +3,54 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import config from '../config';
 
-const STEPS = ['accountCreated', 'emailVerified', 'documentsUploaded', 'trailerListed', 'firstRental'];
+const PROFILE_STEPS = ['accountCreated', 'emailVerified', 'documentsUploaded', 'trailerListed'];
 
 const has = (value) => Boolean(value && String(value).trim());
+const any = (obj, keys) => keys.some((key) => Boolean(obj?.[key]));
 
-const pack = (account, steps) => {
-  const completed = STEPS.filter((key) => steps[key]).length;
-  const firstIncomplete = STEPS.findIndex((key) => !steps[key]);
+const emailVerifiedOf = (account = {}) =>
+  Boolean(
+    account.otpVerified ||
+      account.otpVerified ||
+      account.isGoogleLogin ||
+      account.isGoogleLogin ||
+      account.googleId ||
+      account.kycVerified
+  );
+
+const hasDoc = (account, keys) => keys.some((key) => has(account[key]));
+
+export const normalizeOnboarding = (raw = {}, account = {}) => {
+  const src = raw.steps || {};
+  const documentsUploaded = any(src, ['documentsUploaded', 'documentsUploaded']);
+  const trailerListed = any(src, ['trailerListed', 'trailerListed']);
+  const steps = {
+    accountCreated: true,
+    // existing accounts that already listed/uploaded are past signup OTP
+    emailVerified:
+      any(src, ['emailVerified', 'emailVerified']) ||
+      emailVerifiedOf(account) ||
+      (documentsUploaded && trailerListed),
+    documentsUploaded,
+    trailerListed,
+    firstRental: any(src, ['firstRental', 'firstRental']),
+  };
+  const completed = PROFILE_STEPS.filter((key) => steps[key]).length;
+  const firstIncomplete = PROFILE_STEPS.findIndex((key) => !steps[key]);
   return {
-    step: firstIncomplete === -1 ? STEPS.length : firstIncomplete + 1,
-    percent: completed * 20,
-    completedAt: completed === STEPS.length ? account.onboarding?.completedAt || new Date().toISOString() : null,
+    step: firstIncomplete === -1 ? PROFILE_STEPS.length : firstIncomplete + 1,
+    percent: completed * 25,
+    completedAt:
+      completed === PROFILE_STEPS.length
+        ? raw.completedAt || account.onboarding?.completedAt || new Date().toISOString()
+        : null,
     steps,
-    role: account.role,
-    name: account.name,
-    profilePicture: account.profilePicture,
+    role: raw.role || account.role,
+    name: raw.name || account.name,
+    profilePicture: raw.profilePicture || account.profilePicture,
   };
 };
 
-// ponytail: mirrors backend getOnboarding until DigitalOcean backend is redeployed
 export const deriveOnboarding = async (userId, account) => {
   const isOwner = account.role === 'owner';
   const [trailersRes, bookingsRes] = await Promise.all([
@@ -36,24 +65,37 @@ export const deriveOnboarding = async (userId, account) => {
   const trailers = trailersRes?.data?.data || [];
   const bookings = bookingsRes?.data?.data || [];
 
-  return pack(account, {
-    accountCreated: true,
-    emailVerified: Boolean(account.otpVerified),
-    documentsUploaded:
-      has(account.licenseFrontImage) &&
-      has(account.licenseBackImage) &&
-      has(isOwner ? account.trailerRegistrationImage : account.faq27Image),
-    trailerListed: isOwner
-      ? trailers.length > 0
-      : ['name', 'phone', 'address', 'city', 'postalCode', 'state', 'country'].every((field) => has(account[field])),
-    firstRental: bookings.length > 0,
-  });
+  return normalizeOnboarding(
+    {
+      steps: {
+        accountCreated: true,
+        emailVerified: emailVerifiedOf(account),
+        documentsUploaded:
+          hasDoc(account, ['licenseFrontImage', 'licenseFrontImage']) &&
+          hasDoc(account, ['licenseBackImage', 'licenseBackImage']) &&
+          (isOwner
+            ? hasDoc(account, ['trailerRegistrationImage', 'trailerRegistrationImage'])
+            : hasDoc(account, ['faq27Image', 'faq27Image'])),
+        trailerListed: isOwner
+          ? trailers.length > 0
+          : ['name', 'phone', 'address', 'city', 'postalCode', 'state', 'country'].every((field) =>
+              has(account[field])
+            ),
+        firstRental: bookings.length > 0,
+      },
+      role: account.role,
+      name: account.name,
+      profilePicture: account.profilePicture,
+      completedAt: account.onboarding?.completedAt,
+    },
+    account
+  );
 };
 
 export const fetchOnboarding = async (userId) => {
   try {
     const res = await axios.get(`${config.baseUrl}/account/onboarding/${userId}`);
-    if (res.data?.data) return res.data.data;
+    if (res.data?.data) return normalizeOnboarding(res.data.data);
   } catch {
     // live API may not have the route yet
   }
@@ -66,9 +108,8 @@ export const fetchOnboarding = async (userId) => {
 
 export const FILL_ONBOARDING_MSG = 'Fill your onboarding first';
 
-// ponytail: 100% includes firstRental, which needs dashboard pages — unlock at 80% (docs + profile/listing done)
 export const isDashboardLinkLocked = (link, percent, role) => {
-  if (percent >= 80) return false;
+  if (percent >= 100) return false;
   if (link === 'profile') return false;
   if (link === 'listing' && role === 'owner') return false;
   return true;

@@ -134,8 +134,8 @@ const loginTranslations = {
     calculator: "您能赚多少？",
   },
   fr: {
-    title: "Connexion ou inscription",
-    welcome: "Bienvenue sur Lorepa",
+    title: "Content de vous revoir",
+    welcome: "Votre location. N'attends plus que vous.",
     emailLabel: "Adresse e-mail",
     emailPlaceholder: "Entrez votre e-mail",
     passwordLabel: "Mot de passe",
