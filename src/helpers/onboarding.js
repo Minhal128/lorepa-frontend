@@ -139,6 +139,7 @@ export const welcomeIfOnboardingDone = (percent, userId) => {
 };
 
 export const isDashboardLinkLocked = (link, percent, role) => {
+  if (role !== 'owner') return false;
   if (percent >= 100) return false;
   if (link === 'profile') return false;
   if (link === 'listing' && role === 'owner') return false;

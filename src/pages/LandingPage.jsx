@@ -501,7 +501,7 @@ const LandingPage = () => {
 
                     <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="relative z-10 w-full flex justify-center items-center flex-col pt-16">
                         <span className="text-blue-600 text-xs font-bold tracking-[0.25em] uppercase">{translationsData.heroLabel}</span>
-                        <h1 className="font-display text-[#0A0F18] text-4xl lg:text-5xl font-extrabold text-center mt-3 leading-tight">
+                        <h1 className="font-display text-[#0A0F18] text-4xl lg:text-5xl font-thin text-center mt-3 leading-tight">
                             {translationsData.heroHeadingLine1}<br />
                             <span className="text-blue-600">{translationsData.heroHeadingHighlight}</span> {translationsData.heroHeadingLine2}
                         </h1>
@@ -620,7 +620,7 @@ const LandingPage = () => {
                 <div className="absolute inset-0 bg-gradient-to-b from-blue-50/70 via-blue-50/10 to-transparent" />
                 <motion.div variants={zoomBounce} initial="hidden" animate="visible" className="relative w-full flex justify-center items-center flex-col">
                     <span className="text-blue-600 text-xs font-bold tracking-[0.25em] uppercase mt-2">{translationsData.heroLabel}</span>
-                    <h1 className="font-display text-[#0A0F18] text-2xl font-extrabold text-center mt-2 leading-tight px-6">
+                    <h1 className="font-display text-[#0A0F18] text-2xl font-thin text-center mt-2 leading-tight px-6">
                         {translationsData.heroHeadingLine1}<br />
                         <span className="text-blue-600">{translationsData.heroHeadingHighlight}</span> {translationsData.heroHeadingLine2}
                     </h1>

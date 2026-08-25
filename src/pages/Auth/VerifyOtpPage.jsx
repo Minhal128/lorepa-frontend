@@ -202,9 +202,10 @@ const VerifyOtpPage = () => {
       const res = await axios.post(`${config.baseUrl}/account/verify/otp`, { email, otp });
       toast.success(translations.ok);
       if (isSignup) {
+        const role = res?.data?.data?.role;
         localStorage.setItem("userId", res?.data?.data?._id);
-        localStorage.setItem("role", res?.data?.data?.role);
-        nav("/onboarding");
+        localStorage.setItem("role", role);
+        nav(role === 'owner' ? '/onboarding' : '/user/dashboard/home');
       } else {
         nav("/change-password", { state: { email } });
       }

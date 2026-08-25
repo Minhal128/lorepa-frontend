@@ -188,6 +188,10 @@ const goAfterAuth = async (nav, role) => {
     nav(navigateTo);
     return;
   }
+  if (role !== 'owner') {
+    nav(getDashboardPath(role));
+    return;
+  }
   try {
     const progress = await fetchOnboarding(localStorage.getItem('userId'));
     nav(progress.percent < 100 ? '/onboarding' : getDashboardPath(role));
