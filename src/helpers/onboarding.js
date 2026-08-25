@@ -112,21 +112,7 @@ export const FILL_ONBOARDING_MSG = 'Fill your onboarding first';
 export const showOnboardingWelcomeToast = () => {
   const lang = localStorage.getItem('lang') || 'fr';
   const t = onboardingTranslations[lang] || onboardingTranslations.fr;
-  toast.custom(
-    (id) => (
-      <div className="flex w-[min(92vw,380px)] items-start gap-3 rounded-2xl border border-blue-100 bg-white px-4 py-3.5 shadow-[0_16px_40px_-12px_rgba(37,99,235,0.45)]">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-600 to-blue-500 text-lg text-white">🎉</span>
-        <div className="min-w-0 flex-1 pt-0.5">
-          <p className="font-extrabold leading-tight text-gray-900">{t.welcomeCompleteTitle}</p>
-          <p className="mt-0.5 text-sm text-gray-600">{t.welcomeCompleteBody}</p>
-        </div>
-        <button type="button" onClick={() => toast.dismiss(id)} className="text-sm text-gray-400 hover:text-gray-700" aria-label="Close">
-          ×
-        </button>
-      </div>
-    ),
-    { duration: 5600, position: 'top-center' }
-  );
+  toast.success(`${t.welcomeCompleteTitle}\n${t.welcomeCompleteBody}`, { duration: 5600 });
 };
 
 export const welcomeIfOnboardingDone = (percent, userId) => {
