@@ -129,6 +129,7 @@ export const adminTranslations = {
         imageConstraints: "PNG, JPG, GIF up to 10MB",
         selectedFile: "Selected:",
         save: "Save",
+        onboarding: "Onboarding",
     },
     fr: {
         dashboard: "Tableau de bord",
@@ -259,6 +260,7 @@ export const adminTranslations = {
         imageConstraints: "PNG, JPG, GIF jusqu'à 10 Mo",
         selectedFile: "Sélectionné :",
         save: "Enregistrer",
+        onboarding: "Onboarding",
     },
     es: {
         dashboard: "Panel de control",
@@ -388,6 +390,7 @@ export const adminTranslations = {
         imageConstraints: "PNG, JPG, GIF hasta 10MB",
         selectedFile: "Seleccionado:",
         save: "Guardar",
+        onboarding: "Onboarding",
     },
     cn: {
         dashboard: "仪表盘",
@@ -517,5 +520,6 @@ export const adminTranslations = {
         imageConstraints: "PNG, JPG, GIF 最大 10MB",
         selectedFile: "已选择：",
         save: "保存",
+        onboarding: "Onboarding",
     }
 };

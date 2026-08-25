@@ -96,7 +96,8 @@ const OnboardingPage = () => {
         className={`relative mx-auto w-full max-w-6xl overflow-hidden rounded-2xl sm:rounded-[28px] ${glass}`}
       >
         {/* Header */}
-        <header className="flex items-center justify-between gap-3 border-b border-white/50 bg-white/30 px-4 py-3 backdrop-blur-xl sm:px-6 sm:py-4">
+        {/* ponytail: z-40 so lang menu isn't buried under the grid below */}
+        <header className="relative z-40 flex items-center justify-between gap-3 border-b border-white/50 bg-white/30 px-4 py-3 backdrop-blur-xl sm:px-6 sm:py-4">
           <Link to="/" className="flex items-center">
             <img src={Logo} alt="Lorepa" className="h-14 w-auto object-contain sm:h-16 md:h-20" />
           </Link>
@@ -110,9 +111,10 @@ const OnboardingPage = () => {
               <CiGlobe className="h-5 w-5" />
             </button>
             {showLanguages && (
-              <div className="absolute right-0 top-full z-30 mt-2 w-44 overflow-hidden rounded-xl border border-white/60 bg-white/90 shadow-lg backdrop-blur-xl">
-                {[['en', 'English'], ['es', 'Spanish'], ['cn', 'Chinese'], ['fr', 'French']].map(([code, label]) => (
-                  <button key={code} type="button" onClick={() => handleLanguageChange(code)} className="w-full px-4 py-2.5 text-left text-sm text-gray-800 hover:bg-white">
+              <div className="absolute right-0 top-full z-50 mt-2 w-44 overflow-hidden rounded-xl border border-white/60 bg-white/90 shadow-lg backdrop-blur-xl">
+                {/* ponytail: only langs with onboarding copy; es/cn fall back to fr and look broken */}
+                {[['en', 'English'], ['fr', 'Français']].map(([code, label]) => (
+                  <button key={code} type="button" onClick={() => handleLanguageChange(code)} className={`w-full px-4 py-2.5 text-left text-sm hover:bg-white ${lang === code ? 'font-semibold text-blue-600' : 'text-gray-800'}`}>
                     {label}
                   </button>
                 ))}

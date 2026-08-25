@@ -280,6 +280,9 @@ const AdminUserPage = () => {
                       <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex w-fit ${user.kycVerified ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
                         KYC: {user.kycVerified ? t.verified : t.pending}
                       </span>
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex w-fit ${(user.onboarding?.percent ?? 0) >= 100 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                        {t.onboarding || 'Onboarding'}: {user.onboarding?.percent ?? 0}%
+                      </span>
                     </div>
                   </td>
                   <td className='px-6 py-4'>
@@ -328,6 +331,9 @@ const AdminUserPage = () => {
                     <div className="flex gap-2 mt-1">
                       <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${user.accountBlocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
                         {user.accountBlocked ? t.blocked : t.active}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${(user.onboarding?.percent ?? 0) >= 100 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                        {user.onboarding?.percent ?? 0}%
                       </span>
                     </div>
                   </div>

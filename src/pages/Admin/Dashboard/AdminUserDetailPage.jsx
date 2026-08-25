@@ -36,8 +36,19 @@ const AdminUserDetailPage = () => {
   const fetchSingleUser = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get(`${config.baseUrl}/account/single/${id}`);
-      setUser(res.data.data);
+      const [userRes, onboardingRes] = await Promise.all([
+        axios.get(`${config.baseUrl}/account/single/${id}`),
+        axios.get(`${config.baseUrl}/account/onboarding/${id}`).catch(() => null),
+      ]);
+      const account = userRes.data.data;
+      if (onboardingRes?.data?.data) {
+        account.onboarding = {
+          step: onboardingRes.data.data.step,
+          percent: onboardingRes.data.data.percent,
+          completedAt: onboardingRes.data.data.completedAt,
+        };
+      }
+      setUser(account);
     } catch {
       toast.error("Failed to fetch user details");
     } finally {
@@ -67,6 +78,7 @@ const AdminUserDetailPage = () => {
     { label: "Phone Number", value: user.phone },
     { label: "Role", value: roleLabel },
     { label: "KYC Status", value: user.kycVerified ? "Verified" : "Pending" },
+    { label: "Onboarding", value: `${user.onboarding?.percent ?? 0}%` },
   ];
 
   const locationInfo = [
