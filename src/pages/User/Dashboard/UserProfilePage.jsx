@@ -6,6 +6,7 @@ import config from '../../../config';
 import toast from 'react-hot-toast';
 import { profileTranslations } from '../../Seller/Dashboard/translation/profileTranslations';
 import { isKycApproved } from '../../../helpers/kyc';
+import { deriveOnboarding, fetchOnboarding, welcomeIfOnboardingDone } from '../../../helpers/onboarding';
 
 const InputField = ({ label, value, placeholder, type = 'text', onChange, readOnly = false, required = false }) => (
     <div className="mb-4">
@@ -232,6 +233,20 @@ const DocumentUpload = ({ userData, setUserData, t }) => {
             const res = await axios.put(`${config.baseUrl}/account/update/${localStorage.getItem("userId")}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
+            const userId = localStorage.getItem("userId");
+            let progress = null;
+            try {
+                progress = res.data?.data
+                    ? await deriveOnboarding(userId, res.data.data)
+                    : await fetchOnboarding(userId);
+            } catch { /* still treat upload as success */ }
+            if (welcomeIfOnboardingDone(progress?.percent, userId)) {
+                const path = (progress?.role || localStorage.getItem('role')) === 'owner'
+                    ? '/seller/dashboard/home'
+                    : '/user/dashboard/home';
+                nav(path, { replace: true });
+                return;
+            }
             toast.success(res.data.msg);
             if (fromOnboarding) nav('/onboarding');
         } catch (error) {

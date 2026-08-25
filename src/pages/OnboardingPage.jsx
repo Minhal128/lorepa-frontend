@@ -6,7 +6,7 @@ import { FiBell, FiCheck, FiMail, FiUploadCloud, FiTruck, FiLock, FiChevronRight
 import { CiGlobe } from 'react-icons/ci';
 import Logo from '../assets/logo.svg';
 import AvatarIcon from '../assets/dashboard/avatar.jpg';
-import { fetchOnboarding } from '../helpers/onboarding';
+import { fetchOnboarding, welcomeIfOnboardingDone } from '../helpers/onboarding';
 import { onboardingTranslations } from './Auth/translation/onboardingTranslations';
 
 const STEP_META = [
@@ -55,6 +55,7 @@ const OnboardingPage = () => {
       .then((payload) => {
         setData((prev) => ({ ...prev, ...payload }));
         if (payload.percent >= 100) {
+          welcomeIfOnboardingDone(payload.percent, userId);
           const path = payload.role === 'owner' ? '/seller/dashboard/home' : '/user/dashboard/home';
           nav(path, { replace: true });
         }

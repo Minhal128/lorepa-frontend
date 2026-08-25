@@ -14,6 +14,8 @@ export const onboardingTranslations = {
     you: "You",
     notifications: "Notifications",
     loadFailed: "Failed to load your onboarding progress",
+    welcomeCompleteTitle: "Onboarding 100% complete",
+    welcomeCompleteBody: "Welcome to Lorepa — you're all set.",
     steps: {
       accountCreated: { title: "Account created", desc: "Welcome to Lorepa!" },
       emailVerified: { title: "Email verified", desc: "Your email has been verified." },
@@ -50,6 +52,8 @@ export const onboardingTranslations = {
     you: "Vous",
     notifications: "Notifications",
     loadFailed: "Impossible de charger votre progression",
+    welcomeCompleteTitle: "Onboarding 100 % terminé",
+    welcomeCompleteBody: "Bienvenue sur Lorepa — tout est prêt.",
     steps: {
       accountCreated: { title: "Compte créé", desc: "Bienvenue sur Lorepa !" },
       emailVerified: { title: "E-mail vérifié", desc: "Votre e-mail a été vérifié." },
