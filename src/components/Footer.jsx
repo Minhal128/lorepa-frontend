@@ -23,6 +23,7 @@ const footerTranslations = {
         contactUs: "Contact us",
         downloadAppStore: "Download on the App Store",
         downloadGooglePlay: "Download on the Google Play",
+        comingSoon: "Coming soon",
         english: "English",
         address: "551, Av Jeanne D'arc, Montréal, Québec, H1W 3T2",
         allRightsReserved: "© 2026 Lorepa. All rights reserved.",
@@ -50,6 +51,7 @@ const footerTranslations = {
         contactUs: "Contáctanos",
         downloadAppStore: "Descargar en la App Store",
         downloadGooglePlay: "Descargar en Google Play",
+        comingSoon: "Próximamente",
         english: "Español",
         address: "551, Av Jeanne D'arc, Montréal, Québec, H1W 3T2",
         allRightsReserved: "© 2026 Lorepa. Todos los derechos reservados.",
@@ -77,6 +79,7 @@ const footerTranslations = {
         contactUs: "联系我们",
         downloadAppStore: "在App Store下载",
         downloadGooglePlay: "在Google Play下载",
+        comingSoon: "即将推出",
         english: "中文",
         address: "551, Av Jeanne D'arc, Montréal, Québec, H1W 3T2",
         allRightsReserved: "© 2026 Lorepa. 版权所有。",
@@ -104,6 +107,7 @@ const footerTranslations = {
         contactUs: "Nous contacter",
         downloadAppStore: "Télécharger sur l'App Store",
         downloadGooglePlay: "Télécharger sur Google Play",
+        comingSoon: "Bientôt disponible",
         english: "Français",
         address: "551, Av Jeanne D'arc, Montréal, Québec, H1W 3T2",
         allRightsReserved: "© 2026 Lorepa. Tous droits réservés.",
@@ -201,21 +205,22 @@ const Footer = () => {
                             </div>
 
                             {/* App Store Buttons */}
-                            <div className="flex flex-col sm:flex-row lg:flex-col gap-3">
-                                <a href="#" target="_blank" rel="noopener noreferrer" className="transition-transform hover:scale-105 active:scale-95">
+                            <div className="flex flex-col gap-2">
+                                <span className="text-xs font-medium text-gray-600">{translations.comingSoon}</span>
+                                <div className="flex flex-col sm:flex-row lg:flex-col gap-3">
                                     <img
                                         src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
-                                        alt="Download on the App Store"
-                                        className="h-10 w-auto"
+                                        alt={`${translations.downloadAppStore} - ${translations.comingSoon}`}
+                                        title={translations.comingSoon}
+                                        className="h-10 w-auto opacity-60 grayscale cursor-not-allowed"
                                     />
-                                </a>
-                                <a href="#" target="_blank" rel="noopener noreferrer" className="transition-transform hover:scale-105 active:scale-95">
                                     <img
                                         src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                                        alt="Get it on Google Play"
-                                        className="h-10 w-auto"
+                                        alt={`${translations.downloadGooglePlay} - ${translations.comingSoon}`}
+                                        title={translations.comingSoon}
+                                        className="h-10 w-auto opacity-60 grayscale cursor-not-allowed"
                                     />
-                                </a>
+                                </div>
                             </div>
 
                             {/* Language Selector */}
