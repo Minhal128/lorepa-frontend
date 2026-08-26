@@ -121,7 +121,7 @@ const TrailersListing = () => {
   const query = useQuery();
   const cityFromQuery = query.get('city') || '';
   const [priceFilter, setPriceFilter] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState(() => query.get('type') || '');
   const [keyword, setKeyword] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [filteredTrailers, setFilteredTrailers] = useState([]);

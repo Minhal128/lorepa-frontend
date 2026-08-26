@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, forwardRef, useImperativeHandle } from "react";
 import {
   motion,
   useMotionValue,
@@ -6,7 +6,10 @@ import {
   useTransform,
 } from "framer-motion";
 
-const RollingGallery = ({ autoplay = true, pauseOnHover = true, images = [] }) => {
+const RollingGallery = forwardRef(function RollingGallery(
+  { autoplay = true, pauseOnHover = true, images = [], onImageClick },
+  ref
+) {
   const [isScreenSizeSm, setIsScreenSizeSm] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 640 : false
   );
@@ -21,8 +24,9 @@ const RollingGallery = ({ autoplay = true, pauseOnHover = true, images = [] }) =
 
   const cylinderWidth = isScreenSizeSm ? 1000 : 1600;
   const faceCount = images.length;
-  const faceWidth = (cylinderWidth / faceCount) * 1.2;
+  const faceWidth = (cylinderWidth / Math.max(faceCount, 1)) * 1.2;
   const radius = cylinderWidth / (2 * Math.PI);
+  const stepAngle = faceCount ? 360 / faceCount : 0;
 
   useEffect(() => {
     const handleResize = () => setIsScreenSizeSm(window.innerWidth <= 640);
@@ -43,6 +47,19 @@ const RollingGallery = ({ autoplay = true, pauseOnHover = true, images = [] }) =
     },
     [controls]
   );
+
+  const step = useCallback(
+    (dir) => {
+      if (!faceCount) return;
+      controls.stop();
+      const next = rotation.get() + dir * stepAngle;
+      rotation.set(next);
+      if (autoplay) startInfiniteSpin(next);
+    },
+    [autoplay, controls, faceCount, rotation, startInfiniteSpin, stepAngle]
+  );
+
+  useImperativeHandle(ref, () => ({ prev: () => step(1), next: () => step(-1) }), [step]);
 
   useEffect(() => {
     if (autoplay) {
@@ -77,6 +94,7 @@ const RollingGallery = ({ autoplay = true, pauseOnHover = true, images = [] }) =
       controls.stop();
     }
   };
+
   const handleMouseLeave = () => {
     if (autoplay && pauseOnHover) {
       startInfiniteSpin(rotation.get());
@@ -136,9 +154,14 @@ const RollingGallery = ({ autoplay = true, pauseOnHover = true, images = [] }) =
                   e.target.onerror = null;
                   e.target.src = "/12.png";
                 }}
-                className="pointer-events-none h-[200px] w-[380px] rounded-[15px] border-[3px] border-white object-cover
+                onClick={(e) => {
+                  if (!onImageClick) return;
+                  e.stopPropagation();
+                  onImageClick(i);
+                }}
+                className={`${onImageClick ? "cursor-pointer" : "pointer-events-none"} h-[200px] w-[380px] rounded-[15px] border-[3px] border-white object-cover
                            transition-transform duration-300 ease-out group-hover:scale-105
-                           sm:h-[140px] sm:w-[260px]"
+                           sm:h-[140px] sm:w-[260px]`}
               />
             </div>
           ))}
@@ -146,6 +169,6 @@ const RollingGallery = ({ autoplay = true, pauseOnHover = true, images = [] }) =
       </div>
     </div>
   );
-};
+});
 
 export default RollingGallery;

@@ -297,6 +297,7 @@ const LandingPage = () => {
         return translations[storedLang] || translations.fr;
     });
     const wrapperRef = useRef(null);
+    const galleryRef = useRef(null);
     const debounceRef = useRef(null);
     const latestSuggestionQueryRef = useRef("");
     const [location, setLocation] = useState('');
@@ -764,18 +765,31 @@ const LandingPage = () => {
                         className="text-3xl sm:text-5xl font-extrabold uppercase tracking-wide bg-gradient-to-r from-blue-400 via-white to-blue-400 bg-clip-text text-transparent"
                     />
                     <div className="flex items-center gap-x-3 mt-4">
-                        {[FaAngleLeft, FaAngleRight].map((Icon, i) => (
-                            <div
-                                key={i}
-                                className="bg-white w-[2rem] h-[2rem] rounded-full text-black flex justify-center items-center"
-                            >
-                                <Icon />
-                            </div>
-                        ))}
+                        <button
+                            type="button"
+                            aria-label="Previous trailer"
+                            onClick={() => galleryRef.current?.prev()}
+                            className="bg-white w-[2rem] h-[2rem] rounded-full text-black flex justify-center items-center cursor-pointer"
+                        >
+                            <FaAngleLeft />
+                        </button>
+                        <button
+                            type="button"
+                            aria-label="Next trailer"
+                            onClick={() => galleryRef.current?.next()}
+                            className="bg-white w-[2rem] h-[2rem] rounded-full text-black flex justify-center items-center cursor-pointer"
+                        >
+                            <FaAngleRight />
+                        </button>
                     </div>
                 </div>
                 <RollingGallery
+                    ref={galleryRef}
                     images={trailers.map((item, i) => item.image || browseTrailerImages[i % browseTrailerImages.length])}
+                    onImageClick={(i) => {
+                        const title = trailers[i]?.title;
+                        if (title) nav(`/trailers?type=${encodeURIComponent(title)}`);
+                    }}
                 />
             </motion.div>
 
