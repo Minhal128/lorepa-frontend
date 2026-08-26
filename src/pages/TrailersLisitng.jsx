@@ -116,12 +116,33 @@ const normalizeTrailerImages = (images) => {
 
 
 
+// CMS gallery titles look like "Voiture (Cars)" — map to listing category enums.
+const normalizeTypeFilter = (raw) => {
+  if (!raw) return '';
+  const known = { utility: 'Utility', enclosed: 'Enclosed', flatbed: 'Flatbed', dump: 'Dump', boat: 'Boat' };
+  const aliases = {
+    cars: 'Flatbed', car: 'Flatbed', voiture: 'Flatbed',
+    utilitaire: 'Utility', fermees: 'Enclosed', fermee: 'Enclosed',
+    plateformes: 'Flatbed', plateforme: 'Flatbed',
+    dompeuses: 'Dump', dompeuse: 'Dump', bateaux: 'Boat', bateau: 'Boat',
+  };
+  const strip = (s) => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  const paren = String(raw).match(/\(([^)]+)\)/);
+  const candidates = [paren?.[1], ...strip(raw).replace(/[()]/g, ' ').split(/\s+/), strip(raw)].filter(Boolean);
+  for (const c of candidates) {
+    const key = strip(c);
+    if (known[key]) return known[key];
+    if (aliases[key]) return aliases[key];
+  }
+  return raw;
+};
+
 const TrailersListing = () => {
   const nav = useNavigate();
   const query = useQuery();
   const cityFromQuery = query.get('city') || '';
   const [priceFilter, setPriceFilter] = useState('');
-  const [typeFilter, setTypeFilter] = useState(() => query.get('type') || '');
+  const [typeFilter, setTypeFilter] = useState(() => normalizeTypeFilter(query.get('type') || ''));
   const [keyword, setKeyword] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [filteredTrailers, setFilteredTrailers] = useState([]);
@@ -478,12 +499,12 @@ const TrailersListing = () => {
             {/* Desktop Filters */}
             <div className="hidden lg:flex justify-between items-center mb-6 flex-wrap gap-4">
               <div className="flex flex-wrap gap-4">
-                <select className="bg-[#F1F1F1] p-2 px-4 rounded-md" onChange={(e) => setPriceFilter(e.target.value)}>
+                <select className="bg-[#F1F1F1] p-2 px-4 rounded-md" onChange={(e) => setPriceFilter(e.target.value)} value={priceFilter}>
                   <option value="">{translations.price}</option>
                   <option value="lowToHigh">{translations.lowToHigh}</option>
                   <option value="highToLow">{translations.highToLow}</option>
                 </select>
-                <select className="bg-[#F1F1F1] p-2 px-4 rounded-md" onChange={(e) => setTypeFilter(e.target.value)}>
+                <select className="bg-[#F1F1F1] p-2 px-4 rounded-md" onChange={(e) => setTypeFilter(e.target.value)} value={typeFilter}>
                   <option value="">{translations.type}</option>
                   <option value="Utility">{translations.utility}</option>
                   <option value="Enclosed">{translations.enclosed}</option>
