@@ -42,8 +42,10 @@ const AdminUserPage = () => {
           return parseInt(id.slice(0, 8), 16) * 1000;
         };
 
+        // registration time, not last-touched: getOnboarding writes to the account
+        // on every dashboard load, so updatedAt sorted stale accounts above new signups
         const toTime = (user) => {
-          const parsed = new Date(user?.updatedAt || user?.createdAt || 0).getTime();
+          const parsed = new Date(user?.createdAt || 0).getTime();
           if (!Number.isNaN(parsed) && parsed > 0) return parsed;
           return objectIdToTime(user?._id);
         };
