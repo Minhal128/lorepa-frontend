@@ -207,7 +207,7 @@ const VerifyOtpPage = () => {
         const role = user?.role || localStorage.getItem("role");
         if (user?._id) localStorage.setItem("userId", String(user._id));
         if (role) localStorage.setItem("role", role);
-        nav(role === "owner" ? "/onboarding" : "/user/dashboard/home");
+        nav("/onboarding");
       } else {
         nav("/change-password", { state: { email } });
       }

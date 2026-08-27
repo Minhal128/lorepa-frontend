@@ -55,13 +55,9 @@ const OnboardingPage = () => {
       .then((payload) => {
         setData((prev) => ({ ...prev, ...payload }));
         const role = payload.role || localStorage.getItem('role');
-        if (role !== 'owner') {
-          nav('/user/dashboard/home', { replace: true });
-          return;
-        }
         if (payload.percent >= 100) {
           welcomeIfOnboardingDone(payload.percent, userId);
-          nav('/seller/dashboard/home', { replace: true });
+          nav(role === 'owner' ? '/seller/dashboard/home' : '/user/dashboard/home', { replace: true });
         }
       })
       .catch(() => toast.error(t.loadFailed));

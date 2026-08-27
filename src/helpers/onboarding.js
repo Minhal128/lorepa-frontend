@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import config from '../config';
+import { isKycApproved } from './kyc';
 import { onboardingTranslations } from '../pages/Auth/translation/onboardingTranslations';
 
 const PROFILE_STEPS = ['accountCreated', 'emailVerified', 'documentsUploaded', 'trailerListed'];
@@ -52,6 +53,7 @@ export const normalizeOnboarding = (raw = {}, account = {}) => {
         ? raw.completedAt || account.onboarding?.completedAt || new Date().toISOString()
         : null,
     steps,
+    kycVerified: Boolean(raw.kycVerified) || isKycApproved(account),
     role: raw.role || account.role,
     name: raw.name || account.name,
     profilePicture: raw.profilePicture || account.profilePicture,
@@ -114,7 +116,7 @@ export const fetchOnboarding = async (userId) => {
   return deriveOnboarding(userId, account);
 };
 
-export const FILL_ONBOARDING_MSG = 'Fill your onboarding first';
+export const FILL_ONBOARDING_MSG = 'Admin verification pending - you can list a trailer once approved';
 
 export const showOnboardingWelcomeToast = () => {
   const lang = localStorage.getItem('lang') || 'fr';
@@ -131,17 +133,14 @@ export const welcomeIfOnboardingDone = (percent, userId) => {
   return true;
 };
 
-export const isDashboardLinkLocked = (link, percent, role) => {
-  if (role !== 'owner') return false;
-  if (percent >= 100) return false;
-  if (link === 'profile') return false;
-  if (link === 'listing' && role === 'owner') return false;
-  return true;
-};
+// Dashboard is fully open once onboarding is done; only listing waits on the admin.
+export const isDashboardLinkLocked = (link, role, kycVerified) =>
+  role === 'owner' && link === 'listing' && !kycVerified;
 
 export const useOnboardingLock = () => {
   const [percent, setPercent] = useState(null);
   const [role, setRole] = useState(localStorage.getItem('role') || '');
+  const [kycVerified, setKycVerified] = useState(false);
 
   useEffect(() => {
     const id = localStorage.getItem('userId');
@@ -149,12 +148,13 @@ export const useOnboardingLock = () => {
     fetchOnboarding(id)
       .then((d) => {
         setPercent(Number(d.percent) || 0);
+        setKycVerified(Boolean(d.kycVerified));
         if (d.role) setRole(d.role);
       })
       .catch(() => setPercent(0));
   }, []);
 
-  const locked = (link) => percent != null && isDashboardLinkLocked(link, percent, role);
+  const locked = (link) => percent != null && isDashboardLinkLocked(link, role, kycVerified);
   const block = (e) => {
     e?.preventDefault?.();
     toast.error(FILL_ONBOARDING_MSG);
