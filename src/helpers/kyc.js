@@ -45,21 +45,6 @@ export const isKycApproved = (account) => {
     account.accountVerificationStatus,
   ];
 
-  if (statusFields.map(normalizeString).some((s) => APPROVED_STATUS_VALUES.has(s))) {
-    return true;
-  }
-
-  // All required documents uploaded = KYC complete, regardless of role
-  const isOwnerRole = ["owner", "host", "seller", "buyer"].includes(
-    normalizeString(account.role)
-  );
-  const requiredDocs = isOwnerRole
-    ? [account.licenseFrontImage, account.licenseBackImage, account.trailerRegistrationImage]
-    : [account.licenseFrontImage, account.licenseBackImage, account.carInsurancePolicyImage, account.faq27Image];
-
-  if (requiredDocs.every((doc) => typeof doc === "string" && doc.trim().length > 0)) {
-    return true;
-  }
-
-  return false;
+  // ponytail: admin flags only — docs uploaded ≠ approved (matches backend utils/kyc)
+  return statusFields.map(normalizeString).some((s) => APPROVED_STATUS_VALUES.has(s));
 };

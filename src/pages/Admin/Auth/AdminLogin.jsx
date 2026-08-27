@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import config from '../../../config';
+import { applyAdminKey } from '../../../helpers/adminSession';
 
 const AdminLogin = () => {
     const [passwordVisible, setPasswordVisible] = useState(false)
@@ -21,15 +22,18 @@ const AdminLogin = () => {
         try {
             const res = await axios.get(`${config.baseUrl}/account/admin-key`);
             const masterKey = res.data.adminKey;
-            
+
             if (adminKey === masterKey) {
                 toast.success("Admin Login successful")
-                
+
                 // Set admin session with 2 hour expiry timestamp
                 const expiryTime = Date.now() + (2 * 60 * 60 * 1000); // 2 hours in milliseconds
                 localStorage.setItem("adminLoggedIn", "true");
                 localStorage.setItem("adminSessionExpiry", expiryTime.toString());
-                
+                // admin-only endpoints want this key back as a header
+                localStorage.setItem("adminKey", adminKey);
+                applyAdminKey(adminKey);
+
                 setTimeout(() => {
                     nav("/admin/dashboard/home")
                 }, 1500);

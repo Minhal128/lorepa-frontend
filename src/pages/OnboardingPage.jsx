@@ -78,7 +78,9 @@ const OnboardingPage = () => {
   };
 
   const statusOf = (index) => {
-    if (data.steps?.[STEP_META[index].key]) return 'done';
+    const key = STEP_META[index].key;
+    if (data.steps?.[key]) return 'done';
+    if (key === 'trailerListed' && data.steps?.trailerPending) return 'pending';
     return index + 1 === data.step ? 'current' : 'locked';
   };
 
@@ -202,13 +204,16 @@ const OnboardingPage = () => {
                       {status === 'current' && (
                         <span className="rounded-md border border-blue-200/60 bg-blue-100/70 px-2 py-1 text-xs font-semibold text-blue-700 backdrop-blur-sm">{t.inProgress}</span>
                       )}
+                      {status === 'pending' && (
+                        <span className="rounded-md border border-amber-200/60 bg-amber-100/70 px-2 py-1 text-xs font-semibold text-amber-700 backdrop-blur-sm">{t.pendingApproval}</span>
+                      )}
                       {status === 'locked' && (
                         <span className="flex items-center gap-1 rounded-md border border-white/50 bg-white/40 px-2 py-1 text-xs font-semibold text-gray-500 backdrop-blur-sm">
                           <FiLock className="h-3.5 w-3.5" /> {t.locked}
                         </span>
                       )}
 
-                      {cta && status !== 'done' && (
+                      {cta && status !== 'done' && status !== 'pending' && (
                         <button
                           type="button"
                           disabled={status === 'locked'}

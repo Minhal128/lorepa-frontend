@@ -7,6 +7,7 @@ import axios from 'axios';
 import config from '../../config';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { clearAdminSession } from '../../helpers/adminSession';
 
 let face = "https://images.unsplash.com/photo-1624395213043-fa2e123b2656?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bWFuJTIwZmFjZXxlbnwwfHwwfHx8MA%3D%3D"
 const Header = ({ location }) => {
@@ -27,8 +28,7 @@ const Header = ({ location }) => {
                 const expiryTime = parseInt(adminExpiry, 10);
                 if (Date.now() > expiryTime) {
                     // Session expired - logout admin
-                    localStorage.removeItem("adminLoggedIn");
-                    localStorage.removeItem("adminSessionExpiry");
+                    clearAdminSession();
                     navigate("/admin/login");
                 }
             }

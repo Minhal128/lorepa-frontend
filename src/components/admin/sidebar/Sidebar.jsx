@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { adminNav } from '../../../constants/sidebarData';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IoLogOut } from 'react-icons/io5';
+import { clearAdminSession } from '../../../helpers/adminSession';
 import { useSidebar } from '../../../context/SidebarContext';
 import { RxCross2 } from 'react-icons/rx';
 import Logo from '../../../assets/logo.svg'
@@ -53,7 +54,7 @@ const Sidebar = () => {
 
           <div className="pt-6 border-t border-white/10">
             <button
-              onClick={() => { nav("/admin/login") }}
+              onClick={() => { clearAdminSession(); nav("/admin/login") }}
               className="w-full flex items-center gap-x-3 px-4 py-3.5 rounded-2xl text-blue-100 hover:bg-red-500 hover:text-white transition-all duration-300 group"
             >
               <div className="text-xl group-hover:rotate-12 transition-transform"><IoLogOut /></div>
@@ -107,6 +108,7 @@ const Sidebar = () => {
           <div className="pt-6 border-t border-white/10">
             <button
               onClick={() => {
+                clearAdminSession();
                 nav("/admin/login");
                 toggleNav();
               }}

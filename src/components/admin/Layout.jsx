@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import Sidebar from './sidebar/Sidebar'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Header from './Header'
+import { applyAdminKey, clearAdminSession } from '../../helpers/adminSession'
 
 const Layout = () => {
   const location = useLocation().pathname.split("/")[3];
@@ -21,10 +22,13 @@ const Layout = () => {
     const expiryTime = parseInt(adminExpiry, 10);
     if (Date.now() > expiryTime) {
       // Session expired - clear and redirect
-      localStorage.removeItem("adminLoggedIn");
-      localStorage.removeItem("adminSessionExpiry");
+      clearAdminSession();
       navigate("/admin/login");
+      return;
     }
+
+    // A reload wipes the axios default, so admin requests need it back
+    applyAdminKey(localStorage.getItem("adminKey"));
   }, [navigate]);
 
   return (

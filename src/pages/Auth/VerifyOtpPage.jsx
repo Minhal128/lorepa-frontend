@@ -202,10 +202,12 @@ const VerifyOtpPage = () => {
       const res = await axios.post(`${config.baseUrl}/account/verify/otp`, { email, otp });
       toast.success(translations.ok);
       if (isSignup) {
-        const role = res?.data?.data?.role;
-        localStorage.setItem("userId", res?.data?.data?._id);
-        localStorage.setItem("role", role);
-        nav(role === 'owner' ? '/onboarding' : '/user/dashboard/home');
+        const user = res?.data?.data;
+        // fall back — never overwrite a good register-time role with undefined
+        const role = user?.role || localStorage.getItem("role");
+        if (user?._id) localStorage.setItem("userId", String(user._id));
+        if (role) localStorage.setItem("role", role);
+        nav(role === "owner" ? "/onboarding" : "/user/dashboard/home");
       } else {
         nav("/change-password", { state: { email } });
       }

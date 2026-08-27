@@ -21,20 +21,26 @@ const emailVerifiedOf = (account = {}) =>
 
 const hasDoc = (account, keys) => keys.some((key) => has(account[key]));
 
+// A trailer only counts as listed once an admin approves it.
+const isApproved = (trailer) => /^approved$/i.test(String(trailer?.status || ''));
+
 export const normalizeOnboarding = (raw = {}, account = {}) => {
   const src = raw.steps || {};
   const documentsUploaded = any(src, ['documentsUploaded', 'documentsUploaded']);
   const trailerListed = any(src, ['trailerListed', 'trailerListed']);
+  const trailerPending = any(src, ['trailerPending']);
   const steps = {
     accountCreated: true,
     // existing accounts that already listed/uploaded are past signup OTP
     emailVerified:
       any(src, ['emailVerified', 'emailVerified']) ||
       emailVerifiedOf(account) ||
-      (documentsUploaded && trailerListed),
+      // submitted is enough here - email verification is not the admin's call
+      (documentsUploaded && (trailerListed || trailerPending)),
     documentsUploaded,
     trailerListed,
     firstRental: any(src, ['firstRental', 'firstRental']),
+    trailerPending,
   };
   const completed = PROFILE_STEPS.filter((key) => steps[key]).length;
   const firstIncomplete = PROFILE_STEPS.findIndex((key) => !steps[key]);
@@ -77,8 +83,9 @@ export const deriveOnboarding = async (userId, account) => {
           (isOwner
             ? hasDoc(account, ['trailerRegistrationImage', 'trailerRegistrationImage'])
             : hasDoc(account, ['faq27Image', 'faq27Image'])),
+        trailerPending: isOwner && trailers.length > 0 && !trailers.some(isApproved),
         trailerListed: isOwner
-          ? trailers.length > 0
+          ? trailers.some(isApproved)
           : ['name', 'phone', 'address', 'city', 'postalCode', 'state', 'country'].every((field) =>
               has(account[field])
             ),
