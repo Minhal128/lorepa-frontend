@@ -82,7 +82,7 @@ const translations = {
         trailerCreatedSuccessfully: 'Trailer created successfully!',
         userIdNotFound: 'User ID not found',
         incompleteFields: 'Please fill out all fields before proceeding.',
-        kycRequiredToSell: 'KYC verification is required before listing a trailer.',
+        kycRequiredToSell: 'Your account is not verified by the admin yet. You can list a trailer once it is approved.',
         kycCheckFailed: 'Unable to verify your KYC status. Please try again.'
     },
     es: {
@@ -158,7 +158,7 @@ const translations = {
         trailerCreatedSuccessfully: '¡Remolque creado con éxito!',
         userIdNotFound: 'ID de usuario no encontrado',
         incompleteFields: 'Por favor, complete todos los campos antes de continuar.',
-        kycRequiredToSell: 'La verificación KYC es obligatoria antes de publicar un remolque.',
+        kycRequiredToSell: 'Tu cuenta aún no ha sido verificada por el administrador. Podrás publicar un remolque cuando sea aprobada.',
         kycCheckFailed: 'No se pudo verificar su estado KYC. Inténtelo de nuevo.'
     },
     cn: {
@@ -234,7 +234,7 @@ const translations = {
         trailerCreatedSuccessfully: '拖车创建成功！',
         userIdNotFound: '未找到用户 ID',
         incompleteFields: '在继续之前请填写所有字段。',
-        kycRequiredToSell: '发布拖车前必须完成 KYC 验证。',
+        kycRequiredToSell: '您的账户尚未通过管理员验证。审核通过后即可发布拖车。',
         kycCheckFailed: '无法验证您的 KYC 状态。请重试。'
     },
     fr: {
@@ -310,7 +310,7 @@ const translations = {
         trailerCreatedSuccessfully: 'Remorque créée avec succès!',
         userIdNotFound: 'ID utilisateur introuvable',
         incompleteFields: 'Veuillez remplir tous les champs avant de continuer.',
-        kycRequiredToSell: 'La vérification KYC est obligatoire avant de publier une remorque.',
+        kycRequiredToSell: "Votre compte n'est pas encore vérifié par l'administrateur. Vous pourrez publier une remorque une fois approuvé.",
         kycCheckFailed: 'Impossible de vérifier votre statut KYC. Veuillez réessayer.'
     }
 };

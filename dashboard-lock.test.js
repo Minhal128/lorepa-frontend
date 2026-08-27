@@ -5,7 +5,7 @@
 // listing alone waits on the admin, and an owner never deadlocks (they cannot reach
 // 100% without a trailer they are not allowed to list until KYC clears).
 import assert from 'assert';
-import { isDashboardLinkLocked, isUserOnboardingDone, normalizeOnboarding } from './src/helpers/onboarding.js';
+import { hasRequiredDocuments, isDashboardLinkLocked, isUserOnboardingDone, normalizeOnboarding } from './src/helpers/onboarding.js';
 
 const done = (d) => isUserOnboardingDone(d);
 const locked = (link, d, kyc) => isDashboardLinkLocked(link, done(d), kyc);
@@ -58,5 +58,14 @@ assert.equal(locked('listing', verified, verified.kycVerified), false);
 // legacy account with no OTP flag is still counted as email-verified: the
 // fallback keys off what the user did, not off the KYC-gated step
 assert.equal(unverified.steps.emailVerified, true);
+
+// --- required document set (drives the "with the admin" profile message) ---
+const renterDocs = { licenseFrontImage: 'a.jpg', licenseBackImage: 'b.jpg', faq27Image: 'c.jpg' };
+assert.equal(hasRequiredDocuments({ ...renterDocs }), true);
+assert.equal(hasRequiredDocuments({ ...renterDocs, faq27Image: '' }), false, 'a renter needs the FAQ 27 page');
+assert.equal(hasRequiredDocuments({ ...renterDocs, role: 'owner' }), false, 'an owner needs the registration, not FAQ 27');
+assert.equal(hasRequiredDocuments({ ...renterDocs, role: 'owner', trailerRegistrationImage: 'd.jpg' }), true);
+assert.equal(hasRequiredDocuments({}), false);
+assert.equal(hasRequiredDocuments(), false);
 
 console.log('all dashboard lock checks passed');

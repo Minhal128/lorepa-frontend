@@ -22,6 +22,14 @@ const emailVerifiedOf = (account = {}) =>
 
 const hasDoc = (account, keys) => keys.some((key) => has(account[key]));
 
+// The document set an account must submit before an admin can verify it.
+export const hasRequiredDocuments = (account = {}) =>
+  hasDoc(account, ['licenseFrontImage']) &&
+  hasDoc(account, ['licenseBackImage']) &&
+  (account.role === 'owner'
+    ? hasDoc(account, ['trailerRegistrationImage'])
+    : hasDoc(account, ['faq27Image']));
+
 // A trailer only counts as listed once an admin approves it.
 const isApproved = (trailer) => /^approved$/i.test(String(trailer?.status || ''));
 
@@ -84,12 +92,7 @@ export const deriveOnboarding = async (userId, account) => {
       steps: {
         accountCreated: true,
         emailVerified: emailVerifiedOf(account),
-        documentsUploaded:
-          hasDoc(account, ['licenseFrontImage', 'licenseFrontImage']) &&
-          hasDoc(account, ['licenseBackImage', 'licenseBackImage']) &&
-          (isOwner
-            ? hasDoc(account, ['trailerRegistrationImage', 'trailerRegistrationImage'])
-            : hasDoc(account, ['faq27Image', 'faq27Image'])),
+        documentsUploaded: hasRequiredDocuments(account),
         trailerPending: isOwner && trailers.length > 0 && !trailers.some(isApproved),
         trailerListed: isOwner
           ? trailers.some(isApproved)

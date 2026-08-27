@@ -6,6 +6,7 @@ import config from '../../../config';
 import toast from 'react-hot-toast';
 import { profileTranslations } from '../../Seller/Dashboard/translation/profileTranslations';
 import { isKycApproved } from '../../../helpers/kyc';
+import { hasRequiredDocuments } from '../../../helpers/onboarding';
 
 const InputField = ({ label, value, placeholder, type = 'text', onChange, readOnly = false, required = false }) => (
     <div className="mb-4">
@@ -343,6 +344,10 @@ const UserProfilePage = () => {
     const getKycStatusMessage = (status) => {
         if (status === "Verified") {
             return t.kycVerifiedMessage || t.kycDocumentsUpToDate;
+        }
+        // documents are in - the wait is on the admin, not on the user
+        if (hasRequiredDocuments(userData)) {
+            return t.kycPendingAdminMessage || t.kycNotVerifiedMessage;
         }
         return t.kycNotVerifiedMessage || t.kycDocumentsUpToDate;
     };

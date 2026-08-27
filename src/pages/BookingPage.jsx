@@ -16,7 +16,7 @@ const bookingTranslations = {
         bookingEndDate: "Booking End Date",
         estimatedPrice: "Estimated Price:",
         userNotFound: "User not found. Please log in.",
-        kycVerificationRequired: "Please complete KYC verification before requesting a booking.",
+        kycVerificationRequired: "Your account is not verified by the admin yet. You can book once it is approved.",
         kycCheckFailed: "Unable to verify your KYC status. Please try again.",
         complete: "Complete",
         bookingSubmittedSuccess: "Booking submitted successfully",
@@ -29,7 +29,7 @@ const bookingTranslations = {
         bookingEndDate: "Fecha de finalización de la reserva",
         estimatedPrice: "Precio estimado:",
         userNotFound: "Usuario no encontrado. Por favor, inicie sesión.",
-        kycVerificationRequired: "Complete la verificación KYC antes de solicitar una reserva.",
+        kycVerificationRequired: "Tu cuenta aún no ha sido verificada por el administrador. Podrás reservar cuando sea aprobada.",
         kycCheckFailed: "No se pudo verificar su estado KYC. Inténtelo de nuevo.",
         complete: "Completar",
         bookingSubmittedSuccess: "Reserva enviada con éxito",
@@ -42,7 +42,7 @@ const bookingTranslations = {
         bookingEndDate: "预订结束日期",
         estimatedPrice: "预计价格：",
         userNotFound: "未找到用户。请登录。",
-        kycVerificationRequired: "请先完成 KYC 验证后再请求预订。",
+        kycVerificationRequired: "您的账户尚未通过管理员验证。审核通过后即可预订。",
         kycCheckFailed: "无法验证您的 KYC 状态。请重试。",
         complete: "完成",
         bookingSubmittedSuccess: "预订提交成功",
@@ -55,7 +55,7 @@ const bookingTranslations = {
         bookingEndDate: "Date de fin de réservation",
         estimatedPrice: "Prix estimé :",
         userNotFound: "Utilisateur non trouvé. Veuillez vous connecter.",
-        kycVerificationRequired: "Veuillez compléter la vérification KYC avant de demander une réservation.",
+        kycVerificationRequired: "Votre compte n'est pas encore vérifié par l'administrateur. Vous pourrez réserver une fois approuvé.",
         kycCheckFailed: "Impossible de vérifier votre statut KYC. Veuillez réessayer.",
         complete: "Terminer",
         bookingSubmittedSuccess: "Réservation soumise avec succès",
@@ -155,7 +155,7 @@ const BookingPage = () => {
             const isKycVerified = isKycApproved(accountRes?.data?.data);
 
             if (!isKycVerified) {
-                toast.error(translations.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");
+                toast.error(translations.kycVerificationRequired || "Your account is not verified by the admin yet. You can book once it is approved.");
                 nav('/user/dashboard/profile?tab=documents');
                 return;
             }

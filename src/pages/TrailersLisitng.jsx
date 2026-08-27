@@ -238,7 +238,7 @@ const TrailersListing = () => {
       const isKycVerified = isKycApproved(res?.data?.data);
 
       if (!isKycVerified) {
-        toast.error(translations.kycVerificationRequired || "Please complete KYC verification before requesting a booking.");
+        toast.error(translations.kycVerificationRequired || "Your account is not verified by the admin yet. You can book once it is approved.");
         nav('/user/dashboard/profile');
         return false;
       }
@@ -296,7 +296,7 @@ const TrailersListing = () => {
       const apiMessage = error?.response?.data?.msg;
 
       if (error?.response?.status === 403) {
-        toast.error(translations.kycVerificationRequired || apiMessage || "Please complete KYC verification before requesting a booking.", { id: loadingToast });
+        toast.error(translations.kycVerificationRequired || apiMessage || "Your account is not verified by the admin yet. You can book once it is approved.", { id: loadingToast });
         nav('/user/dashboard/profile');
         return;
       }
