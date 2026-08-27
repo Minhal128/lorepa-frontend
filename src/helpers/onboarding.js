@@ -116,7 +116,7 @@ export const fetchOnboarding = async (userId) => {
   return deriveOnboarding(userId, account);
 };
 
-export const FILL_ONBOARDING_MSG = 'Admin verification pending - you can list a trailer once approved';
+export const FILL_ONBOARDING_MSG = 'Admin verification pending - your dashboard unlocks once approved';
 
 export const showOnboardingWelcomeToast = () => {
   const lang = localStorage.getItem('lang') || 'fr';
@@ -133,13 +133,12 @@ export const welcomeIfOnboardingDone = (percent, userId) => {
   return true;
 };
 
-// Dashboard is fully open once onboarding is done; only listing waits on the admin.
-export const isDashboardLinkLocked = (link, role, kycVerified) =>
-  role === 'owner' && link === 'listing' && !kycVerified;
+// Nothing opens until an admin verifies the account. Profile is the one way in -
+// that is where the KYC documents get uploaded.
+export const isDashboardLinkLocked = (link, kycVerified) => !kycVerified && link !== 'profile';
 
 export const useOnboardingLock = () => {
   const [percent, setPercent] = useState(null);
-  const [role, setRole] = useState(localStorage.getItem('role') || '');
   const [kycVerified, setKycVerified] = useState(false);
 
   useEffect(() => {
@@ -149,15 +148,14 @@ export const useOnboardingLock = () => {
       .then((d) => {
         setPercent(Number(d.percent) || 0);
         setKycVerified(Boolean(d.kycVerified));
-        if (d.role) setRole(d.role);
       })
       .catch(() => setPercent(0));
   }, []);
 
-  const locked = (link) => percent != null && isDashboardLinkLocked(link, role, kycVerified);
+  const locked = (link) => percent != null && isDashboardLinkLocked(link, kycVerified);
   const block = (e) => {
     e?.preventDefault?.();
     toast.error(FILL_ONBOARDING_MSG);
   };
-  return { locked, block, percent, role };
+  return { locked, block, percent };
 };
