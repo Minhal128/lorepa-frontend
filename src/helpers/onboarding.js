@@ -116,7 +116,10 @@ export const fetchOnboarding = async (userId) => {
   return deriveOnboarding(userId, account);
 };
 
-export const FILL_ONBOARDING_MSG = 'Admin verification pending - your dashboard unlocks once approved';
+export const lockMessage = (link) =>
+  link === 'listing'
+    ? 'Admin verification pending - you can list a trailer once approved'
+    : 'Upload your documents first';
 
 export const showOnboardingWelcomeToast = () => {
   const lang = localStorage.getItem('lang') || 'fr';
@@ -133,13 +136,23 @@ export const welcomeIfOnboardingDone = (percent, userId) => {
   return true;
 };
 
-// Nothing opens until an admin verifies the account. Profile is the one way in -
-// that is where the KYC documents get uploaded.
-export const isDashboardLinkLocked = (link, kycVerified) => !kycVerified && link !== 'profile';
+// Documents are the last step the user controls - the trailer step is the admin's
+// call. So the dashboard and the profile nag key off this, not off percent: an owner
+// cannot reach 100% until an admin approves a trailer they are not allowed to list yet.
+// kycVerified short-circuits it: an admin who already approved the account has seen
+// the documents, whatever the step flags say about legacy field names.
+export const isUserOnboardingDone = (d) => Boolean(d?.kycVerified || d?.steps?.documentsUploaded);
+
+export const isDashboardLinkLocked = (link, done, kycVerified) => {
+  if (link === 'profile') return false;
+  if (link === 'listing') return !kycVerified;
+  return !done;
+};
 
 export const useOnboardingLock = () => {
   const [percent, setPercent] = useState(null);
   const [kycVerified, setKycVerified] = useState(false);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     const id = localStorage.getItem('userId');
@@ -148,14 +161,15 @@ export const useOnboardingLock = () => {
       .then((d) => {
         setPercent(Number(d.percent) || 0);
         setKycVerified(Boolean(d.kycVerified));
+        setDone(isUserOnboardingDone(d));
       })
       .catch(() => setPercent(0));
   }, []);
 
-  const locked = (link) => percent != null && isDashboardLinkLocked(link, kycVerified);
-  const block = (e) => {
+  const locked = (link) => percent != null && isDashboardLinkLocked(link, done, kycVerified);
+  const block = (e, link) => {
     e?.preventDefault?.();
-    toast.error(FILL_ONBOARDING_MSG);
+    toast.error(lockMessage(link));
   };
-  return { locked, block, percent };
+  return { locked, block, percent, done };
 };

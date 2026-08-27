@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { FiBell, FiCheck, FiMail, FiUploadCloud, FiTruck, FiLock, FiChevronRight, FiChevronDown, FiAlertTriangle, FiExternalLink, FiHeadphones, FiShield } from 'react-icons/fi';
@@ -21,6 +21,8 @@ const glassSoft = 'border border-white/40 bg-white/40 shadow-sm backdrop-blur-lg
 
 const OnboardingPage = () => {
   const nav = useNavigate();
+  const loc = useLocation();
+  const justUploaded = Boolean(loc.state?.justUploaded);
   const userId = localStorage.getItem('userId');
   const [lang, setLang] = useState(localStorage.getItem('lang') || 'fr');
   const [showLanguages, setShowLanguages] = useState(false);
@@ -55,13 +57,22 @@ const OnboardingPage = () => {
       .then((payload) => {
         setData((prev) => ({ ...prev, ...payload }));
         const role = payload.role || localStorage.getItem('role');
-        if (payload.percent >= 100) {
+        if (payload.percent >= 100 && !justUploaded) {
           welcomeIfOnboardingDone(payload.percent, userId);
           nav(role === 'owner' ? '/seller/dashboard/home' : '/user/dashboard/home', { replace: true });
         }
       })
       .catch(() => toast.error(t.loadFailed));
   }, [userId]);
+
+  // Came straight back from the document upload: play the tick, then hand over.
+  useEffect(() => {
+    if (!justUploaded) return;
+    const id = setTimeout(() => {
+      nav(localStorage.getItem('role') === 'owner' ? '/seller/dashboard/home' : '/user/dashboard/home', { replace: true });
+    }, 1900);
+    return () => clearTimeout(id);
+  }, [justUploaded, nav]);
 
   const isOwner = data.role === 'owner';
   const dashboard = isOwner ? '/seller/dashboard' : '/user/dashboard';
@@ -82,6 +93,38 @@ const OnboardingPage = () => {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-[#b8d0ff] via-[#e8efff] to-[#c5daf8] px-3 py-4 sm:px-6 sm:py-8">
+      {justUploaded && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[60] grid place-items-center bg-white/75 backdrop-blur-md"
+        >
+          <div className="flex flex-col items-center gap-5">
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: [0, 1.15, 1] }}
+              transition={{ duration: 0.55, ease: 'easeOut' }}
+              className="grid h-28 w-28 place-items-center rounded-full bg-green-500 text-white shadow-2xl shadow-green-500/40"
+            >
+              <motion.span
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.3, type: 'spring', stiffness: 300, damping: 14 }}
+              >
+                <FiCheck className="h-14 w-14" strokeWidth={3} />
+              </motion.span>
+            </motion.span>
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="text-lg font-bold text-gray-800"
+            >
+              {t.completed}
+            </motion.p>
+          </div>
+        </motion.div>
+      )}
       {/* Ambient blobs — glass needs something to blur */}
       <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-blue-400/40 blur-3xl" />
       <div className="pointer-events-none absolute -right-16 top-1/4 h-80 w-80 rounded-full bg-indigo-300/35 blur-3xl" />

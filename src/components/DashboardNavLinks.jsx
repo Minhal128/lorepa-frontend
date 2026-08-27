@@ -22,7 +22,7 @@ const DashboardNavLinks = ({ items, prefix, active, onNavigate, t }) => {
 
     if (isLocked) {
       return (
-        <button key={i.id} type="button" onClick={block} className={className}>
+        <button key={i.id} type="button" onClick={(e) => block(e, i.link)} className={className}>
           {inner}
         </button>
       );
