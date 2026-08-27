@@ -27,8 +27,13 @@ const isApproved = (trailer) => /^approved$/i.test(String(trailer?.status || '')
 
 export const normalizeOnboarding = (raw = {}, account = {}) => {
   const src = raw.steps || {};
+  const kycVerified = Boolean(raw.kycVerified) || isKycApproved(account);
   const documentsUploaded = any(src, ['documentsUploaded', 'documentsUploaded']);
-  const trailerListed = any(src, ['trailerListed', 'trailerListed']);
+  // Listing is the admin's call - the step cannot complete before verification.
+  // listingReady is what the user themselves did; the legacy emailVerified
+  // fallback below keys off that, not off the gated step.
+  const listingReady = any(src, ['trailerListed']);
+  const trailerListed = kycVerified && listingReady;
   const trailerPending = any(src, ['trailerPending']);
   const steps = {
     accountCreated: true,
@@ -37,7 +42,7 @@ export const normalizeOnboarding = (raw = {}, account = {}) => {
       any(src, ['emailVerified', 'emailVerified']) ||
       emailVerifiedOf(account) ||
       // submitted is enough here - email verification is not the admin's call
-      (documentsUploaded && (trailerListed || trailerPending)),
+      (documentsUploaded && (listingReady || trailerPending)),
     documentsUploaded,
     trailerListed,
     firstRental: any(src, ['firstRental', 'firstRental']),
@@ -53,7 +58,7 @@ export const normalizeOnboarding = (raw = {}, account = {}) => {
         ? raw.completedAt || account.onboarding?.completedAt || new Date().toISOString()
         : null,
     steps,
-    kycVerified: Boolean(raw.kycVerified) || isKycApproved(account),
+    kycVerified,
     role: raw.role || account.role,
     name: raw.name || account.name,
     profilePicture: raw.profilePicture || account.profilePicture,

@@ -65,15 +65,6 @@ const OnboardingPage = () => {
       .catch(() => toast.error(t.loadFailed));
   }, [userId]);
 
-  // Came straight back from the document upload: play the tick, then hand over.
-  useEffect(() => {
-    if (!justUploaded) return;
-    const id = setTimeout(() => {
-      nav(localStorage.getItem('role') === 'owner' ? '/seller/dashboard/home' : '/user/dashboard/home', { replace: true });
-    }, 1900);
-    return () => clearTimeout(id);
-  }, [justUploaded, nav]);
-
   const isOwner = data.role === 'owner';
   const dashboard = isOwner ? '/seller/dashboard' : '/user/dashboard';
   const avatarSrc = data.profilePicture?.trim() ? data.profilePicture : AvatarIcon;
@@ -87,7 +78,9 @@ const OnboardingPage = () => {
   const statusOf = (index) => {
     const key = STEP_META[index].key;
     if (data.steps?.[key]) return 'done';
-    if (key === 'trailerListed' && data.steps?.trailerPending) return 'pending';
+    // listing is the admin's call: pending once the user has done their part
+    if (key === 'trailerListed' && (data.steps?.trailerPending || !data.kycVerified))
+      return data.steps?.documentsUploaded ? 'pending' : 'locked';
     return index + 1 === data.step ? 'current' : 'locked';
   };
 
@@ -114,14 +107,17 @@ const OnboardingPage = () => {
                 <FiCheck className="h-14 w-14" strokeWidth={3} />
               </motion.span>
             </motion.span>
-            <motion.p
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="text-lg font-bold text-gray-800"
+            {/* ponytail: the button is the only way out of a full-screen overlay,
+                so it does not ride on an animation - rAF is paused while the tab
+                is hidden and a delayed fade-in leaves it at opacity 0. */}
+            <p className="text-lg font-bold text-gray-800">{t.completed}</p>
+            <button
+              type="button"
+              onClick={() => nav(`${dashboard}/home`, { replace: true })}
+              className="rounded-xl bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-700 active:scale-95"
             >
-              {t.completed}
-            </motion.p>
+              {t.skip}
+            </button>
           </div>
         </motion.div>
       )}

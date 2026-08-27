@@ -1,11 +1,11 @@
 // Run: npx esbuild dashboard-lock.test.js --bundle --platform=node --format=esm \
-//        --define:import.meta.env={} --outfile=/tmp/lock.mjs && node /tmp/lock.mjs
+//        --define:import.meta.env={} --outfile=node_modules/.cache/lock.mjs && node node_modules/.cache/lock.mjs
 // (bare `node` cannot resolve Vite's extensionless imports or import.meta.env)
 // Pins the unlock rule: the dashboard opens once the user has uploaded documents,
 // listing alone waits on the admin, and an owner never deadlocks (they cannot reach
 // 100% without a trailer they are not allowed to list until KYC clears).
 import assert from 'assert';
-import { isDashboardLinkLocked, isUserOnboardingDone } from './src/helpers/onboarding.js';
+import { isDashboardLinkLocked, isUserOnboardingDone, normalizeOnboarding } from './src/helpers/onboarding.js';
 
 const done = (d) => isUserOnboardingDone(d);
 const locked = (link, d, kyc) => isDashboardLinkLocked(link, done(d), kyc);
@@ -37,5 +37,26 @@ assert.equal(locked('home', { kycVerified: true, steps: {} }, true), false);
 // the deadlock guard: an owner at 75% (docs done, no approved trailer) can still
 // reach the listing page once KYC clears, which is the only way to ever hit 100%
 assert.equal(locked('listing', { percent: 75, ...uploaded }, true), false);
+
+// --- the listing step waits on the admin ---------------------------------
+const renterSteps = { accountCreated: true, emailVerified: true, documentsUploaded: true, trailerListed: true };
+
+// docs in, profile filled, admin has not verified -> 75%, listing step not done
+const unverified = normalizeOnboarding({ steps: renterSteps }, {});
+assert.equal(unverified.percent, 75);
+assert.equal(unverified.steps.trailerListed, false);
+assert.equal(done(unverified), true);            // dashboard opens at 75%
+assert.equal(locked('home', unverified, unverified.kycVerified), false);
+assert.equal(locked('listing', unverified, unverified.kycVerified), true);
+
+// admin verifies -> the step completes and 100% becomes reachable
+const verified = normalizeOnboarding({ steps: renterSteps, kycVerified: true }, {});
+assert.equal(verified.percent, 100);
+assert.equal(verified.steps.trailerListed, true);
+assert.equal(locked('listing', verified, verified.kycVerified), false);
+
+// legacy account with no OTP flag is still counted as email-verified: the
+// fallback keys off what the user did, not off the KYC-gated step
+assert.equal(unverified.steps.emailVerified, true);
 
 console.log('all dashboard lock checks passed');

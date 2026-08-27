@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Sidebar from './sidebar/Sidebar';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
-import CompleteProfileModal from './CompleteProfileModal';
 import { lockMessage, useOnboardingLock } from '../../helpers/onboarding';
 import toast from 'react-hot-toast';
 
 const Layout = () => {
   const location = useLocation();
   const nav = useNavigate();
-  const [dismissed, setDismissed] = useState(false);
-  const onProfile = location.pathname.includes('/profile');
-  const { locked, percent, done } = useOnboardingLock();
+  const { locked, percent } = useOnboardingLock();
   const page = location.pathname.split('/')[3] || 'home';
 
   useEffect(() => {
@@ -32,11 +29,6 @@ const Layout = () => {
           <Outlet />
         </div>
       </div>
-
-      <CompleteProfileModal
-        isOpen={percent != null && !done && !dismissed && !onProfile}
-        onClose={() => setDismissed(true)}
-      />
     </div>
   );
 }
