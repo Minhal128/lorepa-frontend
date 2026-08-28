@@ -15,6 +15,8 @@ export const onboardingTranslations = {
     you: "You",
     notifications: "Notifications",
     loadFailed: "Failed to load your onboarding progress",
+    listingLocked: "Admin verification pending - you can list a trailer once approved",
+    documentsLocked: "Upload your documents first",
     welcomeCompleteTitle: "Onboarding 100% complete",
     welcomeCompleteBody: "Welcome to Lorepa — you're all set.",
     steps: {
@@ -54,6 +56,8 @@ export const onboardingTranslations = {
     you: "Vous",
     notifications: "Notifications",
     loadFailed: "Impossible de charger votre progression",
+    listingLocked: "Vérification administrative en attente — vous pourrez publier une remorque après approbation",
+    documentsLocked: "Téléversez d'abord vos documents",
     welcomeCompleteTitle: "Onboarding 100 % terminé",
     welcomeCompleteBody: "Bienvenue sur Lorepa — tout est prêt.",
     steps: {

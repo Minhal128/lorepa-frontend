@@ -124,10 +124,11 @@ export const fetchOnboarding = async (userId) => {
   return deriveOnboarding(userId, account);
 };
 
-export const lockMessage = (link) =>
-  link === 'listing'
-    ? 'Admin verification pending - you can list a trailer once approved'
-    : 'Upload your documents first';
+export const lockMessage = (link) => {
+  const lang = localStorage.getItem('lang') || 'fr';
+  const t = onboardingTranslations[lang] || onboardingTranslations.fr;
+  return link === 'listing' ? t.listingLocked : t.documentsLocked;
+};
 
 export const showOnboardingWelcomeToast = () => {
   const lang = localStorage.getItem('lang') || 'fr';
