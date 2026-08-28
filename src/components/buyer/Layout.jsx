@@ -4,12 +4,14 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { lockMessage, useOnboardingLock } from '../../helpers/onboarding';
 import toast from 'react-hot-toast';
+import { useInactivityLogout } from '../../helpers/inactivityLogout';
 
 const Layout = () => {
   const location = useLocation();
   const nav = useNavigate();
   const { locked, percent } = useOnboardingLock();
   const page = location.pathname.split('/')[3] || 'home';
+  useInactivityLogout();
 
   useEffect(() => {
     if (percent == null) return;
