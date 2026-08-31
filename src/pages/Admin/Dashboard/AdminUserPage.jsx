@@ -12,6 +12,8 @@ const AdminUserPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [modalImage, setModalImage] = useState(null); // <-- NEW for modal image
   const [updatingUserId, setUpdatingUserId] = useState(null);
+  const [purgeTarget, setPurgeTarget] = useState(null);
+  const [purgeConfirmText, setPurgeConfirmText] = useState('');
 
   const lang = localStorage.getItem("lang") || "fr";
   const t = adminTranslations[lang] || adminTranslations.en;
@@ -148,6 +150,31 @@ const AdminUserPage = () => {
     }
   };
 
+  // Permanent, and separate from the reversible Suspend above. The typed
+  // confirmation is the only thing standing between a click and a wiped account.
+  const PURGE_CONFIRM_WORD = 'DELETE';
+
+  const closePurgeModal = () => {
+    setPurgeTarget(null);
+    setPurgeConfirmText('');
+  };
+
+  const handlePurgeUser = async () => {
+    const user = purgeTarget;
+    if (!user?._id || purgeConfirmText.trim().toUpperCase() !== PURGE_CONFIRM_WORD) return;
+    setUpdatingUserId(user._id);
+    try {
+      await axios.delete(`${config.baseUrl}/account/purge/account/${user._id}`);
+      toast.success(t.userDeletedSuccess);
+      closePurgeModal();
+      await fetchUsers();
+    } catch (err) {
+      toast.error(err?.response?.data?.msg || t.failedToDeleteUser);
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
+
   const handleVerifyKyc = async (user) => {
     if (!user?._id || user.kycVerified) return;
     setUpdatingUserId(user._id);
@@ -164,6 +191,52 @@ const AdminUserPage = () => {
 
   return (
     <div className='min-h-screen space-y-8 pb-10'>
+      {/* Permanent delete confirmation - typed word required, no accidental clicks */}
+      {purgeTarget && (
+        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm flex items-center justify-center z-[110] p-4">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 className="text-lg font-black text-gray-900">{t.deleteUser}</h3>
+            <p className="text-sm text-gray-600">
+              {t.deleteUserWarning}
+            </p>
+            <div className="rounded-2xl bg-gray-50 border border-gray-100 px-4 py-3">
+              <p className="text-sm font-bold text-gray-900">{purgeTarget.name}</p>
+              <p className="text-xs text-gray-500">{purgeTarget.email}</p>
+            </div>
+            <label className="block text-xs font-bold text-gray-700">
+              {t.deleteUserConfirmLabel}
+              <input
+                type="text"
+                value={purgeConfirmText}
+                onChange={(e) => setPurgeConfirmText(e.target.value)}
+                placeholder={PURGE_CONFIRM_WORD}
+                className="mt-1 w-full px-4 py-2.5 rounded-2xl border border-gray-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-red-200"
+              />
+            </label>
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={closePurgeModal}
+                className="flex-1 py-3 rounded-2xl font-bold text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+              >
+                {t.cancel}
+              </button>
+              <button
+                onClick={handlePurgeUser}
+                disabled={
+                  purgeConfirmText.trim().toUpperCase() !== PURGE_CONFIRM_WORD ||
+                  updatingUserId === purgeTarget._id
+                }
+                className={`flex-1 py-3 rounded-2xl font-bold text-sm bg-red-600 text-white hover:bg-red-700 transition ${purgeConfirmText.trim().toUpperCase() !== PURGE_CONFIRM_WORD || updatingUserId === purgeTarget._id
+                  ? 'opacity-40 cursor-not-allowed'
+                  : ''}`}
+              >
+                {t.deleteUser}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Image Modal */}
       {modalImage && (
         <div
@@ -311,6 +384,14 @@ const AdminUserPage = () => {
                           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                         )}
                       </button>
+                      <button
+                        onClick={() => setPurgeTarget(user)}
+                        disabled={updatingUserId === user._id}
+                        title={t.deleteUser}
+                        className={`p-2 rounded-xl transition bg-red-600 text-white hover:bg-red-700 ${updatingUserId === user._id ? 'opacity-40 cursor-not-allowed' : ''}`}
+                      >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -405,6 +486,13 @@ const AdminUserPage = () => {
                   className={`w-full py-3 rounded-2xl font-bold text-sm transition ${user.kycVerified ? 'bg-indigo-100 text-indigo-700' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'} ${updatingUserId === user._id ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
                   {`KYC: ${user.kycVerified ? t.verified : `${t.pending} · ${t.approve}`}`}
+                </button>
+                <button
+                  onClick={() => setPurgeTarget(user)}
+                  disabled={updatingUserId === user._id}
+                  className={`w-full py-3 rounded-2xl font-bold text-sm transition bg-red-600 text-white hover:bg-red-700 ${updatingUserId === user._id ? 'opacity-40 cursor-not-allowed' : ''}`}
+                >
+                  {t.deleteUser}
                 </button>
               </div>
             </div>
