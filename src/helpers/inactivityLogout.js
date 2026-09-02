@@ -1,5 +1,4 @@
-/** TEST: 1 minute. Restore to `30 * 60 * 1000` after verifying the prompt. */
-export const INACTIVITY_LIMIT_MS = 1 * 60 * 1000;
+export const INACTIVITY_LIMIT_MS = 30 * 60 * 1000;
 
 const ACTIVITY_EVENTS = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'];
 
