@@ -1,7 +1,5 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-export const INACTIVITY_LIMIT_MS = 30 * 60 * 1000;
+/** TEST: 1 minute. Restore to `30 * 60 * 1000` after verifying the prompt. */
+export const INACTIVITY_LIMIT_MS = 1 * 60 * 1000;
 
 const ACTIVITY_EVENTS = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'];
 
@@ -12,25 +10,13 @@ export const startInactivityLogout = (onTimeout, target = window) => {
     timeoutId = setTimeout(onTimeout, INACTIVITY_LIMIT_MS);
   };
 
-  ACTIVITY_EVENTS.forEach((event) => target.addEventListener(event, resetTimer));
+  ACTIVITY_EVENTS.forEach((event) =>
+    target.addEventListener(event, resetTimer, { passive: true })
+  );
   resetTimer();
 
   return () => {
     clearTimeout(timeoutId);
     ACTIVITY_EVENTS.forEach((event) => target.removeEventListener(event, resetTimer));
   };
-};
-
-export const useInactivityLogout = () => {
-  const navigate = useNavigate();
-
-  useEffect(
-    () =>
-      startInactivityLogout(() => {
-        localStorage.removeItem('userId');
-        localStorage.removeItem('role');
-        navigate('/', { replace: true });
-      }),
-    [navigate]
-  );
 };

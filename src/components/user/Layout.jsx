@@ -4,14 +4,13 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import { lockMessage, useOnboardingLock } from '../../helpers/onboarding';
 import toast from 'react-hot-toast';
-import { useInactivityLogout } from '../../helpers/inactivityLogout';
+import { InactivityLogoutGate } from '../../helpers/InactivityLogoutGate';
 
 const Layout = () => {
   const location = useLocation();
   const nav = useNavigate();
   const { locked, percent } = useOnboardingLock();
   const page = location.pathname.split('/')[3] || 'home';
-  useInactivityLogout();
 
   useEffect(() => {
     if (percent == null) return;
@@ -23,6 +22,7 @@ const Layout = () => {
 
   return (
     <div className='flex flex-col lg:flex-row items-start bg-[#fff] w-full min-h-screen'>
+      <InactivityLogoutGate />
       <Sidebar />
 
       <div className='flex-1 w-full lg:h-screen overflow-y-auto bg-[#F9FAFB]'>
