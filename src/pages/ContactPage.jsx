@@ -105,11 +105,11 @@ const ContactPage = () => {
                     </motion.p>
 
                     <motion.div className="space-y-4" variants={fadeInUp}>
-                        <div className="flex items-center text-gray-700 text-lg">
+                        <div className="flex items-center justify-center text-gray-700 text-lg">
                             <FaPhone className="mr-3" size={20} />
                             <span>{translations.phoneNumber}</span>
                         </div>
-                        <div className="flex items-center text-gray-700 text-lg">
+                        <div className="flex items-center justify-center text-gray-700 text-lg">
                             <FaEnvelope className="mr-3" size={20} />
                             <span>{translations.email}</span>
                         </div>
