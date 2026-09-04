@@ -14,7 +14,7 @@ const card = 'bg-white rounded-[32px] shadow-[0_16px_40px_rgba(0,0,0,0.16)]';
 const pill = 'h-10 w-10 rounded-[12px] bg-white/70 backdrop-blur-sm border border-[#2563EB]/25 text-[#2563EB] flex items-center justify-center lg:bg-white/15 lg:border-white/90 lg:text-white';
 const navOutline = 'hidden md:flex h-11 px-5 rounded-xl border-2 border-[#2563EB] text-[#2563EB] text-[14px] font-semibold items-center hover:bg-[#2563EB]/10 lg:border-white lg:text-white lg:hover:bg-white/10';
 const bar = 'bg-black/55 backdrop-blur-[20px] border border-white/20';
-const glassField = 'peer w-full h-11 pl-11 pr-10 pt-3.5 rounded-xl bg-white border border-[#E5E7EB] text-[14px] text-black outline-none transition-colors focus:border-[#2563EB]';
+const glassField = 'peer w-full h-11 pl-11 pr-10 pt-5 pb-1 rounded-xl bg-white border border-[#E5E7EB] text-[14px] leading-none text-black outline-none transition-colors focus:border-[#2563EB]';
 
 const GoogleG = () => (
   <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
@@ -256,7 +256,7 @@ const Field = ({ icon: Icon, label, right, required = true, children }) => (
       <Icon className="w-[17px] h-[17px]" strokeWidth={1.8} />
     </span>
     {children}
-    <label className="pointer-events-none absolute left-11 top-[5px] text-[9px] font-medium text-black/60 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[13px] peer-focus:top-[5px] peer-focus:translate-y-0 peer-focus:text-[9px]">
+    <label className="pointer-events-none absolute left-11 top-[3px] text-[9px] font-medium text-black/60 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-[13px] peer-focus:top-[3px] peer-focus:translate-y-0 peer-focus:text-[9px]">
       {label}{required && <span className="text-red-500 ml-1">*</span>}
     </label>
     {right}
