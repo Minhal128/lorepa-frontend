@@ -9,7 +9,7 @@ import config from '../config';
 import toast from 'react-hot-toast';
 import { trailersListingTranslations } from '../translations/trailerListing';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { MapCenterHandler, MapResizer } from '../components/MapComponents';
+import { MapCenterHandler, MapResizer, MapBoundsHandler } from '../components/MapComponents';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import BookingModal from '../components/BookingModel';
@@ -365,15 +365,22 @@ const TrailersListing = () => {
             .split(/[,\s]+/)
             .filter((part) => part.length >= 2);
 
-          allTrailers = allData.filter((t) => {
-            const haystack = normalizeText(`${t.city || ''} ${t.state || ''} ${t.country || ''}`);
-            if (searchParts.length === 0) return true;
-
-            const matchedParts = searchParts.filter((part) => haystack.includes(part)).length;
-            const minRequiredMatches = searchParts.length === 1 ? 1 : Math.min(2, searchParts.length);
-
-            return matchedParts >= minRequiredMatches;
-          });
+          const searchCity = searchParts[0] || '';
+          if (!searchCity) {
+            allTrailers = allData;
+          } else {
+            const cityHits = allData.filter((t) =>
+              normalizeText(t.city || '').includes(searchCity)
+            );
+            allTrailers =
+              cityHits.length > 0
+                ? cityHits
+                : allData.filter((t) =>
+                    normalizeText(`${t.city || ''} ${t.state || ''} ${t.country || ''}`).includes(
+                      searchCity
+                    )
+                  );
+          }
         }
       }
 
@@ -657,12 +664,22 @@ const TrailersListing = () => {
                 />
                 <MapCenterHandler center={mapCenter} />
                 <MapResizer showMap={showMap} />
+                <MapBoundsHandler
+                  positions={filteredTrailers
+                    .map((trailer) => {
+                      const lat = parseFloat(trailer.latitude);
+                      const lng = parseFloat(trailer.longitude);
+                      return Number.isFinite(lat) && Number.isFinite(lng) ? [lat, lng] : null;
+                    })
+                    .filter(Boolean)}
+                />
 
                 {/* Red marker for search location */}
                 {cityFromQuery && mapCenter ? (
                   <Marker
                     position={[mapCenter.lat, mapCenter.lng]}
                     icon={createSearchLocationIcon()}
+                    zIndexOffset={100}
                   >
                     <Popup>
                       <div className="p-1">
@@ -685,6 +702,7 @@ const TrailersListing = () => {
                       key={trailer._id}
                       position={[lat, lng]}
                       icon={createPriceIcon(trailer.dailyRate)}
+                      zIndexOffset={500}
                       eventHandlers={{
                         click: () => setActiveTrailer(trailer)
                       }}

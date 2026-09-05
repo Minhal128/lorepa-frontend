@@ -12,6 +12,20 @@ export const MapCenterHandler = ({ center }) => {
   return null;
 };
 
+// Fit map to listing markers so none sit off-screen
+export const MapBoundsHandler = ({ positions }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (!positions?.length) return;
+    if (positions.length === 1) {
+      map.setView(positions[0], Math.max(map.getZoom(), 11));
+      return;
+    }
+    map.fitBounds(positions, { padding: [40, 40], maxZoom: 12 });
+  }, [positions, map]);
+  return null;
+};
+
 // Component to handle map resizing when toggled
 export const MapResizer = ({ showMap }) => {
   const map = useMap();
