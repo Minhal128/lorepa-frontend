@@ -230,6 +230,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
     setExistingImages(existingImages.filter((i) => i !== img));
 
   const handleSubmitTrailer = async () => {
+    if (loading) return;
     // If user typed something but never selected/resolved it to coords, try to geocode now
     if ((!location.latitude || !location.longitude) && locationInput.trim().length >= 2) {
       const toastId = toast.loading(t("searchingLocations") || "Resolving location...");
