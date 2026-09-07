@@ -35,6 +35,7 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
     const [photoSubTab, setPhotoSubTab] = useState("post-rental");
     const [showPhotoBanner, setShowPhotoBanner] = useState(true);
     const [lang, setLang] = useState(getCurrentLang());
+    const [selectedAccessoryIds, setSelectedAccessoryIds] = useState([]);
 
     const t = userReservationTranslations[lang] || userReservationTranslations.fr;
 
@@ -140,7 +141,6 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
     const canUploadCheckOut = reservation?.status === "paid";
 
     const [isChangeDrawerOpen, setIsChangeDrawerOpen] = useState(false);
-    const [selectedAccessoryIds, setSelectedAccessoryIds] = useState([]);
     const [contractChecked, setContractChecked] = useState(false);
     const [signingContract, setSigningContract] = useState(false);
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
