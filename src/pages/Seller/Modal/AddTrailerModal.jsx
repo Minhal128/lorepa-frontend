@@ -15,6 +15,7 @@ import config from "../../../config";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { trailerTranslations } from "../Dashboard/translation/addTrailerTranslation";
+import AccessoriesEditor from "../../../components/AccessoriesEditor";
 const normalizeClosedDates = (input) => {
   if (!input) return [];
 
@@ -114,6 +115,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
   });
   const [dailyRate, setDailyRate] = useState(0);
   const [depositRate, setDepositRate] = useState(0);
+  const [accessories, setAccessories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -124,6 +126,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
 
   const lang = localStorage.getItem("lang") || "fr";
   const t = (key) => trailerTranslations[lang]?.[key] || key;
+  const accessoryLabels = trailerTranslations[lang]?.accessories || trailerTranslations.fr.accessories;
 
   useEffect(() => {
     if (trailerData) {
@@ -144,6 +147,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
       });
       setDailyRate(trailerData.dailyRate || 0);
       setDepositRate(trailerData.depositRate || 0);
+      setAccessories(trailerData.accessories || []);
       setHitchType(trailerData.hitchType || "");
       setLightPlug(trailerData.lightPlug || "");
       setWeightCapacity(trailerData.weightCapacity || "");
@@ -262,6 +266,7 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
     formData.append("state", location.state);
     formData.append("dailyRate", dailyRate);
     formData.append("depositRate", depositRate);
+    formData.append("accessories", JSON.stringify(accessories));
     formData.append("closedDates", JSON.stringify(closedDates));
     formData.append("hitchType", hitchType);
     formData.append("lightPlug", lightPlug);
@@ -765,6 +770,11 @@ const AddTrailerModal = ({ isOpen, onClose, trailerData }) => {
                     />
                   </div>
                 </div>
+                <AccessoriesEditor
+                  value={accessories}
+                  onChange={setAccessories}
+                  labels={accessoryLabels}
+                />
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium">{t("make")}</label>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { trackInitiateCheckout } from '../utils/metaPixel';
+import { quote } from '../utils/pricing';
 
 const calculatePrice = (startDate, endDate, dailyRate) => {
     if (!startDate || !endDate || !dailyRate) return 0;
@@ -57,9 +58,8 @@ const BookingModal = ({ isOpen, onClose, trailer, translations, onSubmit }) => {
         return calculatePrice(startDate, endDate, trailer?.dailyRate);
     }, [startDate, endDate, trailer?.dailyRate]);
 
-    const SERVICE_FEE_RATE = 0.05;
-    const serviceFee = parseFloat((price * SERVICE_FEE_RATE).toFixed(2));
-    const totalWithFee = parseFloat((price + serviceFee).toFixed(2));
+    // Accessories are chosen later, at checkout, so a request is quoted on rental alone.
+    const { service_fee: serviceFee, total_with_fee: totalWithFee } = quote(price);
     const depositRate = parseFloat(trailer?.depositRate || 0);
 
     const dailyRate = trailer?.dailyRate || 0;

@@ -107,7 +107,8 @@ export default function App() {
 
   const amount =
     data?.booking?.filter(i => i?.status === "completed")
-      .reduce((a, c) => a + c?.price, 0) || 0;
+      // Accessory revenue is the owner's too; the 5% service fee is not.
+      .reduce((a, c) => a + (c?.price || 0) + (c?.accessories_total || 0), 0) || 0;
 
   return (
     <div className="max-w-7xl mx-auto">

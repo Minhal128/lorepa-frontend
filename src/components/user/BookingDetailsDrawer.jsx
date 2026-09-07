@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import RequestBookingChangeDrawer from "./RequestBookingChangeDrawer";
 import { userReservationTranslations } from "../../pages/User/Dashboard/translation/userReservationTranslations";
+import { quote, activeAccessories } from "../../utils/pricing";
 
 const PHOTO_CATEGORIES = ["Front side", "Back side", "Left side", "Right side", "Interior", "Hitch / Coupling", "Tires", "License Plate"];
 
@@ -109,12 +110,37 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
         (1000 * 60 * 60 * 24)
     );
 
+    // Accessories are flat one-time fees picked at checkout. Once the booking is
+    // paid, the snapshot stored on it is what was actually charged, so it wins
+    // over whatever the owner is offering today.
+    const isPaid = ["paid", "completed"].includes(reservation?.status);
+    const offeredAccessories = activeAccessories(reservation?.trailerId);
+    const chosenAccessories = isPaid
+        ? (reservation?.accessories || [])
+        : offeredAccessories.filter((a) => selectedAccessoryIds.includes(String(a._id)));
+
+    const live = quote(reservation?.price, chosenAccessories);
+    const summary = isPaid
+        ? {
+            ...live,
+            accessories_total: reservation?.accessories_total || live.accessories_total,
+            service_fee: reservation?.service_fee || live.service_fee,
+            total_with_fee: reservation?.total_with_fee || live.total_with_fee,
+        }
+        : live;
+
+    const toggleAccessory = (id) =>
+        setSelectedAccessoryIds((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+        );
+
     // User (renter) uploads ONLY post-rental (check-out) photos — pre-rental is for the owner
     const canUploadCheckIn = false;
     // User uploads check-out photos when status is paid
     const canUploadCheckOut = reservation?.status === "paid";
 
     const [isChangeDrawerOpen, setIsChangeDrawerOpen] = useState(false);
+    const [selectedAccessoryIds, setSelectedAccessoryIds] = useState([]);
     const [contractChecked, setContractChecked] = useState(false);
     const [signingContract, setSigningContract] = useState(false);
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -182,6 +208,7 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
                 endDate: reservation?.endDate,
                 price: reservation?.price,
                 bookingId: reservation?._id,
+                accessoryIds: selectedAccessoryIds,
             });
             toast.dismiss(loadingToast);
             window.location.href = data.url;
@@ -419,13 +446,28 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
                                                     <span>{t.rentalFeeLabel || "Rental fee"} ({rentalDays} {t.days || "days"})</span>
                                                     <span>${parseFloat(reservation?.price || 0).toFixed(2)}</span>
                                                 </div>
+                                                {chosenAccessories.length > 0 && (
+                                                    <>
+                                                        <div className="pt-1 font-medium text-gray-800">{t.optionalAccessories || "Optional accessories"}</div>
+                                                        {chosenAccessories.map((a, i) => (
+                                                            <div key={a._id || a.accessoryId || i} className="flex justify-between pl-3">
+                                                                <span>{a.name} <span className="text-gray-500">({t.oneTimeFeeShort || "one-time fee"})</span></span>
+                                                                <span>${parseFloat(a.price || 0).toFixed(2)}</span>
+                                                            </div>
+                                                        ))}
+                                                    </>
+                                                )}
+                                                <div className="flex justify-between border-t border-dashed pt-2">
+                                                    <span>{t.subtotalLabel || "Subtotal"}</span>
+                                                    <span>${summary.subtotal.toFixed(2)}</span>
+                                                </div>
                                                 <div className="flex justify-between border-b border-dashed pb-2">
                                                     <span>{t.loreparServiceFeeLabel || "Lorepa Service Fee (5%)"}</span>
-                                                    <span>+${parseFloat(reservation?.service_fee || (reservation?.price * 0.05) || 0).toFixed(2)}</span>
+                                                    <span>+${summary.service_fee.toFixed(2)}</span>
                                                 </div>
                                                 <div className="flex justify-between font-semibold text-gray-800">
                                                     <span>{t.totalPayableLabel || "Total Payable"}</span>
-                                                    <span>${parseFloat(reservation?.total_with_fee || (reservation?.price * 1.05) || 0).toFixed(2)}</span>
+                                                    <span>${summary.total_with_fee.toFixed(2)}</span>
                                                 </div>
                                                 {parseFloat(reservation?.trailerId?.depositRate || 0) > 0 && (
                                                     <div className="flex justify-between text-blue-700 border-t border-dashed pt-2">
@@ -516,6 +558,28 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
                                                     <span className="font-semibold">{t.contractSuccessTitle || "Contract Successfully Signed"}</span>
                                                 </div>
                                                 <p className="text-sm text-gray-600">{t.contractSuccessMsg || "Your rental agreement has been submitted. You can now proceed to checkout."}</p>
+
+                                                {offeredAccessories.length > 0 && (
+                                                    <div className="bg-white border border-gray-200 rounded-lg p-3 space-y-3">
+                                                        <p className="font-semibold text-gray-800 text-sm">{t.optionalAccessories || "Optional accessories"}</p>
+                                                        {offeredAccessories.map((a) => (
+                                                            <label key={a._id} className="flex items-start gap-3 cursor-pointer">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={selectedAccessoryIds.includes(String(a._id))}
+                                                                    onChange={() => toggleAccessory(String(a._id))}
+                                                                    className="mt-1 h-4 w-4 accent-blue-600 flex-shrink-0"
+                                                                />
+                                                                <span className="text-sm">
+                                                                    <span className="font-medium text-gray-900">{a.name} — ${parseFloat(a.price || 0).toFixed(2)}</span>
+                                                                    {a.description && <span className="block text-gray-600 text-xs">{a.description}</span>}
+                                                                    <span className="block text-amber-700 text-xs mt-0.5">⚠️ {t.oneTimeFeeNote || "One-time fee — not charged per day"}</span>
+                                                                </span>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                )}
+
                                                 <button onClick={handleProceedToPayment} className="w-full p-3 rounded-lg text-white font-medium bg-blue-600 hover:bg-blue-700 transition">
                                                     {t.proceedToCheckout || "Proceed to Checkout"}
                                                 </button>

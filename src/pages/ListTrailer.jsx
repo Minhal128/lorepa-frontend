@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import { GoAlertFill } from "react-icons/go";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import AccessoriesEditor from '../components/AccessoriesEditor';
 import config from '../config';
 import toast from 'react-hot-toast';
 import { isKycApproved } from '../helpers/kyc';
@@ -58,6 +59,18 @@ const translations = {
         pricingAndTermsDescription: 'Set your pricing and define rental terms for your trailer.',
         dailyRate: 'Daily Rate (CAD)',
         dailyRatePlaceholder: 'e.g., $150.00 CAD',
+        accessories: {
+            title: 'Optional accessories for renters',
+            hint: 'One-time fee — not charged per day.',
+            name: 'Accessory name',
+            namePlaceholder: 'Wheel straps',
+            price: 'Price ($)',
+            description: 'Description (optional)',
+            descriptionPlaceholder: '4 wheel straps included',
+            add: 'Add an accessory',
+            addAnother: 'Add another accessory',
+            remove: 'Remove accessory',
+        },
         weeklyRate: 'Weekly Rate (CAD)',
         weeklyRatePlaceholder: 'e.g., $900.00 CAD',
         monthlyRate: 'Monthly Rate (CAD)',
@@ -134,6 +147,18 @@ const translations = {
         pricingAndTermsDescription: 'Establezca sus precios y defina los términos de alquiler para su remolque.',
         dailyRate: 'Tarifa Diaria (CAD)',
         dailyRatePlaceholder: 'ej., $150.00 CAD',
+        accessories: {
+            title: 'Accesorios opcionales para los arrendatarios',
+            hint: 'Tarifa única — no se cobra por día.',
+            name: 'Nombre del accesorio',
+            namePlaceholder: 'Correas para ruedas',
+            price: 'Precio ($)',
+            description: 'Descripción (opcional)',
+            descriptionPlaceholder: '4 correas para ruedas incluidas',
+            add: 'Añadir un accesorio',
+            addAnother: 'Añadir otro accesorio',
+            remove: 'Eliminar accesorio',
+        },
         weeklyRate: 'Tarifa Semanal (CAD)',
         weeklyRatePlaceholder: 'ej., $900.00 CAD',
         monthlyRate: 'Tarifa Mensual (CAD)',
@@ -210,6 +235,18 @@ const translations = {
         pricingAndTermsDescription: '为您的拖车设置定价并定义租赁条款。',
         dailyRate: '日租金（加元）',
         dailyRatePlaceholder: '例如：$150.00 CAD',
+        accessories: {
+            title: '面向租客的可选配件',
+            hint: '一次性费用 — 非按天收取。',
+            name: '配件名称',
+            namePlaceholder: '轮胎绑带',
+            price: '价格 ($)',
+            description: '描述（可选）',
+            descriptionPlaceholder: '包含 4 根轮胎绑带',
+            add: '添加配件',
+            addAnother: '再添加一个配件',
+            remove: '移除配件',
+        },
         weeklyRate: '周租金（加元）',
         weeklyRatePlaceholder: '例如：$900.00 CAD',
         monthlyRate: '月租金（加元）',
@@ -286,6 +323,18 @@ const translations = {
         pricingAndTermsDescription: 'Définissez vos prix et les conditions de location pour votre remorque.',
         dailyRate: 'Tarif journalier (CAD)',
         dailyRatePlaceholder: 'ex., 150,00 $ CAD',
+        accessories: {
+            title: 'Accessoires optionnels pour les locataires',
+            hint: 'Frais unique — non facturé par jour.',
+            name: 'Nom de l’accessoire',
+            namePlaceholder: 'Sangles de roue',
+            price: 'Prix ($)',
+            description: 'Description (optionnel)',
+            descriptionPlaceholder: '4 sangles de roue incluses',
+            add: 'Ajouter un accessoire',
+            addAnother: 'Ajouter un autre accessoire',
+            remove: 'Retirer l’accessoire',
+        },
         weeklyRate: 'Tarif hebdomadaire (CAD)',
         weeklyRatePlaceholder: 'ex., 900,00 $ CAD',
         monthlyRate: 'Tarif mensuel (CAD)',
@@ -319,6 +368,7 @@ const ListTrailer = () => {
     const nav = useNavigate();
     const [currentStep, setCurrentStep] = useState(0);
     const [images, setImages] = useState([]);
+    const [accessories, setAccessories] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
         category: '',
@@ -483,6 +533,8 @@ const ListTrailer = () => {
                 data.append(key, value);
             });
 
+            data.append("accessories", JSON.stringify(accessories));
+
             images.forEach((img) => {
                 data.append("images", img);
             });
@@ -621,6 +673,14 @@ const ListTrailer = () => {
                             </div>
                         ))}
                     </div>
+
+                    {currentStep === steps.length - 1 && (
+                        <AccessoriesEditor
+                            value={accessories}
+                            onChange={setAccessories}
+                            labels={lang.accessories || {}}
+                        />
+                    )}
 
                     {currentStep === steps.length - 1 && (
                         <div className="mb-6 mobile-form-group">
