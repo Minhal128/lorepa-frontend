@@ -5,148 +5,130 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import config from "../config";
 import { trackPurchase } from "../utils/metaPixel";
 
+const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+const isTransientRequestError = (error) =>
+  !error.response || error.response.status === 429 || error.response.status >= 500;
+
 const PaymentSuccess = () => {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState("processing");
-  const [retryCount, setRetryCount] = useState(0);
+  const [message, setMessage] = useState("Please wait while Stripe verifies your payment.");
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    const confirmBooking = async () => {
-      const bookingId = params.get("bookingId");
-      const sessionId = params.get("session_id");
+    let active = true;
+    let redirectTimer;
+    const bookingId = params.get("bookingId");
+    const sessionId = params.get("session_id");
 
-      if (!bookingId) {
-        // Legacy flow: Create booking from URL params (backward compatibility) 
-        const payload = {
-          trailerId: params.get("trailerId"),
-          user_id: params.get("user"),
-          startDate: params.get("start"),
-          endDate: params.get("end"),
-          price: params.get("price"),
-        };
-
-        try {
-          let res = await axios.post(`${config.baseUrl}/booking/create`, payload);
-          if (res) {
-            toast.success("Réservation confirmée !");
-            navigate("/user/dashboard/reservation");
-          }
-        } catch (err) {
-          toast.error("Booking confirmation failed");
-          navigate("/user/dashboard/reservation");
+    const finish = async () => {
+      if (!bookingId || !sessionId) {
+        if (active) {
+          setStatus("error");
+          setMessage("This return link is incomplete. Open your reservations to check the payment status.");
         }
         return;
       }
 
-      // Main flow: Process payment for existing booking
       try {
-        // Step 1: Try to create deposit hold if we have sessionId
-        if (sessionId) {
+        let verified;
+        for (let attempt = 0; attempt < 4; attempt += 1) {
           try {
-            await axios.post(`${config.baseUrl}/stripe/create-deposit-hold`, { bookingId, sessionId });
-          } catch (err) {
-            console.error("Deposit hold failed:", err?.response?.data || err.message);
-            if (err?.response?.data?.refunded) {
-              toast.error("Votre carte a été refusée pour la caution. Votre paiement de location a été remboursé. Veuillez réessayer avec une autre carte.", { duration: 8000 });
-              navigate("/user/dashboard/reservation");
-              return;
+            const response = await axios.get(
+              `${config.baseUrl}/stripe/verify-payment/${bookingId}?session_id=${encodeURIComponent(sessionId)}`
+            );
+            if (response.data.paid) {
+              verified = response.data;
+              break;
             }
-            // Continue anyway - deposit hold failure shouldn't block the payment confirmation
-            console.warn("Deposit hold failed but continuing with payment confirmation");
+          } catch (verificationError) {
+            if (!isTransientRequestError(verificationError) || attempt === 3) {
+              throw verificationError;
+            }
           }
+          if (attempt < 3) await wait(1500);
         }
 
-        // Step 2: Update booking status to paid
-        try {
-          await axios.put(`${config.baseUrl}/booking/status/${bookingId}`, {    
-            status: "paid"
-          });
-        } catch (err) {
-          console.error("Status update failed:", err);
-          // Don't fail completely - the webhook might have already processed this
-        }
-
-        // Step 3: Verify payment was recorded (fallback check)
-        const verifyPayment = async (attempts = 0) => {
-          try {
-            const verifyRes = await axios.get(`${config.baseUrl}/stripe/verify-payment/${bookingId}?session_id=${sessionId}`);
-            if (verifyRes.data.paid) {
-              setStatus("success");
-              trackPurchase({
-                contentId: params.get("trailerId") || bookingId,
-                value: parseFloat(params.get("price") || 0),
-              });
-              toast.success("Paiement réussi ! Votre réservation est confirmée.");
-              setTimeout(() => navigate("/user/dashboard/reservation"), 1500);
-              return true;
-            }
-          } catch (err) {
-            console.error("Verify payment error:", err);
-          }
-          
-          // Retry up to 3 times with delay
-          if (attempts < 3) {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            return verifyPayment(attempts + 1);
-          }
-          return false;
-        };
-
-        const verified = await verifyPayment();
-        
         if (!verified) {
-          // Even if verification fails, still redirect - webhook will handle it
-          setStatus("success");
-          toast.success("Paiement en cours de traitement. Votre réservation sera confirmée sous peu.");
-          setTimeout(() => navigate("/user/dashboard/reservation"), 2000);
+          throw new Error("Stripe has not confirmed this payment yet. You can safely retry verification.");
         }
 
-      } catch (err) {
-        console.error("Payment confirmation error:", err);
-        setStatus("error");
-        toast.error("Une erreur s'est produite. Veuillez vérifier votre réservation.");
-        setTimeout(() => navigate("/user/dashboard/reservation"), 3000);
+        try {
+          await axios.post(`${config.baseUrl}/stripe/create-deposit-hold`, { bookingId, sessionId });
+        } catch (depositError) {
+          const response = depositError.response?.data;
+          if (response?.refunded) {
+            if (active) {
+              setStatus("refunded");
+              setMessage("The security deposit could not be authorized, so your rental payment was refunded. Please try another card from your reservations.");
+            }
+            return;
+          }
+          throw new Error(response?.msg || "The security deposit could not be confirmed. Please retry.");
+        }
+
+        if (!active) return;
+        setStatus("success");
+        setMessage("Your payment and security deposit are confirmed. Redirecting to your reservations…");
+        const analyticsKey = `lorepa:purchase:${sessionId}`;
+        if (!sessionStorage.getItem(analyticsKey)) {
+          try {
+            sessionStorage.setItem(analyticsKey, "tracked");
+            trackPurchase({ contentId: bookingId, value: Number(verified.total_paid || 0) });
+          } catch (analyticsError) {
+            console.error("Purchase analytics failed:", analyticsError);
+          }
+        }
+        toast.success("Payment confirmed!");
+        redirectTimer = setTimeout(() => navigate("/user/dashboard/reservation"), 1800);
+      } catch (error) {
+        if (active) {
+          setStatus("error");
+          setMessage(error.response?.data?.msg || error.message || "We could not verify the payment.");
+        }
       }
     };
 
-    confirmBooking();
-  }, [params, navigate]);
+    setStatus("processing");
+    setMessage("Please wait while Stripe verifies your payment.");
+    finish();
+    return () => {
+      active = false;
+      clearTimeout(redirectTimer);
+    };
+  }, [params, navigate, retry]);
+
+  const successful = status === "success";
+  const processing = status === "processing";
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-white">
-      <div className="text-center space-y-4">
-        {status === "processing" && (
-          <>
-            <div className="w-16 h-16 mx-auto border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-lg font-medium text-gray-700">Traitement de votre paiement...</p>
-            <p className="text-sm text-gray-500">Veuillez patienter pendant que nous confirmons votre réservation.</p>
-          </>
+    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-sky-100 p-4">
+      <section className="w-full max-w-lg rounded-3xl border border-white bg-white/85 p-8 text-center shadow-2xl backdrop-blur-xl" aria-live="polite">
+        {processing && <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" aria-label="Verifying payment" />}
+        {!processing && (
+          <div className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${successful ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`} aria-hidden="true">
+            <span className="text-3xl">{successful ? "✓" : "!"}</span>
+          </div>
         )}
-        {status === "success" && (
-          <>
-            <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <p className="text-lg font-medium text-green-700">Paiement réussi !</p>
-            <p className="text-sm text-gray-500">Redirection vers vos réservations...</p>
-          </>
+        <h1 className="mt-5 text-2xl font-bold text-slate-950">
+          {processing ? "Verifying payment" : successful ? "Payment confirmed" : status === "refunded" ? "Payment refunded" : "Verification needs attention"}
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-slate-600">{message}</p>
+        {!processing && !successful && (
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            {status === "error" && (
+              <button onClick={() => setRetry((value) => value + 1)} className="min-h-11 rounded-xl bg-blue-600 px-5 font-semibold text-white focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-300">
+                Retry verification
+              </button>
+            )}
+            <button onClick={() => navigate("/user/dashboard/reservation")} className="min-h-11 rounded-xl border border-blue-200 px-5 font-semibold text-blue-800 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200">
+              Back to reservations
+            </button>
+          </div>
         )}
-        {status === "error" && (
-          <>
-            <div className="w-16 h-16 mx-auto bg-yellow-100 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-              </svg>
-            </div>
-            <p className="text-lg font-medium text-yellow-700">Traitement en cours</p>
-            <p className="text-sm text-gray-500">Redirection vers vos réservations pour vérifier le statut...</p>
-          </>
-        )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

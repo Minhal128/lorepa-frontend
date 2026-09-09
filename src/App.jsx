@@ -55,6 +55,7 @@ import CookieConsent from './components/CookieConsent';
 import UserProfilePage from './pages/User/Dashboard/UserProfilePage';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
+import CheckoutPage from './pages/CheckoutPage';
 import LouerUneRemorquePage from './pages/LouerUneRemorquePage';
 import BecomeHostPage from './pages/BecomeHostPage';
 import OwnerLandingPage from './pages/landing/LandingPage';
@@ -195,6 +196,7 @@ function App() {
             <Route path='/verify' element={<VerifyOtpPage />} />
             <Route path='/onboarding' element={<OnboardingPage />} />
 
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel/>} />
             <Route path="/louer-une-remorque" element={<LouerUneRemorquePage />} />

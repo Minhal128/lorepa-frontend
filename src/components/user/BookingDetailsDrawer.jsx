@@ -197,24 +197,12 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
         }
     };
 
-    const handleProceedToPayment = async () => {
-        const userId = localStorage.getItem("userId");
-        let loadingToast = toast.loading("Redirecting to payment...");
-        try {
-            const { data } = await axios.post(`${config.baseUrl}/stripe/create-checkout-session`, {
-                trailerId: reservation?.trailerId?._id,
-                userId,
-                startDate: reservation?.startDate,
-                endDate: reservation?.endDate,
-                price: reservation?.price,
-                bookingId: reservation?._id,
-                accessoryIds: selectedAccessoryIds,
-            });
-            toast.dismiss(loadingToast);
-            window.location.href = data.url;
-        } catch (error) {
-            toast.error("Payment failed", { id: loadingToast });
+    const handleProceedToPayment = () => {
+        const query = new URLSearchParams({ bookingId: reservation?._id || "" });
+        if (selectedAccessoryIds.length > 0) {
+            query.set("accessories", selectedAccessoryIds.join(","));
         }
+        nav(`/checkout?${query.toString()}`);
     };
 
     const getStatusBanner = () => {
