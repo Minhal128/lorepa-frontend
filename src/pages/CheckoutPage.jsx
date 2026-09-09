@@ -69,7 +69,7 @@ const CheckoutForm = ({ summary, onBack }) => {
   const canPay = checkoutState.type === "success" && elementReady && elementComplete && !submitting;
 
   return (
-    <section data-testid="payment-panel" className="rounded-[30px] border border-white/[0.75] bg-[rgba(244,249,255,0.86)] p-5 shadow-[0_30px_90px_rgba(30,64,175,0.20)] backdrop-blur-2xl sm:p-8 lg:p-10">
+    <section data-testid="payment-panel" className="rounded-[30px] border border-white/[0.75] bg-[rgba(244,249,255,0.86)] p-5 shadow-[0_30px_90px_rgba(30,64,175,0.20)] backdrop-blur-2xl sm:p-7 lg:p-8">
       <button
         type="button"
         onClick={onBack}
@@ -83,7 +83,7 @@ const CheckoutForm = ({ summary, onBack }) => {
         <p className="mt-2 max-w-md text-sm leading-6 text-slate-600">Complete your payment and get ready for your journey.</p>
       </div>
 
-      <ol aria-label="Checkout progress" data-testid="checkout-progress" className="mt-7 flex w-full items-start">
+      <ol aria-label="Checkout progress" data-testid="checkout-progress" className="mt-5 flex w-full items-start">
         {[
           ["1", "Payment", true],
           ["2", "Confirmation", false],
@@ -101,7 +101,7 @@ const CheckoutForm = ({ summary, onBack }) => {
         ))}
       </ol>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-7">
+      <form onSubmit={handleSubmit} noValidate className="mt-5">
         <div data-testid="payment-information" className="rounded-[22px] border border-white bg-white/[0.76] p-4 shadow-[0_16px_45px_rgba(30,64,175,0.10)] sm:p-6">
           <div className="mb-5 flex items-start gap-3 border-b border-blue-100 pb-4">
             <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-600"><FaLock aria-hidden="true" /></span>
@@ -152,7 +152,7 @@ const OrderSummary = ({ summary }) => {
 
   return (
   <aside data-testid="order-summary" className="overflow-hidden rounded-[30px] border border-white/[0.75] bg-[rgba(244,249,255,0.88)] shadow-[0_30px_90px_rgba(30,64,175,0.20)] backdrop-blur-2xl">
-    <div data-testid="scenic-summary-hero" className="relative m-3 h-52 overflow-hidden rounded-[22px] bg-blue-100 sm:m-4 sm:h-60 lg:h-64">
+    <div data-testid="scenic-summary-hero" className="relative m-3 h-40 overflow-hidden rounded-[22px] bg-blue-100 sm:m-4 sm:h-44 lg:h-48">
       <img src={heroImage} alt="" className="h-full w-full object-cover object-[56%_66%]" />
     </div>
 
@@ -233,28 +233,50 @@ const StatePanel = ({ title, message, onBack, retry }) => (
 );
 
 const CheckoutPage = () => {
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
 
-  const bookingId = params.get("bookingId") || "";
-  const accessories = params.get("accessories")?.split(",").filter(Boolean) || [];
+  const storedParams = new URLSearchParams(sessionStorage.getItem("lorepaCheckoutQuery") || "");
+  const bookingId = params.get("bookingId") || storedParams.get("bookingId") || "";
+  const accessories = (params.get("accessories") || storedParams.get("accessories"))?.split(",").filter(Boolean) || [];
   const userId = localStorage.getItem("userId") || "";
+
+  useEffect(() => {
+    if (params.get("bookingId")) {
+      sessionStorage.setItem("lorepaCheckoutQuery", params.toString());
+    }
+  }, [params]);
 
   useEffect(() => {
     let active = true;
     const loadCheckout = async () => {
       setLoading(true);
       setError("");
-      if (!bookingId || !userId) {
+      if (!userId) {
         setError("We could not identify an eligible reservation. Please return to your reservations and try again.");
         setLoading(false);
         return;
       }
       try {
+        if (!bookingId) {
+          const bookingsResponse = await axios.get(`${config.baseUrl}/booking/buyer/${userId}`);
+          const eligibleBooking = (bookingsResponse.data?.data || []).find((booking) =>
+            booking?.status === "accepted" && booking?.contractSigned === true && Number(booking?.total_paid || 0) <= 0
+          );
+          if (!eligibleBooking?._id) {
+            throw new Error("No accepted, signed reservation is ready for payment.");
+          }
+
+          const recoveredParams = new URLSearchParams({ bookingId: eligibleBooking._id });
+          sessionStorage.setItem("lorepaCheckoutQuery", recoveredParams.toString());
+          if (active) setParams(recoveredParams, { replace: true });
+          return;
+        }
+
         const response = await axios.post(`${config.baseUrl}/stripe/create-checkout-session`, {
           bookingId,
           userId,
@@ -263,7 +285,7 @@ const CheckoutPage = () => {
         if (active) setData(response.data);
       } catch (requestError) {
         if (active) {
-          setError(requestError.response?.data?.msg || "Secure checkout could not be loaded. Please try again.");
+          setError(requestError.response?.data?.msg || requestError.message || "Secure checkout could not be loaded. Please try again.");
         }
       } finally {
         if (active) setLoading(false);
@@ -271,7 +293,7 @@ const CheckoutPage = () => {
     };
     loadCheckout();
     return () => { active = false; };
-  }, [bookingId, userId, params, attempt]);
+  }, [bookingId, userId, params, setParams, attempt]);
 
   const stripePromise = useMemo(
     () => (data?.publishableKey ? loadStripe(data.publishableKey) : null),
@@ -308,8 +330,8 @@ const CheckoutPage = () => {
       style={{ backgroundImage: `url("${heroImage}")` }}
     >
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(239,246,255,0.78),rgba(219,234,254,0.38))] backdrop-blur-[3px]" aria-hidden="true" />
-      <div className="relative mx-auto flex min-h-screen max-w-[1536px] flex-col px-4 sm:px-6 lg:px-10">
-        <header data-testid="checkout-header" className="flex min-h-24 items-center justify-between gap-4 py-5">
+      <div className="relative mx-auto flex min-h-screen max-w-[1760px] flex-col px-4 sm:px-6 lg:px-10">
+        <header data-testid="checkout-header" className="flex min-h-20 items-center justify-between gap-4 py-4">
           <a href="/" aria-label="Lorepa home" className="rounded-xl px-2 py-2 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-300">
             <img src={logo} alt="Lorepa" className="h-auto w-32 sm:w-40" />
           </a>
@@ -318,7 +340,7 @@ const CheckoutPage = () => {
           </div>
         </header>
 
-        <div data-testid="checkout-responsive-grid" className="mx-auto grid w-full max-w-[1290px] flex-1 items-start gap-5 pb-7 lg:grid-cols-[minmax(0,1.12fr)_minmax(400px,0.88fr)] lg:gap-4">
+        <div data-testid="checkout-responsive-grid" className="mx-auto grid w-full max-w-[1700px] flex-1 items-start gap-5 pb-5 lg:grid-cols-[minmax(0,1fr)_minmax(400px,540px)] lg:gap-4">
           <CheckoutElementsProvider
             stripe={stripePromise}
             options={{ clientSecret: data.clientSecret, elementsOptions: { appearance } }}
@@ -328,7 +350,7 @@ const CheckoutPage = () => {
           <OrderSummary summary={data.summary} />
         </div>
 
-        <footer data-testid="checkout-footer" className="flex items-center gap-6 py-7 text-center">
+        <footer data-testid="checkout-footer" className="flex items-center gap-6 py-5 text-center">
           <span className="h-px flex-1 bg-white/[0.7]" aria-hidden="true" />
           <div><img src={logo} alt="Lorepa" className="mx-auto h-auto w-24 opacity-80" /><p className="mt-2 text-xs font-medium tracking-wide text-blue-950/[0.7]">Rent smarter. Travel further.</p></div>
           <span className="h-px flex-1 bg-white/[0.7]" aria-hidden="true" />

@@ -202,6 +202,7 @@ const BookingDetailsDrawer = ({ reservation: initialReservation, onClose, Status
         if (selectedAccessoryIds.length > 0) {
             query.set("accessories", selectedAccessoryIds.join(","));
         }
+        sessionStorage.setItem("lorepaCheckoutQuery", query.toString());
         nav(`/checkout?${query.toString()}`);
     };
 

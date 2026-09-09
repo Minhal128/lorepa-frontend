@@ -51,6 +51,9 @@ for (const dynamicValue of ["summary.trailer.title", "summary.startDate", "summa
   assert.ok(checkout.includes(dynamicValue), `${dynamicValue} remains dynamic in the checkout`);
 }
 assert.doesNotMatch(drawer, /window\.location\.href\s*=\s*data\.url/, "the renter is never sent to hosted Checkout");
+assert.match(drawer, /sessionStorage\.setItem\("lorepaCheckoutQuery", query\.toString\(\)\)[\s\S]*nav\(`\/checkout\?/, "checkout navigation preserves the selected reservation for refresh recovery");
+assert.match(checkout, /storedParams\.get\("bookingId"\)/, "checkout recovers the selected reservation from session storage");
+assert.match(checkout, /booking\/buyer\/\$\{userId\}[\s\S]*status === "accepted"[\s\S]*contractSigned === true[\s\S]*total_paid/, "a bare checkout URL recovers the newest eligible renter reservation");
 assert.doesNotMatch(success, /booking\/status[\s\S]*status:\s*"paid"/, "the return page never marks a booking paid directly");
 assert.match(success, /verify-payment[\s\S]*create-deposit-hold/, "verified payment precedes the retry-safe deposit request");
 assert.match(success, /isTransientRequestError[\s\S]*attempt === 3[\s\S]*await wait/, "transient verification failures use bounded retries");
