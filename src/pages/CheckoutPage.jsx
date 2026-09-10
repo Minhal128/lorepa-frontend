@@ -3,7 +3,7 @@ import axios from "axios";
 import { CheckoutElementsProvider, PaymentElement, useCheckoutElements } from "@stripe/react-stripe-js/checkout";
 import { loadStripe } from "@stripe/stripe-js";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { FaArrowLeft, FaCheck, FaHeadset, FaLock, FaShieldAlt } from "react-icons/fa";
+import { FaArrowLeft, FaCheck, FaChevronLeft, FaChevronRight, FaHeadset, FaLock, FaShieldAlt } from "react-icons/fa";
 import config from "../config";
 import logo from "../assets/logo_cropped.svg";
 
@@ -148,12 +148,41 @@ const CheckoutForm = ({ summary, onBack }) => {
 
 const OrderSummary = ({ summary }) => {
   const [listingImageFailed, setListingImageFailed] = useState(false);
+  const [slide, setSlide] = useState(0);
   const hasListingImage = Boolean(summary.trailer.image) && !listingImageFailed;
+  const photos = summary.trailer.images?.length ? summary.trailer.images : [summary.trailer.image].filter(Boolean);
+  const step = (delta) => setSlide((current) => (current + delta + photos.length) % photos.length);
 
   return (
   <aside data-testid="order-summary" className="overflow-hidden rounded-[30px] border border-white/[0.75] bg-[rgba(244,249,255,0.88)] shadow-[0_30px_90px_rgba(30,64,175,0.20)] backdrop-blur-2xl">
     <div data-testid="scenic-summary-hero" className="relative m-3 h-40 overflow-hidden rounded-[22px] bg-blue-100 sm:m-4 sm:h-44 lg:h-48">
-      <img src={heroImage} alt="" className="h-full w-full object-cover object-[56%_66%]" />
+      <img
+        src={photos[slide] || heroImage}
+        alt={photos.length ? `${summary.trailer.title} — image ${slide + 1}` : ""}
+        className={`h-full w-full object-cover ${photos.length ? "" : "object-[56%_66%]"}`}
+      />
+      {photos.length > 1 && (
+        <>
+          <button type="button" onClick={() => step(-1)} aria-label="Previous trailer image" className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1.5 text-white transition hover:bg-black/65 focus:outline-none focus-visible:ring-2 focus-visible:ring-white">
+            <FaChevronLeft className="h-3 w-3" />
+          </button>
+          <button type="button" onClick={() => step(1)} aria-label="Next trailer image" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1.5 text-white transition hover:bg-black/65 focus:outline-none focus-visible:ring-2 focus-visible:ring-white">
+            <FaChevronRight className="h-3 w-3" />
+          </button>
+          <span data-testid="summary-image-counter" className="absolute right-2 top-2 rounded-full bg-black/50 px-2 py-0.5 text-[11px] font-semibold text-white">{slide + 1}/{photos.length}</span>
+          <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-1">
+            {photos.map((photo, index) => (
+              <button
+                key={photo}
+                type="button"
+                aria-label={`Show image ${index + 1}`}
+                onClick={() => setSlide(index)}
+                className={`h-1.5 w-1.5 rounded-full transition ${index === slide ? "bg-white" : "bg-white/50"}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
 
     <div className="px-5 pb-5 pt-3 sm:px-7 sm:pb-7">
