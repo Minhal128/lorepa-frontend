@@ -74,7 +74,7 @@ export const checkoutTranslations = {
     backToRentalDetails: "Retour aux détails de la location",
     secure: "Paiement",
     checkout: "sécurisé",
-    subtitle: "Complétez votre paiement et préparez-vous pour votre voyage.",
+    subtitle: "Une dernière étape avant de prendre la route.",
     progressAria: "Progression du paiement",
     stepPayment: "Paiement",
     stepConfirmation: "Confirmation",
