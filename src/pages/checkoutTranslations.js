@@ -88,7 +88,7 @@ export const checkoutTranslations = {
     completeFormHint: "Remplissez le formulaire de paiement sécurisé pour continuer.",
     paymentFailed: "Votre paiement n’a pas pu être complété. Veuillez réessayer.",
     formLoadFailed: "Le formulaire de paiement sécurisé n’a pas pu se charger.",
-    orderSummary: "Récapitulatif de la commande",
+    orderSummary: "Récapitulatif de la location",
     securePayment: "Paiement sécurisé",
     imageUnavailable: "Image indisponible",
     imageUnavailableAria: "Image de la remorque indisponible",
