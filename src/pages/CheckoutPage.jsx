@@ -46,7 +46,7 @@ const appearance = {
   },
 };
 
-const CheckoutForm = ({ summary, onBack }) => {
+const CheckoutForm = ({ summary, email, onBack }) => {
   const checkoutState = useCheckoutElements();
   const [elementComplete, setElementComplete] = useState(false);
   const [elementReady, setElementReady] = useState(false);
@@ -59,7 +59,8 @@ const CheckoutForm = ({ summary, onBack }) => {
     setSubmitting(true);
     setError("");
     try {
-      const result = await checkoutState.checkout.confirm();
+      // Stripe requires an email on the session; the form collects none, so send the account's.
+      const result = await checkoutState.checkout.confirm(email ? { email } : undefined);
       if (result.type === "error") {
         setError(result.error?.message || text.paymentFailed);
         setSubmitting(false);
@@ -380,7 +381,7 @@ const CheckoutPage = () => {
             stripe={stripePromise}
             options={{ clientSecret: data.clientSecret, elementsOptions: { appearance } }}
           >
-            <CheckoutForm summary={data.summary} onBack={backToRentalDetails} />
+            <CheckoutForm summary={data.summary} email={data.customerEmail} onBack={backToRentalDetails} />
           </CheckoutElementsProvider>
           <OrderSummary summary={data.summary} />
         </div>
