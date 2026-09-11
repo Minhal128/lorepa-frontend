@@ -132,7 +132,7 @@ export const profileTranslations = {
     front: "Recto",
     back: "Verso",
     carInsurancePolicyImage: "Police d'Assurance Voiture",
-    trailerInsurancePolicyImage: "Police d'Assurance Remorque",
+    trailerInsurancePolicyImage: "Police d'assurance",
     trailerRegistrationImage: "Enregistrement Remorque",
     requiredProfileFieldsMissing: "Veuillez remplir tous les champs obligatoires du profil.",
     failedToUpdateProfile: "Échec de la mise à jour du profil",

@@ -94,8 +94,9 @@ const AdminUserDetailPage = () => {
     { key: "licenseFrontImage", label: "License Front" },
     { key: "licenseBackImage", label: "License Back" },
     { key: "faq27Image", label: "Endorsement / FAQ 27", renterOnly: true },
+    { key: "carInsurancePolicyImage", label: "Car Insurance", renterOnly: true },
     { key: "trailerRegistrationImage", label: "Trailer Registration", ownerOnly: true },
-    { key: "trailerInsurancePolicyImage", label: "Trailer Insurance", ownerOnly: true },
+    { key: "trailerInsurancePolicyImage", label: "Police d'assurance", ownerOnly: true },
   ].filter((doc) => {
     if (doc.ownerOnly && !isOwner) return false;
     if (doc.renterOnly && isOwner) return false;
